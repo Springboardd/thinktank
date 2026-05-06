@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pratik's Think-Tank</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --ink:#1a1612;--paper:#f5f0e8;--paper2:#ede8dc;
+  --gold:#c9a84c;--gold2:#a07830;--muted:#7a7060;--border:rgba(26,22,18,0.12);
+  --d0:#080706;--d1:#0d0b09;--d2:#121008;--d3:#18150f;--d4:#1e1a12;--d5:#252018;
+  --gold-dim:#c9a84c;--gold-mute:rgba(201,168,76,0.12);--gold-border:rgba(201,168,76,0.2);
+  --t1:rgba(255,255,255,0.87);--t2:rgba(255,255,255,0.52);--t3:rgba(255,255,255,0.26);--t4:rgba(255,255,255,0.1);
+  --b1:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.13);--b3:rgba(255,255,255,0.04);
+}
+body.lm{
+  --d0:#f4efe6;--d1:#ede8de;--d2:#e8e2d8;--d3:#e2dbd0;--d4:#dbd3c8;--d5:#d4ccbe;
+  --t1:#1a1612;--t2:#4a4238;--t3:#7a7060;--t4:rgba(26,22,18,0.22);
+  --b1:rgba(26,22,18,0.07);--b2:rgba(26,22,18,0.13);--b3:rgba(26,22,18,0.04);
+  --gold-border:rgba(160,120,48,0.28);--gold-mute:rgba(160,120,48,0.08);
+  --gold-dim:#8a6520;
+}
+body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overflow-x:hidden;min-height:100vh;}
+.pg{display:none;min-height:100vh;flex-direction:column;}
+.pg.on{display:flex;flex-direction:column;}
+.fi{animation:fi 0.35s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+#gate{background:var(--d1);align-items:center;justify-content:center;padding:2rem;}
+.gate-box{text-align:center;max-width:380px;width:100%;}
+.gate-logo{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--gold-dim);letter-spacing:0.08em;margin-bottom:0.2rem;}
+.gate-sub{font-size:9px;letter-spacing:0.32em;color:var(--t3);text-transform:uppercase;margin-bottom:3rem;}
+.gate-lbl{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--t3);margin-bottom:0.5rem;text-align:left;}
+.gate-inp{width:100%;background:var(--b3);border:1px solid var(--b2);color:var(--t1);padding:0.85rem 1rem;font-family:'DM Mono',monospace;font-size:13px;outline:none;margin-bottom:0.5rem;letter-spacing:0.04em;transition:border-color 0.2s;}
+.gate-inp:focus{border-color:var(--gold-border);}
+.gate-note{font-size:10px;color:var(--t3);margin-bottom:1.8rem;letter-spacing:0.05em;line-height:1.6;}
+.gate-btn{width:100%;background:var(--gold2);border:none;color:var(--paper);padding:0.9rem;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;cursor:pointer;transition:background 0.2s;}
+.gate-btn:hover{background:var(--gold);}
+.gate-err{font-size:11px;color:#c47a7a;margin-top:0.6rem;letter-spacing:0.04em;text-align:left;}
+/* LOBBY - preserved exactly */
+#lobby{background:var(--paper);align-items:center;justify-content:center;padding:2rem;position:relative;}
+.gridbg{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 39px,var(--border) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,var(--border) 40px);opacity:0.45;pointer-events:none;}
+.lobby-in{position:relative;z-index:1;text-align:center;width:100%;max-width:780px;}
+.pname{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,5vw,4rem);font-weight:300;letter-spacing:0.08em;line-height:1;margin-bottom:0.2rem;color:var(--ink);}
+.ptag{font-size:10px;letter-spacing:0.3em;color:var(--muted);text-transform:uppercase;margin-bottom:3rem;}
+.doors{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+.door{border:1px solid var(--border);background:var(--paper);padding:2rem 1.2rem 1.5rem;cursor:pointer;transition:all 0.3s;position:relative;text-align:left;}
+.door::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transition:transform 0.3s;transform-origin:left;}
+.door:hover{background:var(--paper2);transform:translateY(-4px);}
+.door:hover::after{transform:scaleX(1);}
+.door.off{opacity:0.38;cursor:not-allowed;}
+.door.off:hover{transform:none;background:var(--paper);}
+.door.off:hover::after{transform:scaleX(0);}
+.dnum{font-size:9px;letter-spacing:0.22em;color:var(--gold2);margin-bottom:1rem;}
+.dico{font-size:22px;margin-bottom:0.8rem;display:block;color:var(--ink);}
+.dtitle{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:400;margin-bottom:0.4rem;color:var(--ink);}
+.ddesc{font-size:10px;color:var(--muted);line-height:1.7;letter-spacing:0.04em;}
+.dtag{display:inline-block;margin-top:1rem;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--gold);color:var(--gold2);}
+.door.off .dtag{border-color:var(--border);color:var(--muted);}
+/* DARK BASE */
+.dark-pg{background:var(--d1);}
+.dark-head{height:48px;border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 1.4rem;gap:0.7rem;flex-shrink:0;background:var(--d2);}
+.dark-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:300;letter-spacing:0.2em;color:var(--gold-dim);flex:1;}
+.hbtn{background:none;border:1px solid transparent;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--t3);cursor:pointer;padding:5px 10px;transition:all 0.2s;}
+.hbtn:hover{color:var(--t1);border-color:var(--b2);}
+.abtn{background:var(--gold2);border:none;color:var(--paper);padding:0.45rem 1rem;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:background 0.2s;}
+.abtn:hover{background:var(--gold);}
+.theme-btn{background:none;border:1px solid var(--b1);color:var(--t3);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;padding:4px 10px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
+.theme-btn:hover{border-color:var(--gold-border);color:var(--gold-dim);}
+/* WM HUB */
+#wmhub{background:var(--d1);}
+.wm-ctr{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;}
+.wm-in{text-align:center;max-width:560px;width:100%;}
+.wm-opts{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem;}
+.wm-opt{border:1px solid var(--b1);background:var(--d3);padding:2.5rem 1.5rem;cursor:pointer;transition:all 0.3s;position:relative;text-align:left;}
+.wm-opt::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--gold-dim);transform:scaleX(0);transition:transform 0.3s;transform-origin:left;}
+.wm-opt:hover{background:var(--d4);transform:translateY(-3px);}
+.wm-opt:hover::after{transform:scaleX(1);}
+.wm-dnum{font-size:9px;letter-spacing:0.22em;color:var(--gold2);margin-bottom:0.8rem;}
+.wm-dtitle{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--t1);margin-bottom:0.35rem;}
+.wm-ddesc{font-size:10px;color:var(--t2);line-height:1.7;letter-spacing:0.04em;}
+.wm-dtag{display:inline-block;margin-top:0.9rem;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:3px 9px;border:1px solid var(--gold-border);color:var(--gold-dim);}
+/* DUMP */
+#dump{background:var(--d1);}
+.dump-toolbar{padding:0.65rem 1.4rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:0.6rem;background:var(--d2);}
+.sort-btn{background:none;border:1px solid var(--b1);color:var(--t3);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.13em;text-transform:uppercase;padding:4px 10px;cursor:pointer;transition:all 0.2s;}
+.sort-btn:hover,.sort-btn.act{border-color:var(--gold-border);color:var(--gold-dim);}
+.dump-ai-btn{background:none;border:1px solid var(--gold-border);color:var(--gold-dim);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.13em;text-transform:uppercase;padding:4px 10px;cursor:pointer;transition:all 0.2s;margin-left:auto;}
+.dump-ai-btn:hover{background:var(--gold-mute);}
+.dump-grid{padding:1.4rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;overflow-y:auto;flex:1;align-content:start;}
+.ccard{background:var(--d3);border:1px solid var(--b1);padding:1.1rem;position:relative;transition:all 0.2s;cursor:pointer;}
+.ccard:hover{border-color:var(--gold-border);background:var(--d4);}
+.ccard.dragging{opacity:0.4;border-style:dashed;}
+.ccard.drag-over{border-color:var(--gold-dim);}
+.cc-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;color:var(--t1);margin-bottom:0.4rem;padding-right:2rem;line-height:1.3;}
+.cc-body{font-size:10px;color:var(--t2);line-height:1.75;letter-spacing:0.02em;}
+.cc-projs{font-size:9px;color:rgba(201,168,76,0.45);margin-top:0.5rem;letter-spacing:0.07em;}
+.cc-date{font-size:8px;color:var(--t3);margin-top:0.4rem;letter-spacing:0.08em;}
+.cc-dots{position:absolute;top:0.5rem;right:0.5rem;background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;font-family:'DM Mono',monospace;padding:2px 6px;transition:color 0.2s;z-index:2;}
+.cc-dots:hover{color:var(--gold-dim);}
+.dump-empty{text-align:center;padding:4rem;color:var(--t3);font-size:11px;letter-spacing:0.1em;grid-column:1/-1;}
+.ctx-menu{position:fixed;background:var(--d3);border:1px solid var(--b2);z-index:500;min-width:200px;box-shadow:0 12px 32px rgba(0,0,0,0.6);}
+.ctx-item{padding:0.65rem 1.1rem;font-size:11px;color:var(--t2);cursor:pointer;letter-spacing:0.04em;transition:background 0.15s;}
+.ctx-item:hover{background:var(--b1);color:var(--t1);}
+.ctx-del{color:rgba(196,122,122,0.7);}
+.ctx-del:hover{color:#c47a7a!important;}
+/* DUMP CHAT */
+.dump-chat-panel{border-top:1px solid var(--b1);background:var(--d2);display:none;flex-direction:column;height:265px;flex-shrink:0;}
+.dump-chat-panel.open{display:flex;}
+.dump-chat-hdr{padding:0.6rem 1.2rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:0.6rem;flex-shrink:0;}
+.dump-chat-msgs{flex:1;overflow-y:auto;padding:0.8rem 1.2rem;display:flex;flex-direction:column;gap:0.5rem;}
+.dump-chat-msgs::-webkit-scrollbar{width:2px;}
+.dump-chat-msgs::-webkit-scrollbar-thumb{background:var(--b2);}
+.dump-chat-in{display:flex;gap:0.5rem;padding:0.6rem 1.2rem;border-top:1px solid var(--b1);flex-shrink:0;}
+.dump-chat-ta{flex:1;background:var(--b3);border:1px solid var(--b1);color:var(--t1);padding:0.5rem 0.75rem;font-family:'DM Mono',monospace;font-size:11px;resize:none;outline:none;min-height:36px;line-height:1.5;transition:border-color 0.2s;}
+.dump-chat-ta:focus{border-color:var(--gold-border);}
+.dump-send{background:var(--gold2);border:none;color:var(--paper);padding:0.5rem 0.9rem;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;}
+.dump-send:hover{background:var(--gold);}
+/* PROJECTS */
+#projects{background:var(--d1);}
+.proj-grid{padding:1.4rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.8rem;align-content:start;}
+.pcard{background:var(--d3);border:1px solid var(--b1);padding:0.9rem 0.85rem;cursor:pointer;transition:all 0.2s;position:relative;min-height:100px;}
+.pcard:hover{border-color:var(--gold-border);transform:translateY(-2px);background:var(--d4);}
+.pcard.new-p{border-style:dashed;border-color:var(--b2);display:flex;align-items:center;justify-content:center;color:var(--t3);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;min-height:100px;}
+.pcard.new-p:hover{border-color:var(--gold-dim);color:var(--gold-dim);transform:none;}
+.pc-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;color:var(--t1);margin-bottom:0.35rem;}
+.pc-desc{font-size:10px;color:var(--t3);line-height:1.6;letter-spacing:0.03em;}
+.pc-status{font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-dim);opacity:0.6;margin-top:0.5rem;}
+.pc-del{position:absolute;top:0.35rem;right:0.35rem;background:none;border:none;color:var(--t4);font-size:14px;cursor:pointer;line-height:1;padding:1px 5px;font-family:inherit;z-index:2;}
+.pc-del:hover{color:#c47a7a;}
+/* OB */
+#ob{background:var(--d1);}
+.ob-bar{height:2px;background:var(--b1);}
+.ob-fill{height:100%;background:var(--gold-dim);transition:width 0.5s ease;}
+.ob-head{padding:1.2rem 1.5rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;background:var(--d2);}
+.ob-htitle{font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:0.1em;color:var(--t1);}
+.ob-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 1.5rem;max-width:580px;margin:0 auto;width:100%;}
+.ob-ctx{font-size:11px;color:var(--t2);line-height:1.8;letter-spacing:0.04em;margin-bottom:1.8rem;padding:1rem;border-left:2px solid var(--gold-dim);background:var(--b3);}
+.ob-qn{font-size:9px;letter-spacing:0.26em;color:var(--gold2);text-transform:uppercase;margin-bottom:0.9rem;}
+.ob-q{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.75rem);font-weight:300;line-height:1.45;text-align:center;margin-bottom:0.55rem;color:var(--t1);}
+.ob-hint{font-size:11px;color:var(--t3);text-align:center;margin-bottom:1rem;line-height:1.7;letter-spacing:0.04em;font-style:italic;}
+.ob-free{font-size:10px;color:var(--gold2);text-align:center;margin-bottom:1.2rem;letter-spacing:0.07em;}
+.ob-ta{width:100%;min-height:110px;background:var(--b3);border:1px solid var(--b2);border-bottom:2px solid var(--gold-border);padding:0.85rem;font-family:'DM Mono',monospace;font-size:12px;color:var(--t1);resize:vertical;outline:none;line-height:1.75;transition:border-color 0.2s;}
+.ob-ta:focus{border-bottom-color:var(--gold-dim);}
+.ob-ta::placeholder{color:var(--t3);}
+.ob-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.2rem;width:100%;}
+.skip-btn{font-size:10px;color:var(--t3);cursor:pointer;letter-spacing:0.08em;text-decoration:underline;text-underline-offset:3px;background:none;border:none;font-family:'DM Mono',monospace;transition:color 0.2s;}
+.skip-btn:hover{color:var(--t1);}
+.btn-p{background:var(--gold2);color:var(--paper);border:none;padding:0.65rem 1.8rem;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:background 0.2s;}
+.btn-p:hover{background:var(--gold);}
+.btn-g{background:transparent;border:1px solid var(--b2);color:var(--t3);padding:0.65rem 1.2rem;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.btn-g:hover{border-color:var(--t2);color:var(--t1);}
+/* PROFED */
+#profed{background:var(--d1);}
+.pe-body{padding:1.5rem;max-width:620px;margin:0 auto;width:100%;overflow-y:auto;max-height:calc(100vh - 60px);}
+.pe-body::-webkit-scrollbar{width:3px;}
+.pe-body::-webkit-scrollbar-thumb{background:var(--b2);}
+.pe-sec-h{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--t1);margin-bottom:0.2rem;margin-top:1.5rem;}
+.pe-sec-s{font-size:10px;color:var(--t3);letter-spacing:0.1em;margin-bottom:1.2rem;}
+.pef{margin-bottom:1.1rem;}
+.pel{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold2);margin-bottom:0.4rem;opacity:0.8;}
+.peta{width:100%;min-height:70px;background:var(--b3);border:1px solid var(--b1);border-bottom:2px solid var(--gold-border);padding:0.75rem;font-family:'DM Mono',monospace;font-size:12px;color:var(--t1);resize:vertical;outline:none;line-height:1.7;transition:border-color 0.2s;}
+.peta:focus{border-bottom-color:var(--gold-dim);}
+.peta::placeholder{color:var(--t3);}
+.wat-area{width:100%;min-height:160px;background:var(--gold-mute);border:1px solid var(--gold-border);border-bottom:2px solid var(--gold2);padding:0.9rem;font-family:'DM Mono',monospace;font-size:12px;color:var(--t1);resize:vertical;outline:none;line-height:1.8;transition:border-color 0.2s;}
+.wat-area:focus{border-bottom-color:var(--gold-dim);}
+.wat-area::placeholder{color:var(--t3);}
+.wat-entry{padding:0.7rem 0.8rem;border-left:2px solid var(--gold-border);margin-bottom:0.6rem;background:var(--b3);}
+.wat-date{font-size:9px;color:var(--gold2);letter-spacing:0.12em;margin-bottom:0.2rem;}
+.wat-text{font-size:11px;color:var(--t2);line-height:1.7;}
+.add-entry-btn{background:transparent;border:1px solid var(--gold-border);color:var(--gold2);padding:0.5rem 1rem;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;cursor:pointer;margin:0.6rem 0 1.2rem;transition:all 0.2s;}
+.add-entry-btn:hover{border-color:var(--gold-dim);color:var(--gold-dim);}
+/* APP */
+#app{background:var(--d0);height:100vh;overflow:hidden;flex-direction:column;}
+#app.on{display:flex;}
+.app-top{height:48px;border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 1.3rem;gap:0.6rem;flex-shrink:0;background:var(--d2);}
+.app-logo{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:300;letter-spacing:0.2em;color:var(--gold-dim);flex:1;}
+.app-proj-lbl{font-size:9px;letter-spacing:0.16em;color:var(--t3);padding:3px 10px;border:1px solid var(--b1);text-transform:uppercase;}
+.app-body{display:flex;overflow:hidden;height:calc(100vh - 48px);}
+/* LEFT PANEL */
+.lpanel{width:228px;min-width:228px;border-right:1px solid var(--b1);background:var(--d2);overflow-y:auto;display:flex;flex-direction:column;height:100%;}
+.lpanel::-webkit-scrollbar{width:2px;}
+.lpanel::-webkit-scrollbar-thumb{background:var(--b2);}
+.lsec{padding:1rem;border-bottom:1px solid var(--b1);}
+.lsec-t{font-size:8px;letter-spacing:0.24em;text-transform:uppercase;color:var(--t3);margin-bottom:0.8rem;display:flex;align-items:center;justify-content:space-between;}
+.ladd{background:none;border:none;color:var(--t3);font-size:16px;cursor:pointer;font-family:inherit;line-height:1;transition:color 0.2s;padding:0 2px;}
+.ladd:hover{color:var(--gold-dim);}
+.wcard{padding:0.7rem 0.8rem;margin-bottom:0.4rem;border:1px solid var(--b1);cursor:default;transition:all 0.2s;background:var(--d3);}
+.wcard:hover{background:var(--d4);}
+.wcard.wcard-sel{border-color:rgba(196,122,122,0.3);}
+.wc-top{display:flex;align-items:center;gap:0.45rem;margin-bottom:0.28rem;}
+.wc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.wc-name{font-family:'Cormorant Garamond',serif;font-size:0.9rem;flex:1;}
+.wc-eng{font-size:8px;color:var(--t3);letter-spacing:0.1em;text-transform:uppercase;}
+.wc-role{font-size:10px;color:var(--t3);line-height:1.5;padding-left:1.1rem;margin-bottom:0.4rem;}
+.wc-acts{display:flex;gap:0.3rem;padding-left:1.1rem;flex-wrap:wrap;}
+.wcbtn{font-size:8px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 7px;border:1px solid var(--b1);background:transparent;color:var(--t3);cursor:pointer;font-family:'DM Mono',monospace;transition:all 0.2s;}
+.wcbtn:hover{border-color:var(--gold-border);color:var(--gold-dim);}
+.wcbtn.pb{border-color:rgba(196,122,122,0.18);color:rgba(196,122,122,0.4);}
+.wcbtn.pb:hover{border-color:#c47a7a;color:#c47a7a;}
+.vitem{display:flex;align-items:center;gap:0.45rem;padding:0.42rem 0.55rem;margin-bottom:0.25rem;border:1px solid var(--b1);font-size:10px;color:var(--t3);background:var(--d3);}
+.vadd{width:100%;padding:0.45rem;border:1px dashed var(--b2);background:transparent;color:var(--t3);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.13em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;text-align:center;margin-top:0.35rem;}
+.vadd:hover{border-color:var(--gold-border);color:var(--gold-dim);}
+/* CENTER */
+.cpanel{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;height:100%;}
+.priv-bar{background:rgba(74,40,40,0.28);border-bottom:1px solid rgba(196,122,122,0.12);padding:0.42rem 1.3rem;font-size:10px;letter-spacing:0.1em;color:#c47a7a;display:flex;align-items:center;justify-content:space-between;}
+.close-priv{background:none;border:none;color:#c47a7a;cursor:pointer;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.2s;}
+.close-priv:hover{color:var(--t1);}
+.chat-hdr{padding:0.6rem 1.3rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:0.8rem;background:var(--d2);}
+.cmode{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;}
+.gmode{color:var(--gold-dim);}
+.pvmode{color:#c47a7a;}
+.chat-hdr-right{display:flex;align-items:center;gap:0.5rem;margin-left:auto;}
+/* VIEW TOGGLE */
+.view-toggle{display:flex;border:1px solid var(--b1);}
+.vtbtn{background:none;border:none;color:var(--t3);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:4px 10px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
+.vtbtn.active{background:var(--b1);color:var(--t1);}
+.vtbtn:hover:not(.active){color:var(--t2);}
+/* MODE PICKER */
+.mode-picker-wrap{position:relative;}
+.mode-pill{background:var(--b1);border:1px solid var(--b2);color:var(--t2);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;padding:4px 12px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem;white-space:nowrap;}
+.mode-pill:hover{border-color:var(--gold-border);color:var(--gold-dim);}
+.mode-dot{width:5px;height:5px;border-radius:50%;background:var(--gold-dim);flex-shrink:0;}
+.mode-dropdown{position:absolute;top:calc(100% + 4px);right:0;background:var(--d3);border:1px solid var(--b2);z-index:300;min-width:230px;box-shadow:0 12px 32px rgba(0,0,0,0.6);display:none;}
+.mode-dropdown.open{display:block;}
+.mode-opt{padding:0.75rem 1rem;cursor:pointer;transition:background 0.15s;border-bottom:1px solid var(--b1);}
+.mode-opt:last-child{border-bottom:none;}
+.mode-opt:hover{background:var(--b1);}
+.mode-opt.sel{background:var(--gold-mute);}
+.mo-name{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--t1);margin-bottom:0.2rem;}
+.mo-desc{font-size:9px;color:var(--t3);letter-spacing:0.03em;line-height:1.5;}
+/* CHAT */
+.chat-msgs{flex:1;overflow-y:auto;padding:1.6rem;display:flex;flex-direction:column;gap:1.4rem;min-height:0;height:0;}
+.chat-msgs::-webkit-scrollbar{width:2px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--b2);}
+.chat-msgs.sbs{flex-direction:row;gap:0;padding:0;align-items:stretch;}
+.msg{display:flex;flex-direction:column;gap:0.35rem;max-width:88%;}
+.msg.user{align-self:flex-end;align-items:flex-end;}
+.msg.ai{align-self:flex-start;}
+.mwho{font-size:8px;letter-spacing:0.16em;text-transform:uppercase;}
+.uwho{color:var(--t3);}
+.mbub{padding:1rem 1.2rem;font-size:12px;line-height:1.9;letter-spacing:0.02em;}
+.msg.user .mbub{background:var(--b3);border:1px solid var(--b2);color:var(--t1);}
+.msg.ai .mbub{border-left:2px solid;color:var(--t1);background:var(--d3);}
+.dots span{animation:blink 1.3s infinite;color:var(--t3);font-size:16px;}
+.dots span:nth-child(2){animation-delay:0.2s;}
+.dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes blink{0%,80%,100%{opacity:0.1}40%{opacity:1}}
+/* SBS */
+.sbs-col{flex:1;border-right:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.sbs-col:last-child{border-right:none;}
+.sbs-hdr{padding:0.6rem 1rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:0.4rem;background:var(--d2);flex-shrink:0;}
+.sbs-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.sbs-name{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;}
+.sbs-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.8rem;}
+.sbs-msgs::-webkit-scrollbar{width:2px;}
+.sbs-msgs::-webkit-scrollbar-thumb{background:var(--b2);}
+.sbs-user{font-size:10px;color:var(--t3);padding:0.5rem 0.6rem;background:var(--b3);border:1px solid var(--b1);letter-spacing:0.02em;font-style:italic;line-height:1.6;}
+.sbs-ai{font-size:11px;color:var(--t1);line-height:1.85;padding:0.8rem 0.9rem;background:var(--d3);border-left:2px solid;letter-spacing:0.02em;}
+/* INPUT */
+.cin-wrap{border-top:1px solid var(--b1);padding:1rem 1.3rem;background:var(--d2);}
+.inrow{display:flex;gap:0.6rem;align-items:flex-end;}
+.chat-ta{flex:1;background:var(--b3);border:1px solid var(--b2);color:var(--t1);padding:0.75rem 1rem;font-family:'DM Mono',monospace;font-size:12px;resize:none;outline:none;min-height:44px;max-height:120px;line-height:1.6;transition:border-color 0.2s;}
+.chat-ta:focus{border-color:var(--gold-border);}
+.chat-ta::placeholder{color:var(--t3);}
+.send-btn{background:var(--gold2);border:none;color:var(--paper);padding:0.75rem 1.1rem;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;cursor:pointer;height:44px;transition:background 0.2s;white-space:nowrap;}
+.send-btn:hover{background:var(--gold);}
+.send-btn:disabled{opacity:0.3;cursor:not-allowed;}
+.in-meta{font-size:9px;color:var(--t3);margin-top:0.4rem;letter-spacing:0.06em;}
+/* CONCEPTS PANEL */
+.concepts-panel{position:fixed;right:0;top:48px;width:285px;height:calc(100vh - 48px);background:var(--d2);border-left:1px solid var(--b1);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.3s ease;}
+.concepts-panel.open{transform:translateX(0);}
+.cp-head{padding:0.8rem 1rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.cp-title{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--t3);}
+.cp-close{background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;font-family:inherit;line-height:1;}
+.cp-close:hover{color:var(--t1);}
+.cp-list{flex:1;overflow-y:auto;padding:0.8rem;}
+.cp-list::-webkit-scrollbar{width:2px;}
+.cp-list::-webkit-scrollbar-thumb{background:var(--b2);}
+.cp-card{padding:0.7rem 0.8rem;background:var(--d3);border:1px solid var(--b1);margin-bottom:0.5rem;cursor:pointer;transition:all 0.2s;}
+.cp-card:hover{border-color:var(--gold-border);background:var(--d4);}
+.cp-card-title{font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:var(--t1);margin-bottom:0.2rem;}
+.cp-card-body{font-size:10px;color:var(--t2);line-height:1.6;}
+.cp-pull{font-size:8px;color:var(--gold-dim);letter-spacing:0.1em;text-transform:uppercase;margin-top:0.35rem;}
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.87);z-index:100;display:none;align-items:center;justify-content:center;padding:1.5rem;}
+.overlay.on{display:flex;}
+.modal{background:var(--d3);border:1px solid var(--b2);padding:1.8rem;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;}
+.modal::-webkit-scrollbar{width:3px;}
+.modal::-webkit-scrollbar-thumb{background:var(--b2);}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;margin-bottom:1.3rem;color:var(--t1);}
+.mf{margin-bottom:1.1rem;}
+.ml{font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--t3);margin-bottom:0.4rem;}
+.mi,.ms,.mta{width:100%;background:var(--b3);border:1px solid var(--b2);color:var(--t1);padding:0.6rem 0.8rem;font-family:'DM Mono',monospace;font-size:12px;outline:none;transition:border-color 0.2s;}
+.mi:focus,.ms:focus,.mta:focus{border-color:var(--gold-border);}
+.mi::placeholder,.mta::placeholder{color:var(--t3);}
+.mta{min-height:80px;resize:vertical;line-height:1.7;}
+.ms option{background:var(--d3);color:var(--t1);}
+.csw-row{display:flex;gap:0.4rem;flex-wrap:wrap;}
+.csw{width:22px;height:22px;cursor:pointer;border:2px solid transparent;border-radius:50%;transition:border-color 0.2s;}
+.csw.picked{border-color:white;}
+.mbts{display:flex;gap:0.6rem;justify-content:flex-end;margin-top:1.3rem;}
+/* CONCEPT VIEW */
+.cv-td{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--t1);margin-bottom:0.8rem;line-height:1.3;}
+.cv-bd{font-size:12px;color:var(--t2);line-height:1.85;letter-spacing:0.02em;white-space:pre-wrap;}
+.cv-te{width:100%;background:var(--b3);border:1px solid var(--b2);color:var(--t1);padding:0.6rem 0.8rem;font-family:'Cormorant Garamond',serif;font-size:1.1rem;outline:none;margin-bottom:0.8rem;display:none;transition:border-color 0.2s;}
+.cv-te:focus{border-color:var(--gold-border);}
+.cv-be{width:100%;min-height:140px;background:var(--b3);border:1px solid var(--b2);color:var(--t1);padding:0.75rem;font-family:'DM Mono',monospace;font-size:12px;resize:vertical;outline:none;line-height:1.75;display:none;transition:border-color 0.2s;}
+.cv-be:focus{border-color:var(--gold-border);}
+/* SETTINGS MODAL */
+#settings-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:999;align-items:center;justify-content:center;padding:1.5rem;}
+#settings-modal.open{display:flex;}
+.sm-in{background:var(--d3);border:1px solid var(--b2);padding:2rem;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+.sm-in::-webkit-scrollbar{width:3px;}
+.sm-in::-webkit-scrollbar-thumb{background:var(--b2);}
+.sm-t{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--gold-dim);margin-bottom:1.8rem;letter-spacing:0.08em;}
+.sm-s{margin-bottom:1.4rem;}
+.sm-l{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.5rem;}
+.sm-i{width:100%;background:var(--b3);border:1px solid var(--b2);color:var(--t1);padding:0.75rem 1rem;font-family:'DM Mono',monospace;font-size:12px;outline:none;transition:border-color 0.2s;margin-bottom:0.25rem;}
+.sm-i:focus{border-color:var(--gold-border);}
+.sm-h{font-size:9px;color:var(--t3);letter-spacing:0.05em;}
+.sm-dv{height:1px;background:var(--b1);margin:1.5rem 0;}
+.sm-sb{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--t3);margin-bottom:1rem;}
+.sm-rw{margin-bottom:0.8rem;}
+.sm-rl{font-size:10px;color:var(--t2);margin-bottom:0.35rem;}
+.sm-se{width:100%;background:var(--d4);border:1px solid var(--b2);color:var(--t1);padding:0.55rem 0.75rem;font-family:'DM Mono',monospace;font-size:11px;outline:none;}
+.sm-se option{background:var(--d3);}
+.sm-sv{width:100%;background:var(--gold2);border:none;color:var(--paper);padding:0.85rem;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:background 0.2s;margin-bottom:0.6rem;}
+.sm-sv:hover{background:var(--gold);}
+.sm-mg{font-size:11px;color:#7ab89a;text-align:center;min-height:1.2em;margin-bottom:0.6rem;letter-spacing:0.08em;}
+.sm-cl{width:100%;background:transparent;border:1px solid var(--b2);color:var(--t3);padding:0.65rem;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.sm-cl:hover{border-color:var(--t2);color:var(--t1);}
+@media(max-width:640px){.lpanel{display:none;}.doors{grid-template-columns:1fr;}.wm-opts{grid-template-columns:1fr;}.chat-msgs.sbs{flex-direction:column;}}
+</style>
+</head>
+<body>
+
+<!-- API GATE -->
+<div id="gate" class="pg">
+  <div class="gate-box">
+    <div class="gate-logo">Pratik's Think-Tank</div>
+    <div class="gate-sub">Your creative operating system</div>
+    <div class="gate-lbl">Enter your Claude API key</div>
+    <input class="gate-inp" type="password" id="api-inp" placeholder="sk-ant-api03-..." autocomplete="off"/>
+    <div class="gate-note">Your key is stored only in this browser. It never leaves your device.</div>
+    <button class="gate-btn" onclick="enterGate()">Enter the Think-Tank</button>
+    <div class="gate-err" id="gate-err" style="display:none"></div>
+  </div>
+</div>
+
+<!-- LOBBY -->
+<div id="lobby" class="pg fi">
+  <div class="gridbg"></div>
+  <div class="lobby-in">
+    <h1 class="pname">Pratik's Think-Tank</h1>
+    <p class="ptag">Your creative operating system</p>
+    <div class="doors">
+      <div class="door" onclick="goTo('wmhub')">
+        <div class="dnum">01</div><span class="dico">&#9999;</span>
+        <div class="dtitle">Writing Movies</div>
+        <div class="ddesc">Your writers room. Three voices. Real debate. Hollywood &amp; Bollywood craft.</div>
+        <div class="dtag">Enter</div>
+      </div>
+      <div class="door off">
+        <div class="dnum">02</div><span class="dico">&#9671;</span>
+        <div class="dtitle">Business Ideas</div>
+        <div class="ddesc">Client work, acquisition, pitch strategy and your company's ambitions.</div>
+        <div class="dtag">Coming soon</div>
+      </div>
+      <div class="door off">
+        <div class="dnum">03</div><span class="dico">&#9670;</span>
+        <div class="dtitle">Creative Ideas</div>
+        <div class="ddesc">Everything else. The half-formed, the experimental, the not-yet-named.</div>
+        <div class="dtag">Coming soon</div>
+      </div>
+    </div>
+    <p style="font-size:10px;color:var(--muted);letter-spacing:0.1em;">Click Writing Movies to begin</p>
+    <div style="margin-top:2rem;display:flex;gap:1rem;justify-content:center;">
+      <button onclick="openSettingsModal()" style="background:none;border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);cursor:pointer;padding:6px 16px;">Settings</button>
+      <button onclick="clearKey()" style="background:none;border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Change API Key</button>
+    </div>
+  </div>
+</div>
+
+<!-- WM HUB -->
+<div id="wmhub" class="pg dark-pg fi">
+  <div class="dark-head">
+    <div class="dark-title">Writing Movies</div>
+    <button class="theme-btn" onclick="toggleTheme()">&#9788; Theme</button>
+    <button class="hbtn" onclick="goTo('lobby')">&#8592; Lobby</button>
+  </div>
+  <div class="wm-ctr"><div class="wm-in">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--t1);letter-spacing:0.06em;margin-bottom:0.2rem;">Writing Movies</div>
+    <div style="font-size:10px;letter-spacing:0.22em;color:var(--t3);text-transform:uppercase;margin-bottom:0.5rem;">Where do you want to go?</div>
+    <div class="wm-opts">
+      <div class="wm-opt" onclick="goTo('dump')"><div class="wm-dnum">A</div><div class="wm-dtitle">Concepts Dump</div><div class="wm-ddesc">All your raw ideas, fragments, one-liners. Unassigned. Safe. Always here.</div><div class="wm-dtag">Open</div></div>
+      <div class="wm-opt" onclick="goTo('projects')"><div class="wm-dnum">B</div><div class="wm-dtitle">Projects</div><div class="wm-ddesc">Your active films and stories. Each project has its own writers room.</div><div class="wm-dtag">Open</div></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- DUMP -->
+<div id="dump" class="pg dark-pg fi">
+  <div class="dark-head">
+    <div class="dark-title">Concepts Dump</div>
+    <button class="abtn" onclick="openModal('nc-modal')">+ New Concept</button>
+    <button class="theme-btn" onclick="toggleTheme()">&#9788; Theme</button>
+    <button class="hbtn" onclick="goTo('wmhub')">&#8592; Back</button>
+  </div>
+  <div class="dump-toolbar">
+    <button class="sort-btn" id="sort-manual-btn" onclick="toggleSort()">Manual Order</button>
+    <button class="sort-btn act" id="sort-date-btn" onclick="toggleSort()" style="display:none">Newest First</button>
+    <button class="dump-ai-btn" onclick="toggleDumpChat()">&#9997; Discuss with Writers</button>
+  </div>
+  <div class="dump-grid" id="dump-grid">
+    <div class="dump-empty" id="dump-empty">No concepts yet. Click + New Concept to add your first idea.</div>
+  </div>
+  <div class="dump-chat-panel" id="dump-chat-panel">
+    <div class="dump-chat-hdr">
+      <div style="font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-dim);">Discuss Concepts</div>
+      <div style="font-size:9px;color:var(--t3);flex:1;margin-left:0.8rem;">Ask your writers anything about your concepts</div>
+      <button onclick="toggleDumpChat()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;line-height:1;padding:0 4px;">&#10005;</button>
+    </div>
+    <div class="dump-chat-msgs" id="dump-chat-msgs"></div>
+    <div class="dump-chat-in">
+      <textarea class="dump-chat-ta" id="dump-chat-ta" placeholder="Which concept is strongest? Which is most commercial? What should I develop first?" rows="2" onkeydown="handleDumpKey(event)"></textarea>
+      <button class="dump-send" onclick="sendDumpMsg()">Send</button>
+    </div>
+  </div>
+  <div class="overlay" id="nc-modal">
+    <div class="modal">
+      <div class="modal-title">New Concept</div>
+      <div class="mf"><div class="ml">Title (optional)</div><input class="mi" id="nc-title" placeholder="Untitled concept"/></div>
+      <div class="mf"><div class="ml">Your idea</div><textarea class="mta" id="nc-body" placeholder="One line, a paragraph, something that doesn't make sense yet — anything goes." rows="5"></textarea></div>
+      <div class="mbts"><button class="btn-g" onclick="closeModal('nc-modal')">Cancel</button><button class="btn-p" onclick="addConcept()">Save Concept</button></div>
+    </div>
+  </div>
+  <div class="overlay" id="cv-modal">
+    <div class="modal" style="max-width:540px;">
+      <div style="font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--t3);margin-bottom:0.6rem;" id="cv-date"></div>
+      <div class="cv-td" id="cv-td"></div>
+      <input class="cv-te" id="cv-te" placeholder="Title"/>
+      <div class="cv-bd" id="cv-bd" style="margin-bottom:1rem;"></div>
+      <textarea class="cv-be" id="cv-be" rows="6"></textarea>
+      <div id="cv-projs" style="font-size:9px;color:rgba(201,168,76,0.45);letter-spacing:0.07em;margin-top:0.5rem;margin-bottom:0.8rem;"></div>
+      <div class="mbts">
+        <button class="btn-g" onclick="closeModal('cv-modal')">Close</button>
+        <button class="btn-g" id="cv-edit-btn" onclick="toggleConceptEdit()">Edit</button>
+        <button class="btn-p" id="cv-save-btn" onclick="saveConceptEdit()" style="display:none">Save</button>
+      </div>
+    </div>
+  </div>
+  <div id="ctx-menu" class="ctx-menu" style="display:none;">
+    <div class="ctx-item" onclick="ctxOpen()">Open / Read</div>
+    <div class="ctx-item" onclick="ctxNewProj()">Send to new project</div>
+    <div class="ctx-item" onclick="ctxExistProj()">Add to existing project</div>
+    <div class="ctx-item ctx-del" onclick="ctxDel()">Delete concept</div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<div id="projects" class="pg dark-pg fi">
+  <div class="dark-head">
+    <div class="dark-title">Projects</div>
+    <button class="theme-btn" onclick="toggleTheme()">&#9788; Theme</button>
+    <button class="hbtn" onclick="goTo('wmhub')">&#8592; Back</button>
+  </div>
+  <div class="proj-grid" id="proj-grid"></div>
+  <div class="overlay" id="np-modal">
+    <div class="modal">
+      <div class="modal-title">New Project</div>
+      <div class="mf"><div class="ml">Project name</div><input class="mi" id="np-name" placeholder="e.g. The Thing in the Window"/></div>
+      <div class="mf"><div class="ml">One line description</div><input class="mi" id="np-desc" placeholder="e.g. Psychological horror. Mumbai. A body in the window."/></div>
+      <div class="mbts"><button class="btn-g" onclick="closeModal('np-modal')">Cancel</button><button class="btn-p" onclick="createProject()">Create Project</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div id="ob" class="pg dark-pg fi">
+  <div class="ob-bar"><div class="ob-fill" id="ob-fill" style="width:0%"></div></div>
+  <div class="ob-head">
+    <button class="btn-g" onclick="goTo('projects')">&#8592; Back</button>
+    <div class="ob-htitle">Getting to know you</div>
+    <div style="font-size:10px;color:var(--t3);letter-spacing:0.1em;" id="ob-ctr">1 of 5</div>
+  </div>
+  <div class="ob-body" id="ob-body"></div>
+</div>
+
+<!-- PROFILE EDIT -->
+<div id="profed" class="pg dark-pg fi">
+  <div class="ob-bar"><div style="height:100%;background:var(--gold-dim);width:100%"></div></div>
+  <div class="ob-head">
+    <button class="btn-g" onclick="saveProfile()">&#8592; Save &amp; Return</button>
+    <div class="ob-htitle">Your Profile</div>
+    <div style="font-size:10px;color:var(--t3);">Nothing here is permanent</div>
+  </div>
+  <div class="pe-body" id="pe-body"></div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="pg dark-pg fi">
+  <div class="app-top">
+    <div class="app-logo">Pratik's Think-Tank</div>
+    <div class="app-proj-lbl" id="app-proj-lbl">Project</div>
+    <button class="hbtn" onclick="goTo('projects')">&#8592; Projects</button>
+    <button class="hbtn" onclick="openEditProfile()">Profile</button>
+    <button class="hbtn" onclick="toggleConceptsPanel()">Concepts</button>
+    <button class="theme-btn" onclick="toggleTheme()">&#9788;</button>
+  </div>
+  <div class="app-body">
+    <div class="lpanel">
+      <div class="lsec">
+        <div class="lsec-t">Writers <button class="ladd" onclick="openAddWriter()" title="Add voice">+</button></div>
+        <div id="wlist"></div>
+        <button class="vadd" onclick="switchGroup()">&#8617; Group Room</button>
+      </div>
+      <div class="lsec">
+        <div class="lsec-t">Project Vault <button class="ladd" onclick="openVaultModal()" title="Add reference">+</button></div>
+        <div id="vault-list"></div>
+        <button class="vadd" onclick="openVaultModal()">+ Add reference</button>
+      </div>
+    </div>
+    <div class="cpanel">
+      <div id="priv-bar" class="priv-bar" style="display:none">
+        <span>Private &#8212; <span id="priv-nm"></span> only</span>
+        <button class="close-priv" onclick="switchGroup()">&#8592; Group Room</button>
+      </div>
+      <div class="chat-hdr">
+        <div class="cmode gmode" id="mode-lbl">Group Room</div>
+        <div style="font-size:9px;color:var(--t3);letter-spacing:0.06em;" id="mode-sub"></div>
+        <div class="chat-hdr-right">
+          <div class="mode-picker-wrap">
+            <button class="mode-pill" onclick="toggleModeDD()" id="mode-pill-btn">
+              <span class="mode-dot"></span><span id="mode-pill-lbl">Debate</span> &#9662;
+            </button>
+            <div class="mode-dropdown" id="mode-dd">
+              <div class="mode-opt sel" onclick="setMode('debate')" id="mopt-debate"><div class="mo-name">Debate</div><div class="mo-desc">Each writer reads the others and engages</div></div>
+              <div class="mode-opt" onclick="setMode('solo')" id="mopt-solo"><div class="mo-name">Solo</div><div class="mo-desc">Each writer answers independently, simultaneously</div></div>
+              <div class="mode-opt" onclick="setMode('devils')" id="mopt-devils"><div class="mo-name">Devil's Advocate</div><div class="mo-desc">Last writer argues against the others</div></div>
+              <div class="mode-opt" onclick="setMode('build')" id="mopt-build"><div class="mo-name">Build</div><div class="mo-desc">Each writer only adds, never contradicts</div></div>
+              <div class="mode-opt" onclick="setMode('pitch')" id="mopt-pitch"><div class="mo-name">Pitch</div><div class="mo-desc">All three respond as if presenting to a producer</div></div>
+            </div>
+          </div>
+          <div class="view-toggle">
+            <button class="vtbtn active" id="vt-stack" onclick="setView('stacked')" title="Stacked">&#9776;</button>
+            <button class="vtbtn" id="vt-side" onclick="setView('sbs')" title="Side by side">&#8942;</button>
+          </div>
+        </div>
+      </div>
+      <div class="chat-msgs" id="chat-msgs"></div>
+      <div class="cin-wrap">
+        <div class="inrow">
+          <textarea class="chat-ta" id="chat-ta" placeholder="Drop your idea, scene, prompt or concept here..." rows="2" onkeydown="handleKey(event)"></textarea>
+          <button class="send-btn" id="send-btn" onclick="sendMsg()">Send</button>
+        </div>
+        <div class="in-meta" id="in-meta">All three writers respond &#8212; Shift+Enter for new line</div>
+      </div>
+    </div>
+  </div>
+  <!-- CONCEPTS PANEL -->
+  <div class="concepts-panel" id="concepts-panel">
+    <div class="cp-head"><div class="cp-title">Your Concepts</div><button class="cp-close" onclick="toggleConceptsPanel()">&#10005;</button></div>
+    <div class="cp-list" id="cp-list"></div>
+  </div>
+  <!-- ADD WRITER -->
+  <div class="overlay" id="aw-modal">
+    <div class="modal">
+      <div class="modal-title">Add a New Voice</div>
+      <div class="mf"><div class="ml">Name</div><input class="mi" id="aw-name" placeholder="e.g. The Contrarian"/></div>
+      <div class="mf"><div class="ml">Craft identity</div><textarea class="mta" id="aw-persona" placeholder="Who are they? What's their creative philosophy?" rows="4"></textarea></div>
+      <div class="mf"><div class="ml">AI Engine</div><select class="ms" id="aw-eng"><option value="claude">Claude</option><option value="openai">GPT-4o</option><option value="gemini">Gemini</option></select></div>
+      <div class="mf"><div class="ml">Colour</div><div class="csw-row" id="csw-row"></div></div>
+      <div class="mbts"><button class="btn-g" onclick="closeModal('aw-modal')">Cancel</button><button class="btn-p" onclick="addWriter()">Add Voice</button></div>
+    </div>
+  </div>
+  <!-- VAULT -->
+  <div class="overlay" id="vault-modal">
+    <div class="modal">
+      <div class="modal-title">Add to Project Vault</div>
+      <div class="mf"><div class="ml">Title</div><input class="mi" id="v-title" placeholder="e.g. The Dark Knight screenplay"/></div>
+      <div class="mf"><div class="ml">Type</div>
+        <select class="ms" id="v-type" onchange="toggleVType(this.value)">
+          <option value="screenplay">Screenplay</option><option value="book">Craft book</option><option value="note">Personal note</option><option value="research">Research</option><option value="link">Link / article</option><option value="image">Image</option>
+        </select>
+      </div>
+      <div class="mf"><div class="ml">Who sees this?</div>
+        <select class="ms" id="v-scope" onchange="toggleVaultScope(this.value)">
+          <option value="all">All writers</option><option value="private">One writer only</option>
+        </select>
+      </div>
+      <div class="mf" id="v-wf" style="display:none"><div class="ml">Which writer?</div><select class="ms" id="v-writer"></select></div>
+      <div class="mf" id="v-text-field"><div class="ml">Content</div><textarea class="mta" id="v-content" placeholder="Paste text, excerpts, notes, or a link..." rows="4"></textarea></div>
+      <div class="mf" id="v-img-field" style="display:none">
+        <div class="ml">Upload image</div>
+        <input type="file" id="v-img-file" accept="image/png,image/jpeg,image/jpg" onchange="previewVaultImg(this)" style="width:100%;background:var(--b3);border:1px solid var(--b2);color:var(--t2);padding:0.5rem 0.75rem;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;"/>
+        <div id="v-img-preview" style="margin-top:0.6rem;display:none"><img id="v-img-thumb" style="max-width:100%;max-height:120px;border:1px solid var(--b2);"/></div>
+        <div style="margin-top:0.6rem"><div class="ml">Caption</div><textarea class="mta" id="v-img-caption" placeholder="What is this image? What does it capture?" rows="3"></textarea></div>
+      </div>
+      <div class="mbts"><button class="btn-g" onclick="closeModal('vault-modal')">Cancel</button><button class="btn-p" onclick="addVault()">Add to Vault</button></div>
+    </div>
+  </div>
+  <!-- LIBRARY -->
+  <div class="overlay" id="lib-modal">
+    <div class="modal">
+      <div class="modal-title">Add to <span id="lib-wname"></span>'s Library</div>
+      <div class="mf"><div class="ml">Title</div><input class="mi" id="lib-title" placeholder="e.g. Story by Robert McKee — key chapters"/></div>
+      <div class="mf"><div class="ml">Type</div>
+        <select class="ms" id="lib-type" onchange="toggleLibType(this.value)">
+          <option value="text">Text / notes / excerpts</option><option value="image">Image</option>
+        </select>
+      </div>
+      <div class="mf" id="lib-text-field"><div class="ml">Content</div><textarea class="mta" id="lib-content" placeholder="Paste text, excerpts, notes for this writer to learn from." rows="5"></textarea></div>
+      <div class="mf" id="lib-img-field" style="display:none">
+        <div class="ml">Upload image</div>
+        <input type="file" id="lib-img-file" accept="image/png,image/jpeg,image/jpg" onchange="previewLibImg(this)" style="width:100%;background:var(--b3);border:1px solid var(--b2);color:var(--t2);padding:0.5rem 0.75rem;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;"/>
+        <div id="lib-img-preview" style="margin-top:0.6rem;display:none"><img id="lib-img-thumb" style="max-width:100%;max-height:110px;border:1px solid var(--b2);"/></div>
+        <div style="margin-top:0.6rem"><div class="ml">Notes</div><textarea class="mta" id="lib-img-caption" placeholder="What should this writer learn from this image?" rows="3"></textarea></div>
+      </div>
+      <div class="mbts"><button class="btn-g" onclick="closeModal('lib-modal')">Cancel</button><button class="btn-p" onclick="addToLib()">Add to Library</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div id="settings-modal">
+  <div class="sm-in">
+    <div class="sm-t">Settings &#8212; API Keys</div>
+    <div class="sm-s"><div class="sm-l" style="color:#7ab89a;">Claude API Key</div><input type="password" class="sm-i" id="sm-claude" placeholder="sk-ant-api03-..."/><div class="sm-h">platform.anthropic.com</div></div>
+    <div class="sm-s"><div class="sm-l" style="color:#9a7ab8;">OpenAI API Key (GPT-4o)</div><input type="password" class="sm-i" id="sm-openai" placeholder="sk-proj-..."/><div class="sm-h">platform.openai.com</div></div>
+    <div class="sm-s"><div class="sm-l" style="color:#b87a7a;">Gemini API Key (Google)</div><input type="password" class="sm-i" id="sm-gemini" placeholder="AIza..."/><div class="sm-h">aistudio.google.com</div></div>
+    <div class="sm-dv"></div>
+    <div class="sm-sb">Writer Engine Assignment</div>
+    <div class="sm-rw"><div class="sm-rl">The Architect</div><select class="sm-se" id="sm-w1"><option value="claude">Claude</option><option value="openai">GPT-4o</option><option value="gemini">Gemini</option></select></div>
+    <div class="sm-rw"><div class="sm-rl">The Human Being</div><select class="sm-se" id="sm-w2"><option value="claude">Claude</option><option value="openai" selected>GPT-4o</option><option value="gemini">Gemini</option></select></div>
+    <div class="sm-rw" style="margin-bottom:1.5rem;"><div class="sm-rl">The Philosopher</div><select class="sm-se" id="sm-w3"><option value="claude">Claude</option><option value="openai">GPT-4o</option><option value="gemini" selected>Gemini</option></select></div>
+    <div class="sm-dv"></div>
+    <div class="sm-sb">OpenAI CORS Fix (Cloudflare Worker)</div>
+    <div class="sm-s">
+      <div class="sm-l" style="color:#b8a07a;">Worker URL (optional)</div>
+      <input type="text" class="sm-i" id="sm-proxy" placeholder="https://your-worker.workers.dev"/>
+      <div class="sm-h">Only needed if GPT-4o shows connection errors. Free Cloudflare Worker acts as proxy.</div>
+    </div>
+    <div style="background:var(--b3);border:1px solid var(--b1);padding:1rem;margin-bottom:1.5rem;font-size:10px;color:var(--t3);line-height:1.8;letter-spacing:0.03em;">
+      <div style="color:var(--gold-dim);letter-spacing:0.15em;text-transform:uppercase;font-size:9px;margin-bottom:0.6rem;">Cloudflare Worker Setup (5 min, free)</div>
+      1. Go to workers.cloudflare.com &mdash; create free account<br>
+      2. Create Worker &rarr; paste the worker script (ask Claude for it)<br>
+      3. Deploy &rarr; copy the URL &rarr; paste above
+    </div>
+    <button class="sm-sv" onclick="saveSettingsModal()">Save Settings</button>
+    <div class="sm-mg" id="sm-msg"></div>
+    <button class="sm-cl" onclick="closeSettingsModal()">Close</button>
+  </div>
+</div>
+
+<script>
+const COLORS=[
+  {bg:'#1a2e24',fg:'#6aa882'},{bg:'#24192e',fg:'#8a6aa8'},
+  {bg:'#2e1919',fg:'#a86a6a'},{bg:'#19242e',fg:'#6a8aa8'},
+  {bg:'#2e2419',fg:'#a8906a'},{bg:'#192e28',fg:'#6aa898'},
+  {bg:'#2e1928',fg:'#a86a98'},{bg:'#242e19',fg:'#90a86a'}
+];
+const QS=[
+  {key:'films',q:'What films live in your head rent-free?',hint:'Indian, foreign, old, new.',free:'No wrong answers.',ph:'e.g. Deewar, There Will Be Blood, A Tale of Two Sisters...'},
+  {key:'obsessions',q:'What are you obsessed with in stories and in life?',hint:'Themes, feelings, worlds. What do you keep circling?',free:'Stream of consciousness is fine.',ph:'e.g. Men who cannot show love. Cities that eat people...'},
+  {key:'instincts',q:'What do you believe about storytelling that most people would disagree with?',hint:'Your contrarian instincts.',free:'Be as specific or broad as you want.',ph:'e.g. I hate when characters say exactly what they feel...'},
+  {key:'self',q:'Tell me about yourself, your process, your company, and your blind spots.',hint:'How do you work? What does your company do?',free:'This is just for you and the writers.',ph:'e.g. I outline obsessively then abandon it. My company makes branded films...'},
+  {key:'now',q:'What is the thing you are trying to make right now?',hint:"A feeling is enough. An image. A character.",free:'Fragments welcome.',ph:'e.g. A psychological horror about a woman who sees a body in a window...'}
+];
+const DEF_WRITERS=[
+  {id:'w1',name:'The Architect',persona:'Thinks in Acts, sequences, scenes, shots, dialogue and action. Obsessed with structure, causality, plot logic, momentum. Identifies plot holes and scenes that do not earn their place. Expert in NON-LINEAR storytelling — perspective shifts, mid-film protagonist death like Psycho, multiple POV structures like Vantage Point, structural misdirection. Knows when breaking convention serves the story. References McKee, Syd Field, Save the Cat, Bollywood interval structure and the emotional climax that often beats the plot climax in Hindi cinema.',engine:'claude',color:COLORS[0]},
+  {id:'w2',name:'The Human Being',persona:'Thinks in character, motivation, relationship, behaviour and psychology. Asks why a character does what they do. Questions whether every character earns their place in the story. Understands wants versus needs, relationship dynamics, how characters reveal themselves through action and choice. Ensures the story is populated by real human beings not plot functions. References Imtiaz Ali internal journeys, Vishal Bhardwaj psychological depth, the character work of world cinema.',engine:'openai',color:COLORS[1]},
+  {id:'w3',name:'The Philosopher',persona:'Thinks in theme, meaning, emotional arc and the bigger picture. Asks what the film is actually about. What will an audience feel walking out. What the story says about the world. Keeps the work honest — ensures it is not just structurally clever but emotionally and thematically truthful. Thinks on a film level not a scene level. Pushes for work that means something beyond its plot.',engine:'gemini',color:COLORS[2]}
+];
+
+let apiKey='',profile={},watEntries=[];
+let openaiKey='',geminiKey='',proxyUrl='';
+let engineAssign={w1:'claude',w2:'openai',w3:'gemini'};
+const SB_URL='https://tjpgazjlwbiimnhgtgvk.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqcGdhempsd2JpaW1uaGd0Z3ZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwOTEwOTEsImV4cCI6MjA5MTY2NzA5MX0.cax6w5HCMuaNDjQ5M1hzGPbqzz2-68r6kZbwvxusCCQ';
+let sb=null;
+let respMode='debate';
+let curView='stacked';
+let sortByDate=false;
+let dragSrcId=null;
+let cpOpen=false;
+
+function initSB(){try{if(window.supabase){sb=window.supabase.createClient(SB_URL,SB_KEY);}}catch(e){}}
+// Keep Supabase alive - ping every 4 days to prevent pausing
+setInterval(async function(){
+  if(sb){try{await sb.from('ptt_data').select('id').eq('id','main').single();}catch(e){}}
+}, 4*24*60*60*1000);
+
+async function saveAll(){
+  try{
+    localStorage.setItem('ptt_profile',JSON.stringify(profile));
+    localStorage.setItem('ptt_wat',JSON.stringify(watEntries));
+    localStorage.setItem('ptt_concepts',JSON.stringify(concepts));
+    localStorage.setItem('ptt_projects',JSON.stringify(projects));
+    localStorage.setItem('ptt_ghist',JSON.stringify(gHist));
+    localStorage.setItem('ptt_pvhist',JSON.stringify(pvHist));
+  }catch(e){}
+  if(sb){try{const {error}=await sb.from('ptt_data').upsert({id:'main',profile,wat_entries:watEntries,concepts,projects,group_hist:gHist,pv_hist:pvHist,updated_at:new Date().toISOString()});if(error)console.log('Supabase save error:',error);}catch(e){console.log('Supabase save exception:',e);}}
+}
+
+async function loadAll(){
+  try{
+    const p=localStorage.getItem('ptt_profile');if(p)profile=JSON.parse(p);
+    const w=localStorage.getItem('ptt_wat');if(w)watEntries=JSON.parse(w);
+    const c=localStorage.getItem('ptt_concepts');if(c)concepts=JSON.parse(c);
+    const pr=localStorage.getItem('ptt_projects');if(pr)projects=JSON.parse(pr);
+    const gh=localStorage.getItem('ptt_ghist');if(gh)gHist=JSON.parse(gh);
+    const pvh=localStorage.getItem('ptt_pvhist');if(pvh)pvHist=JSON.parse(pvh);
+  }catch(e){}
+  if(sb){
+    try{
+      const {data,error}=await sb.from('ptt_data').select('*').eq('id','main').single();
+      if(data&&!error){
+        if(data.profile&&Object.keys(data.profile).length)profile=data.profile;
+        if(data.wat_entries&&data.wat_entries.length)watEntries=data.wat_entries;
+        if(data.concepts&&data.concepts.length)concepts=data.concepts;
+        if(data.projects&&data.projects.length)projects=data.projects;
+        if(data.group_hist&&Object.keys(data.group_hist).length)gHist=data.group_hist;
+        if(data.pv_hist&&Object.keys(data.pv_hist).length)pvHist=data.pv_hist;
+        try{
+          localStorage.setItem('ptt_profile',JSON.stringify(profile));
+          localStorage.setItem('ptt_wat',JSON.stringify(watEntries));
+          localStorage.setItem('ptt_concepts',JSON.stringify(concepts));
+          localStorage.setItem('ptt_projects',JSON.stringify(projects));
+          localStorage.setItem('ptt_ghist',JSON.stringify(gHist));
+          localStorage.setItem('ptt_pvhist',JSON.stringify(pvHist));
+        }catch(e){}
+      }
+    }catch(e){}
+  }
+}
+
+document.addEventListener('DOMContentLoaded',async function(){
+  try{
+    loadKeys();initSB();await loadAll();
+    if(localStorage.getItem('ptt_theme')==='light')document.body.classList.add('lm');
+    const saved=localStorage.getItem('ptt_key');
+    if(saved&&saved.startsWith('sk-ant-')){
+      apiKey=saved;
+      let restored=false;
+      try{
+        const locRaw=localStorage.getItem('ptt_loc');
+        const loc=locRaw?JSON.parse(locRaw):{};
+        const safe=['lobby','wmhub','dump','projects','app','ob','profed'];
+        if(loc.page&&safe.includes(loc.page)){
+          if(loc.page==='app'&&loc.proj){
+            const p=projects.find(x=>x.id===loc.proj);
+            if(p){try{openProject(p.id);restored=true;}catch(e2){goTo('lobby');restored=true;}}
+          }else{goTo(loc.page);restored=true;}
+        }
+      }catch(e){}
+      if(!restored)goTo('lobby');
+    }else{goTo('gate');}
+  }catch(e){goTo('gate');}
+});
+
+let writers=[],vault=[],selColor=COLORS[0];
+let projects=[],curProj=null;
+let mode='group',activeW=null;
+let gHist={},pvHist={};
+let concepts=[],ctxId=null,libWriter=null;
+let curQ=0;
+
+function toggleTheme(){document.body.classList.toggle('lm');localStorage.setItem('ptt_theme',document.body.classList.contains('lm')?'light':'dark');}
+function clearKey(){try{localStorage.removeItem('ptt_key');localStorage.removeItem('ptt_loc');}catch(e){}apiKey='';document.getElementById('api-inp').value='';goTo('gate');}
+function enterGate(){
+  const k=(document.getElementById('api-inp').value||'').trim();
+  if(!k||!k.startsWith('sk-ant-')){const e=document.getElementById('gate-err');e.textContent='Please enter a valid Claude API key (starts with sk-ant-)';e.style.display='block';return;}
+  apiKey=k;try{localStorage.setItem('ptt_key',k);}catch(e){}
+  document.getElementById('gate-err').textContent='';goTo('lobby');
+}
+function goTo(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  const el=document.getElementById(id);el.classList.add('on','fi');
+  setTimeout(()=>el.classList.remove('fi'),500);
+  if(id==='projects')renderProjects();
+  if(id==='dump')renderDump();
+  try{const loc={page:id};if(id==='app'&&curProj)loc.proj=curProj.id;localStorage.setItem('ptt_loc',JSON.stringify(loc));}catch(e){}
+}
+function openModal(id){document.getElementById(id).classList.add('on');}
+function closeModal(id){document.getElementById(id).classList.remove('on');}
+
+function loadKeys(){
+  try{
+    const ok=localStorage.getItem('ptt_okey');if(ok)openaiKey=ok;
+    const gk=localStorage.getItem('ptt_gkey');if(gk)geminiKey=gk;
+    const ea=localStorage.getItem('ptt_engines');if(ea)engineAssign=JSON.parse(ea);
+    const px=localStorage.getItem('ptt_proxy');if(px)proxyUrl=px;
+  }catch(e){}
+}
+function openSettingsModal(){
+  document.getElementById('settings-modal').classList.add('open');
+  try{
+    document.getElementById('sm-claude').value=localStorage.getItem('ptt_key')||'';
+    document.getElementById('sm-openai').value=localStorage.getItem('ptt_okey')||'';
+    document.getElementById('sm-gemini').value=localStorage.getItem('ptt_gkey')||'';
+    document.getElementById('sm-proxy').value=localStorage.getItem('ptt_proxy')||'';
+    const ea=localStorage.getItem('ptt_engines');
+    const eng=ea?JSON.parse(ea):{w1:'claude',w2:'openai',w3:'gemini'};
+    document.getElementById('sm-w1').value=eng.w1||'claude';
+    document.getElementById('sm-w2').value=eng.w2||'openai';
+    document.getElementById('sm-w3').value=eng.w3||'gemini';
+  }catch(e){}
+}
+function closeSettingsModal(){document.getElementById('settings-modal').classList.remove('open');}
+function saveSettingsModal(){
+  const claude=(document.getElementById('sm-claude').value||'').trim();
+  const openai=(document.getElementById('sm-openai').value||'').trim();
+  const gemini=(document.getElementById('sm-gemini').value||'').trim();
+  const proxy=(document.getElementById('sm-proxy').value||'').trim();
+  const w1=document.getElementById('sm-w1').value;
+  const w2=document.getElementById('sm-w2').value;
+  const w3=document.getElementById('sm-w3').value;
+  if(claude&&claude.startsWith('sk-ant-')){apiKey=claude;try{localStorage.setItem('ptt_key',claude);}catch(e){}}
+  if(openai&&openai.startsWith('sk-')){openaiKey=openai;try{localStorage.setItem('ptt_okey',openai);}catch(e){}}
+  if(gemini&&gemini.startsWith('AIza')){geminiKey=gemini;try{localStorage.setItem('ptt_gkey',gemini);}catch(e){}}
+  if(proxy){proxyUrl=proxy;try{localStorage.setItem('ptt_proxy',proxy);}catch(e){}}
+  engineAssign={w1,w2,w3};
+  try{localStorage.setItem('ptt_engines',JSON.stringify(engineAssign));}catch(e){}
+  if(curProj&&writers.length>=3){
+    const wmap={w1,w2,w3};
+    ['w1','w2','w3'].forEach(wk=>{const w=writers.find(x=>x.id===wk);if(w)w.engine=wmap[wk];});
+    curProj.writers=JSON.parse(JSON.stringify(writers));
+  }
+  const msg=document.getElementById('sm-msg');
+  if(msg){msg.textContent='Settings saved.';setTimeout(()=>{msg.textContent='';},2000);}
+  setTimeout(closeSettingsModal,1200);
+}
+
+// CONCEPTS
+function addConcept(){
+  const t=(document.getElementById('nc-title').value||'').trim();
+  const b=(document.getElementById('nc-body').value||'').trim();
+  if(!b&&!t){alert('Please add some text.');return;}
+  concepts.push({id:'c'+Date.now(),title:t,body:b,projs:[],created:Date.now()});
+  document.getElementById('nc-title').value='';document.getElementById('nc-body').value='';
+  closeModal('nc-modal');saveAll();renderDump();
+}
+function renderDump(){
+  const g=document.getElementById('dump-grid');
+  const em=document.getElementById('dump-empty');
+  g.querySelectorAll('.ccard').forEach(e=>e.remove());
+  if(!concepts.length){if(em)em.style.display='block';return;}
+  if(em)em.style.display='none';
+  const list=sortByDate?[...concepts].sort((a,b)=>(b.created||0)-(a.created||0)):[...concepts];
+  list.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='ccard';d.draggable=!sortByDate;d.dataset.id=c.id;
+    const pt=c.projs.length?`<div class="cc-projs">In: ${c.projs.join(', ')}</div>`:'';
+    const ds=c.created?`<div class="cc-date">${new Date(c.created).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>`:'';
+    d.innerHTML=`<button class="cc-dots" onclick="showCtx(event,'${c.id}')">&#183;&#183;&#183;</button>${c.title?`<div class="cc-title">${esc(c.title)}</div>`:''}<div class="cc-body">${esc(c.body).substring(0,180)}${c.body.length>180?'...':''}</div>${pt}${ds}`;
+    d.addEventListener('click',function(ev){if(!ev.target.classList.contains('cc-dots'))openConceptView(c.id);});
+    if(!sortByDate){
+      d.addEventListener('dragstart',()=>{d.classList.add('dragging');dragSrcId=c.id;});
+      d.addEventListener('dragend',()=>{d.classList.remove('dragging');g.querySelectorAll('.ccard').forEach(x=>x.classList.remove('drag-over'));});
+      d.addEventListener('dragover',ev=>{ev.preventDefault();d.classList.add('drag-over');});
+      d.addEventListener('dragleave',()=>d.classList.remove('drag-over'));
+      d.addEventListener('drop',ev=>{
+        ev.preventDefault();d.classList.remove('drag-over');
+        if(!dragSrcId||dragSrcId===c.id)return;
+        const si=concepts.findIndex(x=>x.id===dragSrcId);
+        const di=concepts.findIndex(x=>x.id===c.id);
+        if(si<0||di<0)return;
+        const [mv]=concepts.splice(si,1);concepts.splice(di,0,mv);
+        dragSrcId=null;saveAll();renderDump();
+      });
+    }
+    g.appendChild(d);
+  });
+}
+function toggleSort(){
+  sortByDate=!sortByDate;
+  document.getElementById('sort-manual-btn').style.display=sortByDate?'none':'inline-block';
+  document.getElementById('sort-date-btn').style.display=sortByDate?'inline-block':'none';
+  document.getElementById('sort-manual-btn').classList.toggle('act',!sortByDate);
+  document.getElementById('sort-date-btn').classList.toggle('act',sortByDate);
+  renderDump();
+}
+let cvId=null,cvEditing=false;
+function openConceptView(id){
+  const c=concepts.find(x=>x.id===id);if(!c)return;
+  cvId=id;cvEditing=false;
+  document.getElementById('cv-td').textContent=c.title||'Untitled';
+  document.getElementById('cv-td').style.display='block';
+  document.getElementById('cv-te').style.display='none';
+  document.getElementById('cv-bd').textContent=c.body||'';
+  document.getElementById('cv-bd').style.display='block';
+  document.getElementById('cv-be').style.display='none';
+  document.getElementById('cv-save-btn').style.display='none';
+  document.getElementById('cv-edit-btn').textContent='Edit';
+  const ds=c.created?new Date(c.created).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}):'';
+  document.getElementById('cv-date').textContent=ds;
+  document.getElementById('cv-projs').textContent=c.projs.length?'In: '+c.projs.join(', '):'';
+  openModal('cv-modal');
+}
+function toggleConceptEdit(){
+  const c=concepts.find(x=>x.id===cvId);if(!c)return;
+  cvEditing=!cvEditing;
+  document.getElementById('cv-td').style.display=cvEditing?'none':'block';
+  document.getElementById('cv-bd').style.display=cvEditing?'none':'block';
+  document.getElementById('cv-te').style.display=cvEditing?'block':'none';
+  document.getElementById('cv-be').style.display=cvEditing?'block':'none';
+  document.getElementById('cv-save-btn').style.display=cvEditing?'inline-flex':'none';
+  document.getElementById('cv-edit-btn').textContent=cvEditing?'Cancel':'Edit';
+  if(cvEditing){document.getElementById('cv-te').value=c.title||'';document.getElementById('cv-be').value=c.body||'';}
+}
+function saveConceptEdit(){
+  const c=concepts.find(x=>x.id===cvId);if(!c)return;
+  c.title=(document.getElementById('cv-te').value||'').trim();
+  c.body=(document.getElementById('cv-be').value||'').trim();
+  saveAll();
+  document.getElementById('cv-td').textContent=c.title||'Untitled';
+  document.getElementById('cv-bd').textContent=c.body||'';
+  toggleConceptEdit();renderDump();
+}
+function showCtx(e,id){e.stopPropagation();ctxId=id;const m=document.getElementById('ctx-menu');m.style.display='block';m.style.top=e.clientY+'px';m.style.left=e.clientX+'px';}
+document.addEventListener('click',()=>{const m=document.getElementById('ctx-menu');if(m)m.style.display='none';});
+function ctxOpen(){openConceptView(ctxId);}
+function ctxNewProj(){
+  const c=concepts.find(x=>x.id===ctxId);if(!c)return;
+  const nm=prompt('New project name?');if(!nm)return;
+  const id='p'+Date.now();
+  projects.push({id,name:nm,desc:c.title||c.body.substring(0,60),vault:[],libs:{}});
+  if(!c.projs.includes(nm))c.projs.push(nm);
+  saveAll();renderDump();alert('Project "'+nm+'" created.');
+}
+function ctxExistProj(){
+  const c=concepts.find(x=>x.id===ctxId);if(!c)return;
+  if(!projects.length){alert('No projects yet. Create one first.');return;}
+  const ls=projects.map((p,i)=>`${i+1}. ${p.name}`).join('\n');
+  const ch=prompt('Which project?\n'+ls);
+  const idx=parseInt(ch)-1;
+  if(isNaN(idx)||idx<0||idx>=projects.length)return;
+  const p=projects[idx];
+  if(!c.projs.includes(p.name)){c.projs.push(p.name);saveAll();}
+  renderDump();alert('Added to "'+p.name+'".');
+}
+function ctxDel(){concepts=concepts.filter(x=>x.id!==ctxId);saveAll();renderDump();}
+
+// DUMP CHAT
+let dumpChatOpen=false;
+function toggleDumpChat(){
+  dumpChatOpen=!dumpChatOpen;
+  document.getElementById('dump-chat-panel').classList.toggle('open',dumpChatOpen);
+  if(dumpChatOpen&&!document.getElementById('dump-chat-msgs').children.length){
+    addDumpChatMsg('sys','Ask me anything about your concepts. Which is strongest? Which should you develop first?');
+  }
+}
+function addDumpChatMsg(role,text){
+  const el=document.getElementById('dump-chat-msgs');
+  const d=document.createElement('div');
+  if(role==='user')d.style.cssText='font-size:11px;color:var(--t2);padding:0.4rem 0.6rem;background:var(--b3);border:1px solid var(--b1);text-align:right;line-height:1.6;';
+  else if(role==='sys')d.style.cssText='font-size:10px;color:var(--t3);padding:0.4rem 0;border-bottom:1px solid var(--b1);letter-spacing:0.03em;';
+  else d.style.cssText='font-size:11px;color:var(--t1);padding:0.6rem 0.8rem;background:var(--d3);border-left:2px solid var(--gold-border);line-height:1.8;';
+  d.textContent=text;el.appendChild(d);el.scrollTop=el.scrollHeight;
+}
+function handleDumpKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendDumpMsg();}}
+async function sendDumpMsg(){
+  const ta=document.getElementById('dump-chat-ta');
+  const text=ta.value.trim();if(!text)return;
+  ta.value='';addDumpChatMsg('user',text);
+  const cCtx=concepts.map((c,i)=>`${i+1}. "${c.title||'Untitled'}": ${c.body.substring(0,300)}`).join('\n\n');
+  const sys=`You are a sharp creative advisor in Pratik's Think-Tank. Pratik is a filmmaker with nine years developing a psychological thriller. His current concepts:\n\n${cCtx}\n\nHis profile:\n- Films: ${profile.films||'not answered'}\n- Obsessions: ${profile.obsessions||'not answered'}\n- Instincts: ${profile.instincts||'not answered'}\n\nAnswer his question with genuine creative insight. Be direct and personal. No generic advice.`;
+  const loadEl=document.createElement('div');
+  loadEl.style.cssText='font-size:10px;color:var(--t3);padding:0.4rem 0.8rem;';loadEl.textContent='Thinking...';
+  document.getElementById('dump-chat-msgs').appendChild(loadEl);
+  document.getElementById('dump-chat-msgs').scrollTop=9999;
+  try{const r=await callAPI(sys,[{role:'user',content:text}],null);loadEl.remove();addDumpChatMsg('ai',r);}
+  catch(e){loadEl.remove();addDumpChatMsg('ai','Connection error. Please try again.');}
+}
+
+// PROJECTS
+function renderProjects(){
+  const g=document.getElementById('proj-grid');g.innerHTML='';
+  projects.forEach(p=>{
+    const d=document.createElement('div');d.className='pcard';
+    d.innerHTML=`<button class="pc-del" onclick="delProj(event,'${p.id}')">&#215;</button><div class="pc-name">${esc(p.name)}</div><div class="pc-desc">${esc(p.desc)}</div><div class="pc-status">Active</div>`;
+    d.onclick=()=>openProject(p.id);g.appendChild(d);
+  });
+  const np=document.createElement('div');np.className='pcard new-p';np.innerHTML='+ New Project';np.onclick=()=>openModal('np-modal');g.appendChild(np);
+}
+function delProj(e,id){
+  e.stopPropagation();
+  const p=projects.find(x=>x.id===id);if(!p)return;
+  if(!confirm('Delete "'+p.name+'"? Cannot be undone.'))return;
+  projects=projects.filter(x=>x.id!==id);saveAll();renderProjects();
+}
+function createProject(){
+  const nm=(document.getElementById('np-name').value||'').trim();
+  const ds=(document.getElementById('np-desc').value||'').trim();
+  if(!nm){alert('Please enter a project name.');return;}
+  const id='p'+Date.now();
+  projects.push({id,name:nm,desc:ds,vault:[],libs:{}});
+  closeModal('np-modal');document.getElementById('np-name').value='';document.getElementById('np-desc').value='';
+  saveAll();openProject(id);
+}
+function openProject(id){
+  curProj=projects.find(p=>p.id===id);if(!curProj)return;
+  writers=JSON.parse(JSON.stringify(curProj.writers&&curProj.writers.length?curProj.writers:DEF_WRITERS));
+  writers.forEach(w=>{if(!pvHist[w.id])pvHist[w.id]={};});
+  if(!gHist[id])gHist[id]=[];
+  vault=curProj.vault||[];
+  buildCSW();renderWlist();renderVaultList();renderCP();
+  document.getElementById('app-proj-lbl').textContent=curProj.name;
+  mode='group';activeW=null;goTo('app');clearChat();
+  addAIMsg('w1','The Architect',`The room is ready, Pratik. Project: "${curProj.name}". I've read your profile. Bring me anything — a premise, a structure problem, a scene, a plot hole. We start now.`);
+}
+
+// ONBOARDING
+const OQS=QS;
+function renderQ(){
+  const q=OQS[curQ];
+  document.getElementById('ob-fill').style.width=Math.round((curQ/OQS.length)*100)+'%';
+  document.getElementById('ob-ctr').textContent=(curQ+1)+' of '+OQS.length;
+  document.getElementById('ob-body').innerHTML=`
+    ${curQ===0?'<div class="ob-ctx">These questions help your writers know you — not just your story. Answer freely, in fragments. Nothing is final.</div>':''}
+    <div class="ob-qn">Question ${curQ+1} of ${OQS.length}</div>
+    <div class="ob-q">${q.q}</div>
+    <p class="ob-hint">${q.hint}</p><p class="ob-free">${q.free}</p>
+    <textarea class="ob-ta" id="ob-ans" placeholder="${q.ph}" rows="4">${profile[q.key]||''}</textarea>
+    <div class="ob-nav">
+      <div style="display:flex;gap:0.8rem;align-items:center">
+        ${curQ>0?'<button class="btn-g" onclick="prevQ()">&#8592; Back</button>':'<div></div>'}
+        <button class="skip-btn" onclick="skipQ()">Skip for now</button>
+      </div>
+      <button class="btn-p" onclick="nextQ()">${curQ===OQS.length-1?'Enter the Room &#8594;':'Next &#8594;'}</button>
+    </div>`;
+  setTimeout(()=>{const el=document.getElementById('ob-ans');if(el)el.focus();},50);
+}
+function nextQ(){const a=(document.getElementById('ob-ans').value||'').trim();if(a){profile[OQS[curQ].key]=a;saveAll();}if(curQ<OQS.length-1){curQ++;renderQ();}else if(curProj)openProject(curProj.id);}
+function prevQ(){if(curQ>0){curQ--;renderQ();}}
+function skipQ(){if(curQ<OQS.length-1){curQ++;renderQ();}else if(curProj)openProject(curProj.id);}
+
+// PROFILE
+function openEditProfile(){
+  const fields=QS.map(q=>`<div class="pef"><div class="pel">${q.q}</div><textarea class="peta" id="ep-${q.key}" rows="3" placeholder="${q.ph}">${profile[q.key]||''}</textarea></div>`).join('');
+  const we=watEntries.map(e=>`<div class="wat-entry"><div class="wat-date">${e.date}</div><div class="wat-text">${esc(e.text)}</div></div>`).join('');
+  document.getElementById('pe-body').innerHTML=`
+    <div class="pe-sec-h">Creative Profile</div><div class="pe-sec-s">Change anything. Nothing is permanent.</div>
+    ${fields}
+    <div style="height:1rem"></div>
+    <div class="pe-sec-h" style="color:var(--gold-dim)">What am I?</div>
+    <div class="pe-sec-s">An open canvas. Dated entries build over time.</div>
+    <textarea class="wat-area" id="wat-new" placeholder="Write anything about yourself as a filmmaker, a person, a maker..." rows="6"></textarea>
+    <button class="add-entry-btn" onclick="addWat()">Add Entry</button>
+    <div id="wat-list">${we}</div>
+    <div style="display:flex;justify-content:flex-end;gap:0.7rem;margin-top:1.5rem;padding-bottom:2rem">
+      <button class="btn-g" onclick="goTo('app')">Cancel</button>
+      <button class="btn-p" onclick="saveProfile()">Save Changes</button>
+    </div>`;
+  goTo('profed');
+}
+function addWat(){
+  const t=(document.getElementById('wat-new').value||'').trim();if(!t)return;
+  const date=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  watEntries.unshift({date,text:t});saveAll();
+  document.getElementById('wat-new').value='';
+  const wl=document.getElementById('wat-list');
+  if(wl)wl.innerHTML=watEntries.map(e=>`<div class="wat-entry"><div class="wat-date">${e.date}</div><div class="wat-text">${esc(e.text)}</div></div>`).join('');
+}
+function saveProfile(){QS.forEach(q=>{const el=document.getElementById('ep-'+q.key);if(el&&el.value.trim())profile[q.key]=el.value.trim();});saveAll();goTo('app');}
+
+// WRITERS
+function buildCSW(){
+  document.getElementById('csw-row').innerHTML=COLORS.map((c,i)=>`<div class="csw ${i===0?'picked':''}" style="background:${c.fg}" onclick="pickC(${i},this)"></div>`).join('');
+  selColor=COLORS[0];
+}
+function pickC(i,el){selColor=COLORS[i];document.querySelectorAll('.csw').forEach(s=>s.classList.remove('picked'));el.classList.add('picked');}
+function openAddWriter(){
+  const sel=document.getElementById('aw-eng');
+  if(sel){
+    const hC=!!(apiKey||localStorage.getItem('ptt_key'));
+    const hO=!!(openaiKey||localStorage.getItem('ptt_okey'));
+    const hG=!!(geminiKey||localStorage.getItem('ptt_gkey'));
+    sel.innerHTML=`<option value="claude">Claude${hC?' \u2713':' (add key in Settings)'}</option><option value="openai">GPT-4o${hO?' \u2713':' (add key in Settings)'}</option><option value="gemini">Gemini${hG?' \u2713':' (add key in Settings)'}</option>`;
+  }
+  openModal('aw-modal');
+}
+function addWriter(){
+  const nm=(document.getElementById('aw-name').value||'').trim();
+  const ps=(document.getElementById('aw-persona').value||'').trim();
+  const eng=document.getElementById('aw-eng').value;
+  if(!nm||!ps){alert('Please fill in name and craft identity.');return;}
+  const id='w'+Date.now();
+  writers.push({id,name:nm,persona:ps,engine:eng,color:selColor});
+  pvHist[id]={};if(curProj){curProj.writers=JSON.parse(JSON.stringify(writers));saveAll();}
+  renderWlist();closeModal('aw-modal');
+  document.getElementById('aw-name').value='';document.getElementById('aw-persona').value='';
+}
+function removeWriter(id){
+  writers=writers.filter(w=>w.id!==id);
+  if(activeW&&activeW.id===id)switchGroup();
+  if(curProj){curProj.writers=JSON.parse(JSON.stringify(writers));saveAll();}
+  renderWlist();
+}
+function openLib(wid){const w=writers.find(x=>x.id===wid);if(!w)return;libWriter=w;document.getElementById('lib-wname').textContent=w.name;openModal('lib-modal');}
+function addToLib(){
+  const t=(document.getElementById('lib-title').value||'').trim();
+  const tp=document.getElementById('lib-type')?document.getElementById('lib-type').value:'text';
+  if(!curProj.libs)curProj.libs={};
+  if(!curProj.libs[libWriter.id])curProj.libs[libWriter.id]=[];
+  if(tp==='image'){
+    const fi=document.getElementById('lib-img-file');
+    const cap=(document.getElementById('lib-img-caption').value||'').trim();
+    readImgB64(fi,function(b64,mt){
+      if(!b64){alert('Please select an image file.');return;}
+      curProj.libs[libWriter.id].push({title:t||'Image reference',content:cap,imgData:b64,imgType:mt,id:'l'+Date.now()});
+      saveAll();closeModal('lib-modal');document.getElementById('lib-title').value='';
+      alert('Added to '+libWriter.name+"'s library.");
+    });return;
+  }
+  const c=(document.getElementById('lib-content').value||'').trim();
+  if(!t&&!c){alert('Please add some content.');return;}
+  curProj.libs[libWriter.id].push({title:t,content:c,id:'l'+Date.now()});
+  saveAll();closeModal('lib-modal');
+  document.getElementById('lib-title').value='';document.getElementById('lib-content').value='';
+  alert('Added to '+libWriter.name+"'s library.");
+}
+function renderWlist(){
+  document.getElementById('wlist').innerHTML=writers.map(w=>`
+    <div class="wcard ${mode==='private'&&activeW&&activeW.id===w.id?'wcard-sel':''}">
+      <div class="wc-top"><div class="wc-dot" style="background:${w.color.fg}"></div><div class="wc-name" style="color:${w.color.fg}">${w.name}</div><div class="wc-eng">${w.engine}</div></div>
+      <div class="wc-role">${w.persona.substring(0,55)}...</div>
+      <div class="wc-acts">
+        <button class="wcbtn pb" onclick="openPrivate('${w.id}')">Private</button>
+        <button class="wcbtn" onclick="openLib('${w.id}')">Library</button>
+        <button class="wcbtn" onclick="removeWriter('${w.id}')">Remove</button>
+      </div>
+    </div>`).join('');
+}
+
+// VAULT
+function toggleVaultScope(v){document.getElementById('v-wf').style.display=v==='private'?'block':'none';}
+function openVaultModal(){const sel=document.getElementById('v-writer');if(sel)sel.innerHTML=writers.map(w=>`<option value="${w.id}">${w.name}</option>`).join('');openModal('vault-modal');}
+function addVault(){
+  const t=(document.getElementById('v-title').value||'').trim();
+  const tp=document.getElementById('v-type').value;
+  const sc=document.getElementById('v-scope').value;
+  const wid=sc==='private'?document.getElementById('v-writer').value:null;
+  if(!t){alert('Please add a title.');return;}
+  if(tp==='image'){
+    const fi=document.getElementById('v-img-file');
+    const cap=(document.getElementById('v-img-caption').value||'').trim();
+    readImgB64(fi,function(b64,mt){
+      if(!b64){alert('Please select an image file.');return;}
+      vault.push({id:'v'+Date.now(),title:t,type:'image',scope:sc,wid,content:cap,imgData:b64,imgType:mt});
+      if(curProj)curProj.vault=vault;saveAll();renderVaultList();closeModal('vault-modal');
+      document.getElementById('v-title').value='';document.getElementById('v-img-caption').value='';
+      document.getElementById('v-img-preview').style.display='none';
+      document.getElementById('v-type').value='screenplay';toggleVType('screenplay');
+    });return;
+  }
+  const ct=(document.getElementById('v-content').value||'').trim();
+  vault.push({id:'v'+Date.now(),title:t,type:tp,scope:sc,wid,content:ct});
+  if(curProj)curProj.vault=vault;saveAll();renderVaultList();closeModal('vault-modal');
+  document.getElementById('v-title').value='';document.getElementById('v-content').value='';
+}
+function renderVaultList(){
+  const icons={screenplay:'S',book:'B',note:'N',research:'R',link:'L',image:'I'};
+  const el=document.getElementById('vault-list');
+  if(!vault.length){el.innerHTML='<div class="vitem" style="opacity:0.28;border-style:dashed;font-size:9px;justify-content:center">Empty vault</div>';return;}
+  el.innerHTML=vault.map(v=>`<div class="vitem"><span style="font-size:8px;opacity:0.4">[${icons[v.type]||'?'}]</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${v.title.substring(0,20)}</span><span style="font-size:8px;opacity:0.28">${v.scope==='all'?'All':'Prv'}</span></div>`).join('');
+}
+
+// CONCEPTS PANEL IN APP
+function toggleConceptsPanel(){
+  cpOpen=!cpOpen;
+  document.getElementById('concepts-panel').classList.toggle('open',cpOpen);
+}
+function renderCP(){
+  const el=document.getElementById('cp-list');if(!el)return;
+  if(!concepts.length){el.innerHTML='<div style="font-size:10px;color:var(--t3);padding:0.5rem;letter-spacing:0.08em;">No concepts yet.</div>';return;}
+  el.innerHTML=concepts.map(c=>`
+    <div class="cp-card" onclick="pullConcept('${c.id}')">
+      <div class="cp-card-title">${esc(c.title||'Untitled')}</div>
+      <div class="cp-card-body">${esc(c.body).substring(0,100)}${c.body.length>100?'...':''}</div>
+      <div class="cp-pull">Tap to pull into chat</div>
+    </div>`).join('');
+}
+function pullConcept(id){
+  const c=concepts.find(x=>x.id===id);if(!c)return;
+  const ta=document.getElementById('chat-ta');
+  ta.value=(c.title?c.title+': ':'')+c.body;ta.focus();
+  toggleConceptsPanel();
+}
+
+// VIEW TOGGLE
+function setView(v){
+  curView=v;
+  document.getElementById('vt-stack').classList.toggle('active',v==='stacked');
+  document.getElementById('vt-side').classList.toggle('active',v==='sbs');
+  if(v==='sbs'){buildSBS();}else{tearSBS();}
+}
+function buildSBS(){
+  const msgs=document.getElementById('chat-msgs');
+  msgs.classList.add('sbs');msgs.innerHTML='';
+  writers.forEach(w=>{
+    const col=document.createElement('div');col.className='sbs-col';col.id='sbsc-'+w.id;
+    col.innerHTML=`<div class="sbs-hdr"><div class="sbs-dot" style="background:${w.color.fg}"></div><div class="sbs-name" style="color:${w.color.fg}">${w.name}</div></div><div class="sbs-msgs" id="sbsm-${w.id}"></div>`;
+    msgs.appendChild(col);
+  });
+}
+function tearSBS(){const msgs=document.getElementById('chat-msgs');msgs.classList.remove('sbs');msgs.innerHTML='';}
+function addSBSUser(text){
+  if(curView!=='sbs')return;
+  writers.forEach(w=>{const col=document.getElementById('sbsm-'+w.id);if(!col)return;const d=document.createElement('div');d.className='sbs-user';d.textContent=text;col.appendChild(d);col.scrollTop=col.scrollHeight;});
+}
+function addSBSAI(wid,text){
+  if(curView!=='sbs')return;
+  const col=document.getElementById('sbsm-'+wid);if(!col)return;
+  const w=writers.find(x=>x.id===wid)||{color:COLORS[0]};
+  const d=document.createElement('div');d.className='sbs-ai';d.style.borderLeftColor=w.color.fg;d.textContent=text;
+  col.appendChild(d);col.scrollTop=col.scrollHeight;
+}
+function addSBSLoad(wid){
+  if(curView!=='sbs')return;
+  const col=document.getElementById('sbsm-'+wid);if(!col)return;
+  const w=writers.find(x=>x.id===wid)||{color:COLORS[0]};
+  const d=document.createElement('div');d.id='sbsld-'+wid;d.className='sbs-ai dots';d.style.borderLeftColor=w.color.fg;
+  d.innerHTML='<span>.</span><span>.</span><span>.</span>';col.appendChild(d);col.scrollTop=col.scrollHeight;
+}
+function remSBSLoad(wid){const el=document.getElementById('sbsld-'+wid);if(el)el.remove();}
+
+// MODE PICKER
+function toggleModeDD(){document.getElementById('mode-dd').classList.toggle('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.mode-picker-wrap'))document.getElementById('mode-dd').classList.remove('open');});
+const modeLabels={debate:'Debate',solo:'Solo',devils:"Devil's Adv",build:'Build',pitch:'Pitch'};
+function setMode(m){
+  respMode=m;
+  document.getElementById('mode-pill-lbl').textContent=modeLabels[m];
+  document.querySelectorAll('.mode-opt').forEach(el=>el.classList.remove('sel'));
+  const opt=document.getElementById('mopt-'+m);if(opt)opt.classList.add('sel');
+  document.getElementById('mode-dd').classList.remove('open');
+}
+
+function getModeRole(i,prevResps,m){
+  const others=prevResps.map((r,j)=>writers[j]&&j!==i?`${writers[j].name}:\n"${r}"`:null).filter(Boolean).join('\n\n');
+  switch(m){
+    case 'solo':return'Answer from your specific craft lens only. Do NOT reference or acknowledge any other writer. Give your own completely independent response.';
+    case 'debate':
+      if(i===0)return'First response. Set the tone from your craft lens. Be direct and specific.';
+      return`You have seen:\n${others}\n\nGive YOUR response. Engage with what was said — agree, disagree, build from your lens.`;
+    case 'devils':
+      if(i===writers.length-1&&i>0)return`You are the Devil's Advocate. You have seen:\n${others}\n\nArgue the OPPOSITE. Find every weakness. Be provocative but intelligent — find the genuine counter-argument.`;
+      if(i===0)return'First response. Make your strongest case from your craft lens.';
+      return`Build on what came before:\n${others}`;
+    case 'build':
+      if(i===0)return'First response. Lay the foundation from your craft lens. Be specific and constructive.';
+      return`You have seen:\n${others}\n\nBUILD ONLY. Add what is missing. Extend what was said. Do NOT contradict or challenge. Only add new value.`;
+    case 'pitch':
+      const pp=i>0&&prevResps.length?`\n\nYour colleagues pitched:\n${others}\n\nAdd your angle — don't repeat theirs.`:'';
+      return`You are pitching to a room of OTT producers and executives. Champion this idea with conviction, commercial awareness, and creative passion. Make them want to greenlight it. Speak as ${writers[i]?writers[i].name:'you'} — your craft lens shapes how you pitch.${pp}`;
+    default:return'Respond from your craft lens.';
+  }
+}
+
+// CHAT
+function switchGroup(){
+  mode='group';activeW=null;
+  document.getElementById('priv-bar').style.display='none';
+  document.getElementById('mode-lbl').textContent='Group Room';
+  document.getElementById('mode-lbl').className='cmode gmode';
+  document.getElementById('mode-sub').textContent='';
+  document.getElementById('in-meta').textContent='All three writers respond \u2014 Shift+Enter for new line';
+  document.getElementById('chat-ta').placeholder='Drop your idea, scene, prompt or concept here...';
+  renderWlist();clearChat();
+  if(curView==='sbs')buildSBS();
+  const pid=curProj?curProj.id:'d';
+  const hist=gHist[pid]||[];
+  if(!hist.length){addAIMsg('w1','The Architect','Back in the group room. What are we working on?');}
+  else{
+    hist.forEach(m=>{
+      if(m.role==='user'){addUserMsg(m.content,false);if(curView==='sbs')addSBSUser(m.content);}
+      else{m.content.split('\n\n---\n\n').forEach(p=>{
+        const mx=p.match(/^(.+?):\s*([\s\S]+)$/);
+        if(mx){const w=writers.find(x=>x.name===mx[1].trim());if(w){addAIMsg(w.id,w.name,mx[2].trim(),false);if(curView==='sbs')addSBSAI(w.id,mx[2].trim());}}
+      });}
+    });
+  }
+}
+function openPrivate(wid){
+  const w=writers.find(x=>x.id===wid);if(!w)return;
+  mode='private';activeW=w;
+  document.getElementById('priv-bar').style.display='flex';
+  document.getElementById('priv-nm').textContent=w.name;
+  document.getElementById('mode-lbl').textContent='Private Channel';
+  document.getElementById('mode-lbl').className='cmode pvmode';
+  document.getElementById('mode-sub').textContent='Only '+w.name+' sees this';
+  document.getElementById('in-meta').textContent='Private \u2014 '+w.name+' only. Shift+Enter for new line.';
+  document.getElementById('chat-ta').placeholder='Give '+w.name+' a private note, reference or directive...';
+  renderWlist();clearChat();
+  if(curView==='sbs')tearSBS();
+  const pid=curProj?curProj.id:'d';
+  if(!pvHist[wid])pvHist[wid]={};
+  const hist=pvHist[wid][pid]||[];
+  hist.forEach(m=>{if(m.role==='user')addUserMsg(m.content,false);else addAIMsg(w.id,w.name,m.content,false);});
+  if(!hist.length)addAIMsg(w.id,w.name,'This is our private channel, Pratik. What you tell me here stays between us \u2014 I\'ll carry it into the group room without the others knowing. What do you want me to hold onto?');
+}
+function clearChat(){document.getElementById('chat-msgs').innerHTML='';}
+function addUserMsg(t,sc=true){
+  if(curView==='sbs'){addSBSUser(t);return;}
+  const el=document.getElementById('chat-msgs');
+  const d=document.createElement('div');d.className='msg user fi';
+  d.innerHTML=`<div class="mwho uwho">Pratik</div><div class="mbub">${esc(t)}</div>`;
+  el.appendChild(d);if(sc)el.scrollTop=el.scrollHeight;
+}
+function addAIMsg(wid,name,text,sc=true){
+  const w=writers.find(x=>x.id===wid)||{color:COLORS[0]};
+  if(curView==='sbs'){addSBSAI(wid,text);return;}
+  const el=document.getElementById('chat-msgs');
+  const d=document.createElement('div');d.className='msg ai fi';
+  d.innerHTML=`<div class="mwho" style="color:${w.color.fg}">${name}</div><div class="mbub" style="border-left-color:${w.color.fg};background:${w.color.bg}18">${esc(text)}</div>`;
+  el.appendChild(d);if(sc)el.scrollTop=el.scrollHeight;
+}
+function addLoading(wid,name){
+  if(curView==='sbs'){addSBSLoad(wid);return;}
+  const w=writers.find(x=>x.id===wid)||{color:COLORS[0]};
+  const el=document.getElementById('chat-msgs');
+  const d=document.createElement('div');d.className='msg ai';d.id='ld-'+wid;
+  d.innerHTML=`<div class="mwho" style="color:${w.color.fg}">${name}</div><div class="mbub dots" style="border-left:2px solid ${w.color.fg};background:${w.color.bg}18"><span>.</span><span>.</span><span>.</span></div>`;
+  el.appendChild(d);el.scrollTop=el.scrollHeight;
+}
+function removeLoading(wid){if(curView==='sbs'){remSBSLoad(wid);return;}const el=document.getElementById('ld-'+wid);if(el)el.remove();}
+function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+
+// CONTEXT
+function vCtx(){const all=vault.filter(v=>v.scope==='all'&&v.type!=='image');if(!all.length)return'';return'\n\nPROJECT VAULT:\n'+all.map(v=>`[${v.type.toUpperCase()}] "${v.title}": ${(v.content||'').substring(0,500)}`).join('\n');}
+function vImgs(){return vault.filter(v=>v.scope==='all'&&v.type==='image'&&v.imgData);}
+function pvImgs(wid){return vault.filter(v=>v.scope==='private'&&v.wid===wid&&v.type==='image'&&v.imgData);}
+function libImgs(wid){const lib=(curProj&&curProj.libs&&curProj.libs[wid])||[];return lib.filter(i=>i.imgData);}
+function pvCtx(wid){const pv=vault.filter(v=>v.scope==='private'&&v.wid===wid&&v.type!=='image');if(!pv.length)return'';return'\n\nPRIVATE VAULT (only you):\n'+pv.map(v=>`[${v.type.toUpperCase()}] "${v.title}": ${(v.content||'').substring(0,400)}`).join('\n');}
+function libCtx(wid){const lib=(curProj&&curProj.libs&&curProj.libs[wid])||[];if(!lib.length)return'';return'\n\nYOUR PRIVATE LEARNING LIBRARY:\n'+lib.map(i=>{if(i.imgData)return`[IMAGE] "${i.title}": ${i.content||'No caption'}`;return`"${i.title}": ${(i.content||'').substring(0,400)}`;}).join('\n');}
+function pnCtx(wid){const pid=curProj?curProj.id:'d';const hist=(pvHist[wid]&&pvHist[wid][pid])||[];if(!hist.length)return'';return'\n\nPRIVATE NOTES FROM PRATIK (never reveal to group):\n'+hist.map(m=>m.role==='user'?'Pratik: '+m.content:'You: '+m.content).join('\n');}
+function watCtx(){if(!watEntries.length)return'';return'\n\nPRATIK\'S "WHAT AM I?" JOURNAL:\n'+watEntries.map(e=>e.date+': '+e.text).join('\n');}
+
+function buildSys(w,role){
+  return`You are ${w.name}, a world-class screenwriter and creative collaborator in Pratik's personal creative platform "Pratik's Think-Tank". Current project: "${curProj?curProj.name:'Unnamed'}".
+
+YOUR CRAFT IDENTITY:
+${w.persona}
+
+PRATIK'S CREATIVE PROFILE:
+- Films in his head: ${profile.films||'not answered'}
+- Thematic obsessions: ${profile.obsessions||'not answered'}
+- Storytelling instincts: ${profile.instincts||'not answered'}
+- Process, company, blind spots: ${profile.self||'not answered'}
+- Current project: ${profile.now||'not answered'}
+${watCtx()}${vCtx()}${pvCtx(w.id)}${libCtx(w.id)}${pnCtx(w.id)}
+
+YOUR ROLE: ${role}
+
+ABSOLUTE RULES:
+1. Stay in character. Respond only from your specific craft lens.
+2. Be sharp — 3 to 5 paragraphs. Precise, not exhaustive.
+3. NOT a yes-man. Challenge weak ideas directly but respectfully.
+4. Make it personal — use his profile, blind spots, obsessions. Generic feedback is failure.
+5. Deep knowledge of Hollywood AND Bollywood. Non-linear structure, perspective shifts, Psycho mid-film death, Vantage Point POV — all legitimate tools you understand and respect.
+6. You are a WRITER not just an editor. When asked to write scenes, dialogue, sequences — write them properly with real creative investment.
+7. Pratik's instinct is data. If he says something feels right even if he cannot explain it, work with that.
+8. Never be generic. Every response must feel like it could only come from someone who knows this specific profile.`;
+}
+
+function buildImgsForMsgs(msgs,wid){
+  const imgs=[...vImgs(),...pvImgs(wid),...libImgs(wid)];
+  if(!imgs.length)return msgs;
+  const result=[];
+  for(let i=0;i<msgs.length;i++){
+    const m=msgs[i];
+    if(i===0&&m.role==='user'){
+      const imgBlocks=imgs.map(img=>({type:'image',source:{type:'base64',media_type:img.imgType||'image/jpeg',data:img.imgData}}));
+      const capBlock={type:'text',text:'\n[Visual references in vault:\n'+imgs.map(img=>`"${img.title}": ${img.content||'Reference image'}`).join('\n')+']'};
+      result.push({role:'user',content:[...imgBlocks,{type:'text',text:typeof m.content==='string'?m.content:m.content},capBlock]});
+    }else{result.push(m);}
+  }
+  return result;
+}
+
+// API
+async function callAPI(sys,msgs,wid){
+  try{
+    const finalMsgs=wid?buildImgsForMsgs(msgs,wid):msgs;
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-opus-4-5',max_tokens:1500,system:sys,messages:finalMsgs})
+    });
+    const d=await r.json();
+    if(d.error)return'API Error: '+d.error.message;
+    return d.content&&d.content[0]?d.content[0].text:'No response.';
+  }catch(e){return'Connection error. Please check your API key and try again.';}
+}
+async function callOpenAI(sys,msgs){
+  try{
+    const endpoint=proxyUrl?proxyUrl+'/v1/chat/completions':'https://api.openai.com/v1/chat/completions';
+    const headers={'Content-Type':'application/json'};
+    if(proxyUrl){headers['x-openai-key']=openaiKey;}else{headers['Authorization']='Bearer '+openaiKey;}
+    const r=await fetch(endpoint,{method:'POST',headers,body:JSON.stringify({model:'gpt-4o',messages:[{role:'system',content:sys},...msgs.map(m=>({role:m.role==='user'?'user':'assistant',content:typeof m.content==='string'?m.content:m.content}))],max_tokens:1500})});
+    const d=await r.json();
+    if(d.error)return'GPT Error: '+d.error.message;
+    return d.choices&&d.choices[0]?d.choices[0].message.content:'No response from GPT.';
+  }catch(e){return'GPT connection error. If this keeps happening, add a Cloudflare Worker URL in Settings to fix CORS.';}
+}
+async function callGemini(sys,msgs){
+  try{
+    const combined=sys+'\n\n'+msgs.map(m=>(m.role==='user'?'Pratik: ':'Writer: ')+m.content).join('\n');
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key='+geminiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{role:'user',parts:[{text:combined}]}],generationConfig:{maxOutputTokens:1500}})});
+    const d=await r.json();
+    if(d.error)return'Gemini Error: '+d.error.message;
+    return d.candidates&&d.candidates[0]&&d.candidates[0].content?d.candidates[0].content.parts[0].text:'No response from Gemini.';
+  }catch(e){return'Gemini connection error: '+e.message;}
+}
+async function callForWriter(w,sys,msgs){
+  const engine=w.engine||'claude';
+  if(engine==='openai'&&openaiKey)return await callOpenAI(sys,msgs);
+  if(engine==='gemini'&&geminiKey)return await callGemini(sys,msgs);
+  return await callAPI(sys,msgs,w.id);
+}
+
+// SEND
+async function sendMsg(){
+  const ta=document.getElementById('chat-ta');
+  const text=ta.value.trim();if(!text)return;
+  const btn=document.getElementById('send-btn');
+  btn.disabled=true;ta.value='';
+  addUserMsg(text);
+
+  if(mode==='private'&&activeW){
+    const wid=activeW.id;const pid=curProj?curProj.id:'d';
+    if(!pvHist[wid])pvHist[wid]={};
+    if(!pvHist[wid][pid])pvHist[wid][pid]=[];
+    pvHist[wid][pid].push({role:'user',content:text});
+    addLoading(wid,activeW.name);
+    try{
+      const hist=pvHist[wid][pid].map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
+      const sys=buildSys(activeW,'Private one-on-one with Pratik. Be candid, direct, personal. Safe space — no other writers watching.');
+      const reply=await callForWriter(activeW,sys,hist);
+      removeLoading(wid);addAIMsg(wid,activeW.name,reply);
+      pvHist[wid][pid].push({role:'assistant',content:reply});saveAll();
+    }catch(e){removeLoading(wid);addAIMsg(wid,activeW.name,'Connection issue — please try again.');}
+    btn.disabled=false;return;
+  }
+
+  const pid=curProj?curProj.id:'d';
+  if(!gHist[pid])gHist[pid]=[];
+  gHist[pid].push({role:'user',content:text});
+  const responses=[];
+
+  if(respMode==='solo'){
+    await Promise.all(writers.map(async(w,i)=>{
+      addLoading(w.id,w.name);
+      try{
+        const role=getModeRole(i,[],respMode);
+        const hist=gHist[pid].map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
+        const reply=await callForWriter(w,buildSys(w,role),hist);
+        responses[i]=reply;removeLoading(w.id);addAIMsg(w.id,w.name,reply);
+      }catch(e){removeLoading(w.id);addAIMsg(w.id,w.name,'Connection error — please try again.');responses[i]='';}
+    }));
+  }else{
+    for(let i=0;i<writers.length;i++){
+      const w=writers[i];addLoading(w.id,w.name);
+      try{
+        const role=getModeRole(i,responses,respMode);
+        const hist=gHist[pid].map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
+        const reply=await callForWriter(w,buildSys(w,role),hist);
+        responses[i]=reply;removeLoading(w.id);addAIMsg(w.id,w.name,reply);
+      }catch(e){removeLoading(w.id);addAIMsg(w.id,w.name,'Connection error — please try again.');responses[i]='';}
+    }
+  }
+
+  if(responses.some(r=>r)){gHist[pid].push({role:'assistant',content:responses.map((r,i)=>writers[i]?`${writers[i].name}: ${r}`:r).join('\n\n---\n\n')});saveAll();}
+  btn.disabled=false;
+  document.getElementById('chat-ta').focus();
+}
+
+// UTILS
+function toggleVType(v){document.getElementById('v-text-field').style.display=v==='image'?'none':'block';document.getElementById('v-img-field').style.display=v==='image'?'block':'none';}
+function toggleLibType(v){document.getElementById('lib-text-field').style.display=v==='image'?'none':'block';document.getElementById('lib-img-field').style.display=v==='image'?'block':'none';}
+function previewVaultImg(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=function(e){const prev=document.getElementById('v-img-preview');const img=document.getElementById('v-img-thumb');if(prev&&img){img.src=e.target.result;prev.style.display='block';}};r.readAsDataURL(f);}
+function previewLibImg(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=function(e){const prev=document.getElementById('lib-img-preview');const img=document.getElementById('lib-img-thumb');if(prev&&img){img.src=e.target.result;prev.style.display='block';}};r.readAsDataURL(f);}
+function readImgB64(fileInput,callback){const f=fileInput.files[0];if(!f){callback(null,null);return;}const r=new FileReader();r.onload=function(e){const b64=e.target.result.split(',')[1];callback(b64,f.type);};r.readAsDataURL(f);}
+</script>
+</body>
+</html>
