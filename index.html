@@ -390,7 +390,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 <div id="wmhub" class="pg dark-pg on">
   <div class="dark-head">
     <div class="dark-title">Writing Movies</div>
-    <button class="hbtn" onclick="openEditProfile()">Profile</button>
+    <button class="hbtn" onclick="openEditProfile('wmhub')">Profile</button>
     <button class="theme-btn" onclick="toggleTheme()">&#9788; Theme</button>
     <button class="hbtn" onclick="goTo(&#39;lobby&#39;)">&#8592; Lobby</button>
   </div>
@@ -408,7 +408,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 <div id="rawmaterials" class="pg dark-pg fi">
   <div class="dark-head">
     <div class="dark-title">Raw Materials</div>
-    <button class="hbtn" onclick="openEditProfile()">Profile</button>
+    <button class="hbtn" onclick="openEditProfile('rawmaterials')">Profile</button>
     <button class="theme-btn" onclick="toggleTheme()">&#9788; Theme</button>
     <button class="hbtn" onclick="goTo(&#39;wmhub&#39;)">&#8592; Back</button>
   </div>
@@ -540,7 +540,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 <div id="projects" class="pg dark-pg fi">
   <div class="dark-head">
     <div class="dark-title">Projects</div>
-    <button class="hbtn" onclick="openEditProfile()">Profile</button>
+    <button class="hbtn" onclick="openEditProfile('projects')">Profile</button>
     <button class="theme-btn" onclick="toggleTheme()">☼ Theme</button>
     <button class="hbtn" onclick="goTo(&#39;wmhub&#39;)">← Back</button>
   </div>
@@ -1312,7 +1312,7 @@ function prevQ(){if(curQ>0){curQ--;renderQ();}}
 function skipQ(){if(curQ<OQS.length-1){curQ++;renderQ();}else if(curProj)openProject(curProj.id);}
 
 // PROFILE
-function openEditProfile(){
+function openEditProfile(origin){window._profileOrigin=origin||'wmhub';
   const fields=QS.map(q=>`<div class="pef"><div class="pel">${q.q}</div><textarea class="peta" id="ep-${q.key}" rows="3" placeholder="${q.ph}">${profile[q.key]||''}</textarea></div>`).join('');
   const we=watEntries.map(e=>`<div class="wat-entry"><div class="wat-date">${e.date}</div><div class="wat-text">${esc(e.text)}</div></div>`).join('');
   document.getElementById('pe-body').innerHTML=`
@@ -1325,7 +1325,7 @@ function openEditProfile(){
     <button class="add-entry-btn" onclick="addWat()">Add Entry</button>
     <div id="wat-list">${we}</div>
     <div style="display:flex;justify-content:flex-end;gap:0.7rem;margin-top:1.5rem;padding-bottom:2rem">
-      <button class="btn-g" onclick="goTo('app')">Cancel</button>
+      <button class="btn-g" onclick="goTo(window._profileOrigin||'wmhub')">Cancel</button>
       <button class="btn-p" onclick="saveProfile()">Save Changes</button>
     </div>`;
   goTo('profed');
@@ -1338,7 +1338,7 @@ function addWat(){
   const wl=document.getElementById('wat-list');
   if(wl)wl.innerHTML=watEntries.map(e=>`<div class="wat-entry"><div class="wat-date">${e.date}</div><div class="wat-text">${esc(e.text)}</div></div>`).join('');
 }
-function saveProfile(){QS.forEach(q=>{const el=document.getElementById('ep-'+q.key);if(el&&el.value.trim())profile[q.key]=el.value.trim();});saveAll();goTo('app');}
+function saveProfile(){QS.forEach(q=>{const el=document.getElementById('ep-'+q.key);if(el&&el.value.trim())profile[q.key]=el.value.trim();});saveAll();goTo(window._profileOrigin||'wmhub');}
 
 // WRITERS
 function buildCSW(){
