@@ -390,6 +390,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 <div id="wmhub" class="pg dark-pg on">
   <div class="dark-head">
     <div class="dark-title">Writing Movies</div>
+    <button class="hbtn" onclick="openEditProfile()">Profile</button>
     <button class="theme-btn" onclick="toggleTheme()">&#9788; Theme</button>
     <button class="hbtn" onclick="goTo(&#39;lobby&#39;)">&#8592; Lobby</button>
   </div>
@@ -407,6 +408,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 <div id="rawmaterials" class="pg dark-pg fi">
   <div class="dark-head">
     <div class="dark-title">Raw Materials</div>
+    <button class="hbtn" onclick="openEditProfile()">Profile</button>
     <button class="theme-btn" onclick="toggleTheme()">&#9788; Theme</button>
     <button class="hbtn" onclick="goTo(&#39;wmhub&#39;)">&#8592; Back</button>
   </div>
@@ -426,7 +428,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <div class="dark-title">Concepts Dump</div>
     <button class="abtn" onclick="openModal(&#39;nc-modal&#39;)">+ New Concept</button>
     <button class="theme-btn" onclick="toggleTheme()">☼ Theme</button>
-    <button class="hbtn" onclick="goTo(&#39;rawmaterials&#39;)">← Back</button>
+    <button class="hbtn" id="dump-back-btn" onclick="goTo('rawmaterials')">← Back</button>
   </div>
   <div class="dump-toolbar">
     <button class="sort-btn" id="sort-manual-btn" onclick="toggleSort()">Manual Order</button>
@@ -538,6 +540,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 <div id="projects" class="pg dark-pg fi">
   <div class="dark-head">
     <div class="dark-title">Projects</div>
+    <button class="hbtn" onclick="openEditProfile()">Profile</button>
     <button class="theme-btn" onclick="toggleTheme()">☼ Theme</button>
     <button class="hbtn" onclick="goTo(&#39;wmhub&#39;)">← Back</button>
   </div>
@@ -580,8 +583,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <div class="app-logo">Pratik's Think-Tank</div>
     <div class="app-proj-lbl" id="app-proj-lbl">Project</div>
     <button class="hbtn" onclick="goTo(&#39;projects&#39;)">← Projects</button>
-    <button class="hbtn" onclick="openEditProfile()">Profile</button>
-    <button class="hbtn" onclick="toggleConceptsPanel()">Concepts</button>
+    <button class="hbtn" onclick="goTo('dump')">Concepts</button>
     <button class="hbtn" onclick="goTo('dialoguedump')">Dialogue</button>
     <button class="theme-btn" onclick="toggleTheme()">☼</button>
   </div>
@@ -863,7 +865,14 @@ function goTo(id){
   const el=document.getElementById(id);el.classList.add('on','fi');
   setTimeout(()=>el.classList.remove('fi'),500);
   if(id==='projects')renderProjects();
-  if(id==='dump')renderDump();
+  if(id==='dump'){
+    const backBtn=document.getElementById('dump-back-btn');
+    if(backBtn){
+      if(curProj){backBtn.textContent='← '+curProj.name;backBtn.onclick=()=>goTo('app');}
+      else{backBtn.textContent='← Back';backBtn.onclick=()=>goTo('rawmaterials');}
+    }
+    renderDump();
+  }
   if(id==='dialoguedump'){
     const backBtn=document.getElementById('dd-back-btn');
     if(backBtn){
@@ -1268,9 +1277,13 @@ function openProject(id){
   buildCSW();renderWlist();renderVaultList();renderCP();
   document.getElementById('app-proj-lbl').textContent=curProj.name;
   mode='group';activeW=null;goTo('app');clearChat();
-  const welcomeMsg=`The room is ready, Pratik. Project: "${curProj.name}". I've read your profile. Bring me anything — a premise, a structure problem, a scene, a plot hole. We start now.`;
-  if(!gHist[id].length){gHist[id].push({role:'assistant',content:'The Architect:\n'+welcomeMsg});}
-  addAIMsg('w1','The Architect',welcomeMsg);
+  if(gHist[id].length){
+    replayStackedHistory();
+  } else {
+    const welcomeMsg=`The room is ready. Bring anything.`;
+    gHist[id].push({role:'assistant',content:'system:\n'+welcomeMsg});
+    addAIMsg('w1','The Architect',welcomeMsg);
+  }
 }
 
 // ONBOARDING
