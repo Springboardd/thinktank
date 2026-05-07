@@ -1842,8 +1842,7 @@ function switchGroup(){
   document.getElementById('chat-ta').placeholder='Drop your idea, scene, prompt or concept here...';
   renderWlist();clearChat();
   if(curView==='sbs')buildSBS();
-  const pid=curProj?curProj.id:'d';
-  const hist=gHist[pid]||[];
+  const hist=curThread?curThread.messages:(gHist[curProj?curProj.id:'d']||[]);
   if(!hist.length){addAIMsg('w1','The Architect','Back in the group room. What are we working on?');}
   else{
     hist.forEach(m=>{
