@@ -1709,7 +1709,7 @@ function setView(v){
   curView=v;
   document.getElementById('vt-stack').classList.toggle('active',v==='stacked');
   document.getElementById('vt-side').classList.toggle('active',v==='sbs');
-  if(v==='sbs'){buildSBS();}else{tearSBS();clearChat();replayStackedHistory();}
+  if(v==='sbs'){buildSBS();}else{tearSBS();replayStackedHistory();}
 }
 function buildSBS(){
   const n=writers.length;
@@ -1840,26 +1840,9 @@ function switchGroup(){
   document.getElementById('mode-sub').textContent='';
   document.getElementById('in-meta').textContent='All three writers respond \u2014 Shift+Enter for new line';
   document.getElementById('chat-ta').placeholder='Drop your idea, scene, prompt or concept here...';
-  // Always switch to stacked view first
-  if(curView==='sbs'){
-    curView='stacked';
-    document.getElementById('vt-stack').classList.add('active');
-    document.getElementById('vt-side').classList.remove('active');
-    tearSBS();
-  }
   renderWlist();clearChat();
+  if(curView==='sbs')buildSBS();
   const hist=curThread?curThread.messages:(gHist[curProj?curProj.id:'d']||[]);
-  if(!hist.length){addAIMsg('w1','The Architect','Back in the group room. What are we working on?');}
-  else{
-    hist.forEach(m=>{
-      if(m.role==='user'){addUserMsg(m.content,false);}
-      else{m.content.split('\n\n---\n\n').forEach(p=>{
-        const mx=p.match(/^(.+?):\s*([\s\S]+)$/);
-        if(mx){const w=writers.find(x=>x.name===mx[1].trim());if(w)addAIMsg(w.id,w.name,mx[2].trim(),false);}
-      });}
-    });
-  }
-}
   if(!hist.length){addAIMsg('w1','The Architect','Back in the group room. What are we working on?');}
   else{
     hist.forEach(m=>{
