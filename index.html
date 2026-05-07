@@ -1747,7 +1747,7 @@ function buildSBS(){
   }
   // Replay existing history into SBS columns
   const pid=curProj?curProj.id:'d';
-  const hist=mode==='private'&&activeW?(pvHist[activeW.id]&&pvHist[activeW.id][pid]||[]):(gHist[pid]||[]);
+  const hist=mode==='private'&&activeW?(pvHist[activeW.id]&&pvHist[activeW.id][pid]||[]):(curThread?curThread.messages:(gHist[pid]||[]));
   hist.forEach(m=>{
     if(m.role==='user'){
       addSBSUser(m.content);
@@ -1765,7 +1765,7 @@ function buildSBS(){
 }
 function replayStackedHistory(){
   const pid=curProj?curProj.id:'d';
-  const hist=mode==='private'&&activeW?(pvHist[activeW.id]&&pvHist[activeW.id][pid]||[]):(gHist[pid]||[]);
+  const hist=mode==='private'&&activeW?(pvHist[activeW.id]&&pvHist[activeW.id][pid]||[]):(curThread?curThread.messages:(gHist[pid]||[]));
   hist.forEach(m=>{
     if(m.role==='user'){addUserMsg(m.content,false);}
     else{
