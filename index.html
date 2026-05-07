@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0050)https://symphonious-blancmange-3f2ba1.netlify.app/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pratik's Think-Tank</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="./Pratik&#39;s Think-Tank_files/supabase-js@2"></script>
+<link href="./Pratik&#39;s Think-Tank_files/css2" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -343,7 +343,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <div class="gate-logo">Pratik's Think-Tank</div>
     <div class="gate-sub">Your creative operating system</div>
     <div class="gate-lbl">Enter your Claude API key</div>
-    <input class="gate-inp" type="password" id="api-inp" placeholder="sk-ant-api03-..." autocomplete="off"/>
+    <input class="gate-inp" type="password" id="api-inp" placeholder="sk-ant-api03-..." autocomplete="off">
     <div class="gate-note">Your key is stored only in this browser. It never leaves your device.</div>
     <button class="gate-btn" onclick="enterGate()">Enter the Think-Tank</button>
     <div class="gate-err" id="gate-err" style="display:none"></div>
@@ -351,26 +351,26 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 </div>
 
 <!-- LOBBY -->
-<div id="lobby" class="pg fi">
+<div id="lobby" class="pg">
   <div class="gridbg"></div>
   <div class="lobby-in">
     <h1 class="pname">Pratik's Think-Tank</h1>
     <p class="ptag">Your creative operating system</p>
     <div class="doors">
-      <div class="door" onclick="goTo('wmhub')">
-        <div class="dnum">01</div><span class="dico">&#9999;</span>
+      <div class="door" onclick="goTo(&#39;wmhub&#39;)">
+        <div class="dnum">01</div><span class="dico">✏</span>
         <div class="dtitle">Writing Movies</div>
         <div class="ddesc">Your writers room. Three voices. Real debate. Hollywood &amp; Bollywood craft.</div>
         <div class="dtag">Enter</div>
       </div>
       <div class="door off">
-        <div class="dnum">02</div><span class="dico">&#9671;</span>
+        <div class="dnum">02</div><span class="dico">◇</span>
         <div class="dtitle">Business Ideas</div>
         <div class="ddesc">Client work, acquisition, pitch strategy and your company's ambitions.</div>
         <div class="dtag">Coming soon</div>
       </div>
       <div class="door off">
-        <div class="dnum">03</div><span class="dico">&#9670;</span>
+        <div class="dnum">03</div><span class="dico">◆</span>
         <div class="dtitle">Creative Ideas</div>
         <div class="ddesc">Everything else. The half-formed, the experimental, the not-yet-named.</div>
         <div class="dtag">Coming soon</div>
@@ -378,25 +378,25 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     </div>
     <p style="font-size:10px;color:var(--muted);letter-spacing:0.1em;">Click Writing Movies to begin</p>
     <div style="margin-top:2rem;display:flex;gap:1rem;justify-content:center;">
-      <button onclick="openSettingsModal()" style="background:none;border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);cursor:pointer;padding:6px 16px;">Settings</button>
-      <button onclick="clearKey()" style="background:none;border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Change API Key</button>
+      <button onclick="openSettingsModal()" style="background:none;border:1px solid var(--border);font-family:&#39;DM Mono&#39;,monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);cursor:pointer;padding:6px 16px;">Settings</button>
+      <button onclick="clearKey()" style="background:none;border:none;font-family:&#39;DM Mono&#39;,monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px;">Change API Key</button>
     </div>
   </div>
 </div>
 
 <!-- WM HUB -->
-<div id="wmhub" class="pg dark-pg fi">
+<div id="wmhub" class="pg dark-pg on">
   <div class="dark-head">
     <div class="dark-title">Writing Movies</div>
-    <button class="theme-btn" onclick="toggleTheme()">&#9788; Theme</button>
-    <button class="hbtn" onclick="goTo('lobby')">&#8592; Lobby</button>
+    <button class="theme-btn" onclick="toggleTheme()">☼ Theme</button>
+    <button class="hbtn" onclick="goTo(&#39;lobby&#39;)">← Lobby</button>
   </div>
   <div class="wm-ctr"><div class="wm-in">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--t1);letter-spacing:0.06em;margin-bottom:0.2rem;">Writing Movies</div>
+    <div style="font-family:&#39;Cormorant Garamond&#39;,serif;font-size:2rem;font-weight:300;color:var(--t1);letter-spacing:0.06em;margin-bottom:0.2rem;">Writing Movies</div>
     <div style="font-size:10px;letter-spacing:0.22em;color:var(--t3);text-transform:uppercase;margin-bottom:0.5rem;">Where do you want to go?</div>
     <div class="wm-opts">
-      <div class="wm-opt" onclick="goTo('dump')"><div class="wm-dnum">A</div><div class="wm-dtitle">Concepts Dump</div><div class="wm-ddesc">All your raw ideas, fragments, one-liners. Unassigned. Safe. Always here.</div><div class="wm-dtag">Open</div></div>
-      <div class="wm-opt" onclick="goTo('projects')"><div class="wm-dnum">B</div><div class="wm-dtitle">Projects</div><div class="wm-ddesc">Your active films and stories. Each project has its own writers room.</div><div class="wm-dtag">Open</div></div>
+      <div class="wm-opt" onclick="goTo(&#39;dump&#39;)"><div class="wm-dnum">A</div><div class="wm-dtitle">Concepts Dump</div><div class="wm-ddesc">All your raw ideas, fragments, one-liners. Unassigned. Safe. Always here.</div><div class="wm-dtag">Open</div></div>
+      <div class="wm-opt" onclick="goTo(&#39;projects&#39;)"><div class="wm-dnum">B</div><div class="wm-dtitle">Projects</div><div class="wm-ddesc">Your active films and stories. Each project has its own writers room.</div><div class="wm-dtag">Open</div></div>
     </div>
   </div></div>
 </div>
@@ -405,14 +405,14 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 <div id="dump" class="pg dark-pg fi">
   <div class="dark-head">
     <div class="dark-title">Concepts Dump</div>
-    <button class="abtn" onclick="openModal('nc-modal')">+ New Concept</button>
-    <button class="theme-btn" onclick="toggleTheme()">&#9788; Theme</button>
-    <button class="hbtn" onclick="goTo('wmhub')">&#8592; Back</button>
+    <button class="abtn" onclick="openModal(&#39;nc-modal&#39;)">+ New Concept</button>
+    <button class="theme-btn" onclick="toggleTheme()">☼ Theme</button>
+    <button class="hbtn" onclick="goTo(&#39;wmhub&#39;)">← Back</button>
   </div>
   <div class="dump-toolbar">
     <button class="sort-btn" id="sort-manual-btn" onclick="toggleSort()">Manual Order</button>
     <button class="sort-btn act" id="sort-date-btn" onclick="toggleSort()" style="display:none">Newest First</button>
-    <button class="dump-ai-btn" onclick="toggleDumpChat()">&#9997; Discuss with Writers</button>
+    <button class="dump-ai-btn" onclick="toggleDumpChat()">✍ Discuss with Writers</button>
   </div>
   <div class="dump-grid" id="dump-grid">
     <div class="dump-empty" id="dump-empty">No concepts yet. Click + New Concept to add your first idea.</div>
@@ -421,7 +421,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <div class="dump-chat-hdr">
       <div style="font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-dim);">Discuss Concepts</div>
       <div style="font-size:9px;color:var(--t3);flex:1;margin-left:0.8rem;">Ask your writers anything about your concepts</div>
-      <button onclick="toggleDumpChat()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;line-height:1;padding:0 4px;">&#10005;</button>
+      <button onclick="toggleDumpChat()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;line-height:1;padding:0 4px;">✕</button>
     </div>
     <div class="dump-chat-msgs" id="dump-chat-msgs"></div>
     <div class="dump-chat-in">
@@ -432,21 +432,21 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
   <div class="overlay" id="nc-modal">
     <div class="modal">
       <div class="modal-title">New Concept</div>
-      <div class="mf"><div class="ml">Title (optional)</div><input class="mi" id="nc-title" placeholder="Untitled concept"/></div>
-      <div class="mf"><div class="ml">Your idea</div><textarea class="mta" id="nc-body" placeholder="One line, a paragraph, something that doesn't make sense yet — anything goes." rows="5"></textarea></div>
-      <div class="mbts"><button class="btn-g" onclick="closeModal('nc-modal')">Cancel</button><button class="btn-p" onclick="addConcept()">Save Concept</button></div>
+      <div class="mf"><div class="ml">Title (optional)</div><input class="mi" id="nc-title" placeholder="Untitled concept"></div>
+      <div class="mf"><div class="ml">Your idea</div><textarea class="mta" id="nc-body" placeholder="One line, a paragraph, something that doesn&#39;t make sense yet — anything goes." rows="5"></textarea></div>
+      <div class="mbts"><button class="btn-g" onclick="closeModal(&#39;nc-modal&#39;)">Cancel</button><button class="btn-p" onclick="addConcept()">Save Concept</button></div>
     </div>
   </div>
   <div class="overlay" id="cv-modal">
     <div class="modal" style="max-width:540px;">
       <div style="font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--t3);margin-bottom:0.6rem;" id="cv-date"></div>
       <div class="cv-td" id="cv-td"></div>
-      <input class="cv-te" id="cv-te" placeholder="Title"/>
+      <input class="cv-te" id="cv-te" placeholder="Title">
       <div class="cv-bd" id="cv-bd" style="margin-bottom:1rem;"></div>
       <textarea class="cv-be" id="cv-be" rows="6"></textarea>
       <div id="cv-projs" style="font-size:9px;color:rgba(201,168,76,0.45);letter-spacing:0.07em;margin-top:0.5rem;margin-bottom:0.8rem;"></div>
       <div class="mbts">
-        <button class="btn-g" onclick="closeModal('cv-modal')">Close</button>
+        <button class="btn-g" onclick="closeModal(&#39;cv-modal&#39;)">Close</button>
         <button class="btn-g" id="cv-edit-btn" onclick="toggleConceptEdit()">Edit</button>
         <button class="btn-p" id="cv-save-btn" onclick="saveConceptEdit()" style="display:none">Save</button>
       </div>
@@ -464,16 +464,16 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 <div id="projects" class="pg dark-pg fi">
   <div class="dark-head">
     <div class="dark-title">Projects</div>
-    <button class="theme-btn" onclick="toggleTheme()">&#9788; Theme</button>
-    <button class="hbtn" onclick="goTo('wmhub')">&#8592; Back</button>
+    <button class="theme-btn" onclick="toggleTheme()">☼ Theme</button>
+    <button class="hbtn" onclick="goTo(&#39;wmhub&#39;)">← Back</button>
   </div>
   <div class="proj-grid" id="proj-grid"></div>
   <div class="overlay" id="np-modal">
     <div class="modal">
       <div class="modal-title">New Project</div>
-      <div class="mf"><div class="ml">Project name</div><input class="mi" id="np-name" placeholder="e.g. The Thing in the Window"/></div>
-      <div class="mf"><div class="ml">One line description</div><input class="mi" id="np-desc" placeholder="e.g. Psychological horror. Mumbai. A body in the window."/></div>
-      <div class="mbts"><button class="btn-g" onclick="closeModal('np-modal')">Cancel</button><button class="btn-p" onclick="createProject()">Create Project</button></div>
+      <div class="mf"><div class="ml">Project name</div><input class="mi" id="np-name" placeholder="e.g. The Thing in the Window"></div>
+      <div class="mf"><div class="ml">One line description</div><input class="mi" id="np-desc" placeholder="e.g. Psychological horror. Mumbai. A body in the window."></div>
+      <div class="mbts"><button class="btn-g" onclick="closeModal(&#39;np-modal&#39;)">Cancel</button><button class="btn-p" onclick="createProject()">Create Project</button></div>
     </div>
   </div>
 </div>
@@ -482,7 +482,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 <div id="ob" class="pg dark-pg fi">
   <div class="ob-bar"><div class="ob-fill" id="ob-fill" style="width:0%"></div></div>
   <div class="ob-head">
-    <button class="btn-g" onclick="goTo('projects')">&#8592; Back</button>
+    <button class="btn-g" onclick="goTo(&#39;projects&#39;)">← Back</button>
     <div class="ob-htitle">Getting to know you</div>
     <div style="font-size:10px;color:var(--t3);letter-spacing:0.1em;" id="ob-ctr">1 of 5</div>
   </div>
@@ -493,7 +493,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 <div id="profed" class="pg dark-pg fi">
   <div class="ob-bar"><div style="height:100%;background:var(--gold-dim);width:100%"></div></div>
   <div class="ob-head">
-    <button class="btn-g" onclick="saveProfile()">&#8592; Save &amp; Return</button>
+    <button class="btn-g" onclick="saveProfile()">← Save &amp; Return</button>
     <div class="ob-htitle">Your Profile</div>
     <div style="font-size:10px;color:var(--t3);">Nothing here is permanent</div>
   </div>
@@ -505,17 +505,17 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
   <div class="app-top">
     <div class="app-logo">Pratik's Think-Tank</div>
     <div class="app-proj-lbl" id="app-proj-lbl">Project</div>
-    <button class="hbtn" onclick="goTo('projects')">&#8592; Projects</button>
+    <button class="hbtn" onclick="goTo(&#39;projects&#39;)">← Projects</button>
     <button class="hbtn" onclick="openEditProfile()">Profile</button>
     <button class="hbtn" onclick="toggleConceptsPanel()">Concepts</button>
-    <button class="theme-btn" onclick="toggleTheme()">&#9788;</button>
+    <button class="theme-btn" onclick="toggleTheme()">☼</button>
   </div>
   <div class="app-body">
     <div class="lpanel">
       <div class="lsec">
         <div class="lsec-t">Writers <button class="ladd" onclick="openAddWriter()" title="Add voice">+</button></div>
         <div id="wlist"></div>
-        <button class="vadd" onclick="switchGroup()">&#8617; Group Room</button>
+        <button class="vadd" onclick="switchGroup()">↩ Group Room</button>
       </div>
       <div class="lsec">
         <div class="lsec-t">Project Vault <button class="ladd" onclick="openVaultModal()" title="Add reference">+</button></div>
@@ -525,8 +525,8 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     </div>
     <div class="cpanel">
       <div id="priv-bar" class="priv-bar" style="display:none">
-        <span>Private &#8212; <span id="priv-nm"></span> only</span>
-        <button class="close-priv" onclick="switchGroup()">&#8592; Group Room</button>
+        <span>Private — <span id="priv-nm"></span> only</span>
+        <button class="close-priv" onclick="switchGroup()">← Group Room</button>
       </div>
       <div class="chat-hdr">
         <div class="cmode gmode" id="mode-lbl">Group Room</div>
@@ -534,19 +534,19 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
         <div class="chat-hdr-right">
           <div class="mode-picker-wrap">
             <button class="mode-pill" onclick="toggleModeDD()" id="mode-pill-btn">
-              <span class="mode-dot"></span><span id="mode-pill-lbl">Debate</span> &#9662;
+              <span class="mode-dot"></span><span id="mode-pill-lbl">Debate</span> ▾
             </button>
             <div class="mode-dropdown" id="mode-dd">
-              <div class="mode-opt sel" onclick="setMode('debate')" id="mopt-debate"><div class="mo-name">Debate</div><div class="mo-desc">Each writer reads the others and engages</div></div>
-              <div class="mode-opt" onclick="setMode('solo')" id="mopt-solo"><div class="mo-name">Solo</div><div class="mo-desc">Each writer answers independently, simultaneously</div></div>
-              <div class="mode-opt" onclick="setMode('devils')" id="mopt-devils"><div class="mo-name">Devil's Advocate</div><div class="mo-desc">Last writer argues against the others</div></div>
-              <div class="mode-opt" onclick="setMode('build')" id="mopt-build"><div class="mo-name">Build</div><div class="mo-desc">Each writer only adds, never contradicts</div></div>
-              <div class="mode-opt" onclick="setMode('pitch')" id="mopt-pitch"><div class="mo-name">Pitch</div><div class="mo-desc">All three respond as if presenting to a producer</div></div>
+              <div class="mode-opt sel" onclick="setMode(&#39;debate&#39;)" id="mopt-debate"><div class="mo-name">Debate</div><div class="mo-desc">Each writer reads the others and engages</div></div>
+              <div class="mode-opt" onclick="setMode(&#39;solo&#39;)" id="mopt-solo"><div class="mo-name">Solo</div><div class="mo-desc">Each writer answers independently, simultaneously</div></div>
+              <div class="mode-opt" onclick="setMode(&#39;devils&#39;)" id="mopt-devils"><div class="mo-name">Devil's Advocate</div><div class="mo-desc">Last writer argues against the others</div></div>
+              <div class="mode-opt" onclick="setMode(&#39;build&#39;)" id="mopt-build"><div class="mo-name">Build</div><div class="mo-desc">Each writer only adds, never contradicts</div></div>
+              <div class="mode-opt" onclick="setMode(&#39;pitch&#39;)" id="mopt-pitch"><div class="mo-name">Pitch</div><div class="mo-desc">All three respond as if presenting to a producer</div></div>
             </div>
           </div>
           <div class="view-toggle">
-            <button class="vtbtn active" id="vt-stack" onclick="setView('stacked')" title="Stacked">&#9776;</button>
-            <button class="vtbtn" id="vt-side" onclick="setView('sbs')" title="Side by side">&#8942;</button>
+            <button class="vtbtn active" id="vt-stack" onclick="setView(&#39;stacked&#39;)" title="Stacked">☰</button>
+            <button class="vtbtn" id="vt-side" onclick="setView(&#39;sbs&#39;)" title="Side by side">⋮</button>
           </div>
         </div>
       </div>
@@ -556,31 +556,31 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
           <textarea class="chat-ta" id="chat-ta" placeholder="Drop your idea, scene, prompt or concept here..." rows="2" onkeydown="handleKey(event)"></textarea>
           <button class="send-btn" id="send-btn" onclick="sendMsg()">Send</button>
         </div>
-        <div class="in-meta" id="in-meta">All three writers respond &#8212; Shift+Enter for new line</div>
+        <div class="in-meta" id="in-meta">All three writers respond — Shift+Enter for new line</div>
       </div>
     </div>
   </div>
   <!-- CONCEPTS PANEL -->
   <div class="concepts-panel" id="concepts-panel">
-    <div class="cp-head"><div class="cp-title">Your Concepts</div><button class="cp-close" onclick="toggleConceptsPanel()">&#10005;</button></div>
+    <div class="cp-head"><div class="cp-title">Your Concepts</div><button class="cp-close" onclick="toggleConceptsPanel()">✕</button></div>
     <div class="cp-list" id="cp-list"></div>
   </div>
   <!-- ADD WRITER -->
   <div class="overlay" id="aw-modal">
     <div class="modal">
       <div class="modal-title">Add a New Voice</div>
-      <div class="mf"><div class="ml">Name</div><input class="mi" id="aw-name" placeholder="e.g. The Contrarian"/></div>
-      <div class="mf"><div class="ml">Craft identity</div><textarea class="mta" id="aw-persona" placeholder="Who are they? What's their creative philosophy?" rows="4"></textarea></div>
+      <div class="mf"><div class="ml">Name</div><input class="mi" id="aw-name" placeholder="e.g. The Contrarian"></div>
+      <div class="mf"><div class="ml">Craft identity</div><textarea class="mta" id="aw-persona" placeholder="Who are they? What&#39;s their creative philosophy?" rows="4"></textarea></div>
       <div class="mf"><div class="ml">AI Engine</div><select class="ms" id="aw-eng"><option value="claude">Claude</option><option value="openai">GPT-4o</option><option value="gemini">Gemini</option></select></div>
       <div class="mf"><div class="ml">Colour</div><div class="csw-row" id="csw-row"></div></div>
-      <div class="mbts"><button class="btn-g" onclick="closeModal('aw-modal')">Cancel</button><button class="btn-p" onclick="addWriter()">Add Voice</button></div>
+      <div class="mbts"><button class="btn-g" onclick="closeModal(&#39;aw-modal&#39;)">Cancel</button><button class="btn-p" onclick="addWriter()">Add Voice</button></div>
     </div>
   </div>
   <!-- VAULT -->
   <div class="overlay" id="vault-modal">
     <div class="modal">
       <div class="modal-title">Add to Project Vault</div>
-      <div class="mf"><div class="ml">Title</div><input class="mi" id="v-title" placeholder="e.g. The Dark Knight screenplay"/></div>
+      <div class="mf"><div class="ml">Title</div><input class="mi" id="v-title" placeholder="e.g. The Dark Knight screenplay"></div>
       <div class="mf"><div class="ml">Type</div>
         <select class="ms" id="v-type" onchange="toggleVType(this.value)">
           <option value="screenplay">Screenplay</option><option value="book">Craft book</option><option value="note">Personal note</option><option value="research">Research</option><option value="link">Link / article</option><option value="image">Image</option>
@@ -595,18 +595,18 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
       <div class="mf" id="v-text-field"><div class="ml">Content</div><textarea class="mta" id="v-content" placeholder="Paste text, excerpts, notes, or a link..." rows="4"></textarea></div>
       <div class="mf" id="v-img-field" style="display:none">
         <div class="ml">Upload image</div>
-        <input type="file" id="v-img-file" accept="image/png,image/jpeg,image/jpg" onchange="previewVaultImg(this)" style="width:100%;background:var(--b3);border:1px solid var(--b2);color:var(--t2);padding:0.5rem 0.75rem;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;"/>
-        <div id="v-img-preview" style="margin-top:0.6rem;display:none"><img id="v-img-thumb" style="max-width:100%;max-height:120px;border:1px solid var(--b2);"/></div>
+        <input type="file" id="v-img-file" accept="image/png,image/jpeg,image/jpg" onchange="previewVaultImg(this)" style="width:100%;background:var(--b3);border:1px solid var(--b2);color:var(--t2);padding:0.5rem 0.75rem;font-family:&#39;DM Mono&#39;,monospace;font-size:11px;cursor:pointer;">
+        <div id="v-img-preview" style="margin-top:0.6rem;display:none"><img id="v-img-thumb" style="max-width:100%;max-height:120px;border:1px solid var(--b2);"></div>
         <div style="margin-top:0.6rem"><div class="ml">Caption</div><textarea class="mta" id="v-img-caption" placeholder="What is this image? What does it capture?" rows="3"></textarea></div>
       </div>
-      <div class="mbts"><button class="btn-g" onclick="closeModal('vault-modal')">Cancel</button><button class="btn-p" onclick="addVault()">Add to Vault</button></div>
+      <div class="mbts"><button class="btn-g" onclick="closeModal(&#39;vault-modal&#39;)">Cancel</button><button class="btn-p" onclick="addVault()">Add to Vault</button></div>
     </div>
   </div>
   <!-- LIBRARY -->
   <div class="overlay" id="lib-modal">
     <div class="modal">
       <div class="modal-title">Add to <span id="lib-wname"></span>'s Library</div>
-      <div class="mf"><div class="ml">Title</div><input class="mi" id="lib-title" placeholder="e.g. Story by Robert McKee — key chapters"/></div>
+      <div class="mf"><div class="ml">Title</div><input class="mi" id="lib-title" placeholder="e.g. Story by Robert McKee — key chapters"></div>
       <div class="mf"><div class="ml">Type</div>
         <select class="ms" id="lib-type" onchange="toggleLibType(this.value)">
           <option value="text">Text / notes / excerpts</option><option value="image">Image</option>
@@ -615,11 +615,11 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
       <div class="mf" id="lib-text-field"><div class="ml">Content</div><textarea class="mta" id="lib-content" placeholder="Paste text, excerpts, notes for this writer to learn from." rows="5"></textarea></div>
       <div class="mf" id="lib-img-field" style="display:none">
         <div class="ml">Upload image</div>
-        <input type="file" id="lib-img-file" accept="image/png,image/jpeg,image/jpg" onchange="previewLibImg(this)" style="width:100%;background:var(--b3);border:1px solid var(--b2);color:var(--t2);padding:0.5rem 0.75rem;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;"/>
-        <div id="lib-img-preview" style="margin-top:0.6rem;display:none"><img id="lib-img-thumb" style="max-width:100%;max-height:110px;border:1px solid var(--b2);"/></div>
+        <input type="file" id="lib-img-file" accept="image/png,image/jpeg,image/jpg" onchange="previewLibImg(this)" style="width:100%;background:var(--b3);border:1px solid var(--b2);color:var(--t2);padding:0.5rem 0.75rem;font-family:&#39;DM Mono&#39;,monospace;font-size:11px;cursor:pointer;">
+        <div id="lib-img-preview" style="margin-top:0.6rem;display:none"><img id="lib-img-thumb" style="max-width:100%;max-height:110px;border:1px solid var(--b2);"></div>
         <div style="margin-top:0.6rem"><div class="ml">Notes</div><textarea class="mta" id="lib-img-caption" placeholder="What should this writer learn from this image?" rows="3"></textarea></div>
       </div>
-      <div class="mbts"><button class="btn-g" onclick="closeModal('lib-modal')">Cancel</button><button class="btn-p" onclick="addToLib()">Add to Library</button></div>
+      <div class="mbts"><button class="btn-g" onclick="closeModal(&#39;lib-modal&#39;)">Cancel</button><button class="btn-p" onclick="addToLib()">Add to Library</button></div>
     </div>
   </div>
 </div>
@@ -627,27 +627,27 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 <!-- SETTINGS MODAL -->
 <div id="settings-modal">
   <div class="sm-in">
-    <div class="sm-t">Settings &#8212; API Keys</div>
-    <div class="sm-s"><div class="sm-l" style="color:#7ab89a;">Claude API Key</div><input type="password" class="sm-i" id="sm-claude" placeholder="sk-ant-api03-..."/><div class="sm-h">platform.anthropic.com</div></div>
-    <div class="sm-s"><div class="sm-l" style="color:#9a7ab8;">OpenAI API Key (GPT-4o)</div><input type="password" class="sm-i" id="sm-openai" placeholder="sk-proj-..."/><div class="sm-h">platform.openai.com</div></div>
-    <div class="sm-s"><div class="sm-l" style="color:#b87a7a;">Gemini API Key (Google)</div><input type="password" class="sm-i" id="sm-gemini" placeholder="AIza..."/><div class="sm-h">aistudio.google.com</div></div>
+    <div class="sm-t">Settings — API Keys</div>
+    <div class="sm-s"><div class="sm-l" style="color:#7ab89a;">Claude API Key</div><input type="password" class="sm-i" id="sm-claude" placeholder="sk-ant-api03-..."><div class="sm-h">platform.anthropic.com</div></div>
+    <div class="sm-s"><div class="sm-l" style="color:#9a7ab8;">OpenAI API Key (GPT-4o)</div><input type="password" class="sm-i" id="sm-openai" placeholder="sk-proj-..."><div class="sm-h">platform.openai.com</div></div>
+    <div class="sm-s"><div class="sm-l" style="color:#b87a7a;">Gemini API Key (Google)</div><input type="password" class="sm-i" id="sm-gemini" placeholder="AIza..."><div class="sm-h">aistudio.google.com</div></div>
     <div class="sm-dv"></div>
     <div class="sm-sb">Writer Engine Assignment</div>
     <div class="sm-rw"><div class="sm-rl">The Architect</div><select class="sm-se" id="sm-w1"><option value="claude">Claude</option><option value="openai">GPT-4o</option><option value="gemini">Gemini</option></select></div>
-    <div class="sm-rw"><div class="sm-rl">The Human Being</div><select class="sm-se" id="sm-w2"><option value="claude">Claude</option><option value="openai" selected>GPT-4o</option><option value="gemini">Gemini</option></select></div>
-    <div class="sm-rw" style="margin-bottom:1.5rem;"><div class="sm-rl">The Philosopher</div><select class="sm-se" id="sm-w3"><option value="claude">Claude</option><option value="openai">GPT-4o</option><option value="gemini" selected>Gemini</option></select></div>
+    <div class="sm-rw"><div class="sm-rl">The Human Being</div><select class="sm-se" id="sm-w2"><option value="claude">Claude</option><option value="openai" selected="">GPT-4o</option><option value="gemini">Gemini</option></select></div>
+    <div class="sm-rw" style="margin-bottom:1.5rem;"><div class="sm-rl">The Philosopher</div><select class="sm-se" id="sm-w3"><option value="claude">Claude</option><option value="openai">GPT-4o</option><option value="gemini" selected="">Gemini</option></select></div>
     <div class="sm-dv"></div>
     <div class="sm-sb">OpenAI CORS Fix (Cloudflare Worker)</div>
     <div class="sm-s">
       <div class="sm-l" style="color:#b8a07a;">Worker URL (optional)</div>
-      <input type="text" class="sm-i" id="sm-proxy" placeholder="https://your-worker.workers.dev"/>
+      <input type="text" class="sm-i" id="sm-proxy" placeholder="https://your-worker.workers.dev">
       <div class="sm-h">Only needed if GPT-4o shows connection errors. Free Cloudflare Worker acts as proxy.</div>
     </div>
     <div style="background:var(--b3);border:1px solid var(--b1);padding:1rem;margin-bottom:1.5rem;font-size:10px;color:var(--t3);line-height:1.8;letter-spacing:0.03em;">
       <div style="color:var(--gold-dim);letter-spacing:0.15em;text-transform:uppercase;font-size:9px;margin-bottom:0.6rem;">Cloudflare Worker Setup (5 min, free)</div>
-      1. Go to workers.cloudflare.com &mdash; create free account<br>
-      2. Create Worker &rarr; paste the worker script (ask Claude for it)<br>
-      3. Deploy &rarr; copy the URL &rarr; paste above
+      1. Go to workers.cloudflare.com — create free account<br>
+      2. Create Worker → paste the worker script (ask Claude for it)<br>
+      3. Deploy → copy the URL → paste above
     </div>
     <button class="sm-sv" onclick="saveSettingsModal()">Save Settings</button>
     <div class="sm-mg" id="sm-msg"></div>
@@ -687,7 +687,7 @@ let sortByDate=false;
 let dragSrcId=null;
 let cpOpen=false;
 
-function initSB(){try{if(window.supabase){sb=window.supabase.createClient(SB_URL,SB_KEY);}}catch(e){}}
+function initSB(){try{if(typeof window.supabase!=='undefined'&&window.supabase.createClient){sb=window.supabase.createClient(SB_URL,SB_KEY);window.sb=sb;console.log('Supabase OK');}}catch(e){console.log('Supabase init error:',e);}}
 // Keep Supabase alive - ping every 4 days to prevent pausing
 setInterval(async function(){
   if(sb){try{await sb.from('ptt_data').select('id').eq('id','main').single();}catch(e){}}
@@ -740,6 +740,11 @@ async function loadAll(){
 document.addEventListener('DOMContentLoaded',async function(){
   try{
     loadKeys();initSB();await loadAll();
+    // Seed concepts if empty (data recovery)
+    if(!concepts.length){
+      const seed="[{\"id\": \"c1778082085759\", \"title\": \"Father-Daughter murder mystery in Iceland\", \"body\": \"Father-daughter live at a very isolated cold and low populated mountain town in Iceland.\\nThey both grieve the mother's death. \\nShe died a few years after daughter was born. Daughter really longs for her mother and misses her presence in an empty home but father and her do fine, they've made a nice happy home over the years. \\nTURN:\\nMother was always alive and was searching for the daughter but father took her from the mother and ran away. When she finally arrives to meet her daughter who she's been searching for decades. The father kills her in the absence of the daughter. The daughter doesn't know who she was. \\n(Father is a policeman and is investigating the same murder.) daughter helps him\\nOr \\n(daughter finds a dead body and the father confesses that she was just a wandering crazy woman and he killed her by accident and daughter helps in hiding her dead body)\", \"projs\": [], \"created\": 1778082085759}, {\"id\": \"c1778082120541\", \"title\": \"Medallion\", \"body\": \"There is a medallion that everyone is looking for. It is said that it contains the strength of the world, some say that it contains map to the world's greatest treasure, some say that turns you into a monster. \\nProtagonist's father searches for something - an invisible floating city in the sky. \\nDuring the first half they search for medallion and in the middle\\nProtagonist gets the medallion and wears it throughout, people/thieves/kings try to search for this kid who has the medallion but the medallion doesn't work, it has no special powers, father tells him to believe in it. \\nSome say the medallion turns you into a monster, some say that it summons a monster but it does nothing. \\nIn the end, when people try to steal it from the boy (the boy wears it around bud neck) the medallion burns itself inside the boy's chest\\nWhat it really does is, it summons a dragon. This boy rides the dragon. \\nWhat his power does - he can see what the dragon sees. Feel the power of the dragon, he can control it,\", \"projs\": [], \"created\": 1778082120541}, {\"id\": \"c1778082171770\", \"title\": \"Jaws on land - Concept\", \"body\": \"Tiger attacks a secluded society. \\nNew society. \\n\\nMake the worst possible scenario for humans \\n\\nJaws on land\", \"projs\": [], \"created\": 1778082171770}, {\"id\": \"c1778082201393\", \"title\": \"Jail Concept - Black Mirror type\", \"body\": \"You go to jail and you serve your time. When you come out after years, you see a whole new world, so much changed - technology, infrastructure, government, relationships, etc.\\nWhat if even after you serve 25-30 years in prison, you come out the same day as you got in. No changes. If you check into jail for a crime on 3rd October. You come out on 3rd October having spent the 25-30 years. For you when you go in, it's 30 years but for people outside, it's still 3rd of October same year, same time.\\n\\n-what if the only thing that's changed is you. You've grown old.\\n-or what if you're the same person on the outside(physically) but on the inside(mentally) you've lived 30 years.\\n\\nNo body changes except for you.\\nYou become a completely different person. The people who hate you or despise you for something still feel the same way, they haven't moved on.\", \"projs\": [], \"created\": 1778082201393}, {\"id\": \"c1778082223655\", \"title\": \"Soldier about to go to war\", \"body\": \"How would a soldier feel when he would be drafted into a war. Apart from feeling anxious /scared, he would probably feel proud, maybe.\\nSo let's consider a soldier who's 17, just drafted into war. He got enlisted because he saw everybody his age going into war and he wanted to be one of the cool kids, maybe. So he's had a 10-15 day army training of basic protocols and now he's being sent to a beach in France to fight a very powerful German army.\", \"projs\": [], \"created\": 1778082223655}, {\"id\": \"c1778082256784\", \"title\": \"Maiden of his dreams\", \"body\": \"A king falls madly in love with a beautiful maiden. She is the girl of his dreams. \\n\\nThis angel never speaks but just dissipates so much glow and energy around herself that the man feels how can anyone not fall in love with her.\", \"projs\": [], \"created\": 1778082256784}, {\"id\": \"c1778083651721\", \"title\": \"Consciousness after death\", \"body\": \"What if after death your consciousness leaves your body and merges with existing person's consciousness. Consciousness isn't you as a person, you've already perished. It's inside you...\", \"projs\": [], \"created\": 1778083651721}, {\"id\": \"c1778086867120\", \"title\": \"Creating a Myth\", \"body\": \"A widowed queen was with a child when her kingdom was attacked by enemies. There was a prophecy that her child would destroy the all great mad king(enemy king-ruthless, powerful and mad) who ruled the...\", \"projs\": [], \"created\": 1778086867120}, {\"id\": \"c1778086894921\", \"title\": \"Assasin Parent\", \"body\": \"An Indian man lives with his son who's a Japanese (mother was a Japanese) and is devoted to his son. He wakes up early and gets him up and ready for school. He makes breakfast for him - japanese style...\", \"projs\": [], \"created\": 1778086894921}, {\"id\": \"c1778086932073\", \"title\": \"Choir Boy\", \"body\": \"A man robs bank for fun but he doesn't know that his roommate is a cop. \\nChoir boy - Love and Radio\", \"projs\": [], \"created\": 1778086932073}, {\"id\": \"c1778086978478\", \"title\": \"The Magician and the improviser\", \"body\": \"A man who improvises\\n\\nMagician leaves his seemingly ordinary shop to an imaginative improviser who accidentally kills him while improvising in his shop to impress his friends. He starts by impressing...\", \"projs\": [], \"created\": 1778086978478}, {\"id\": \"c1778087001564\", \"title\": \"Share spaces\", \"body\": \"Shaadi party\\n\\nOne group in hotel\\nOne group in house\\nOne group in office\\n\\nAbout 60 people in total. Share their space and have a party together. All the above spaces combine and become...\", \"projs\": [], \"created\": 1778087001564}, {\"id\": \"c1778087018950\", \"title\": \"New idea - ghost in the shell\", \"body\": \"A: You're talking about redefining my identity\\nI want a guarantee that i can still be myself\\n\\nB: There isn't one\\nWhy would you wish to\\nAll things change in a dynamic...\", \"projs\": [], \"created\": 1778087018950}, {\"id\": \"c1778087044641\", \"title\": \"Dream items\", \"body\": \"If i sleep and in my dream i pick something up, and keep it in my pocket, it shows up in my pocket when i wake up in the real world.\", \"projs\": [], \"created\": 1778087044641}, {\"id\": \"c1778087082032\", \"title\": \"Tvf type\", \"body\": \"Pratik is addressing a group of 15 foreigners outside a 5-star hotel. All are well dressed, seem excited and pretentious. \\n\\nPratik looking into a foreigner's phone who is just showing her dog's...\", \"projs\": [], \"created\": 1778087082032}, {\"id\": \"c1778087113944\", \"title\": \"Narrative device / element (not a concept)\", \"body\": \"2 gangsters are sitting with an FBI agent Johnson. The agent tells them if you tell the truth, he'll make sure that they walk free. The two look at each other. The fat one looks li...\", \"projs\": [], \"created\": 1778087113944}, {\"id\": \"c1778087157889\", \"title\": \"Survival Guide to Life\", \"body\": \"You move into a new apartment and while you're unpacking, about to keep clothes in the Almira, you check out all the drawers. In one of the drawers is a torn-up black notebook. You...\", \"projs\": [], \"created\": 1778087157889}, {\"id\": \"c1778087180123\", \"title\": \"A conversation between the prey and the predator\", \"body\": \"A baby Pigeon is sitting on his nest waiting for his mother.\\nHe cant fly yet. A huge hawk sits above the nest staring at him. The hawk is hungry. After observing the squab for a while, the hawk dec...\", \"projs\": [], \"created\": 1778087180123}, {\"id\": \"c1778087206718\", \"title\": \"Reverse truman show\", \"body\": \"What if a man believes he's been watched and he feels like that his whole life but never really confesses to anyone. He takes this feeling in a good stride and lives a good/entertaining life thinking...\", \"projs\": [], \"created\": 1778087206718}, {\"id\": \"c1778087237092\", \"title\": \"Just a Thought (not a concept)\", \"body\": \"When the sun sets, it doesn't just go away with a switch or a jolt. It fades, in other words, it cries as it goes away and we can still see the tears of the sun when we see that th...\", \"projs\": [], \"created\": 1778087237092}, {\"id\": \"c1778087271484\", \"title\": \"You when you were younger\", \"body\": \"What if one day as you're crossing the street, you meet with your younger self. This young person isn't a lookalike. He actually is YOU when you were younger.\", \"projs\": [], \"created\": 1778087271484}, {\"id\": \"c1778087317187\", \"title\": \"The Office (US) - Thriller version\", \"body\": \"Action/Thriller /Drama version of the office. Only the first names of the office characters.\\n\\n\\\"hi, you must be James\\\"\\n\\\"you can call me Jim\\\"\\nHi Jim, I'm Michael\\\"\\n\\nLet's get to work.\", \"projs\": [], \"created\": 1778087317187}, {\"id\": \"c1778087346816\", \"title\": \"Lore Podcast stories\", \"body\": \"1. Lore witch sequel - Rosemary's baby.\\n (episode name - making a mark? Unsure or half hanged?) - the lone wolf dies but the pack survives\\n\\n\\n2. Children abducted and ke...\", \"projs\": [], \"created\": 1778087346816}, {\"id\": \"c1778087388102\", \"title\": \"Family infiltrator - crime + docu style\", \"body\": \"A man has infiltrated a family as their son. This family is really rich. The real man has died in front of prot after a car accident and the man looks exactly like the prot. The family - F...\", \"projs\": [], \"created\": 1778087388102}, {\"id\": \"c1778087409834\", \"title\": \"The Amazing world of Arranged Marriages\", \"body\": \"Often it is thought amongst our generation that arranged marriages are facades, that there are so many relationships that don't work because you don't know the other person and their families well eno...\", \"projs\": [], \"created\": 1778087409834}, {\"id\": \"c1778087429609\", \"title\": \"Silver train bogie that travels the world like CatBus\", \"body\": \"A shiny silver train bogie travels across the world all year round. It remains unseen by everyone except for people who know about its existence.\\nThis bogie emits blinding gold light from its squar...\", \"projs\": [], \"created\": 1778087429609}, {\"id\": \"c1778087448016\", \"title\": \"Real suffering is witnessing the suffering of someone close and not being able to do anything about it\", \"body\": \"Evening - A man walking along the street on a footpath and a serious accident happens on the road. Everybody stops and is vicariously witnessing the pain being felt by the victims...\", \"projs\": [], \"created\": 1778087448016}, {\"id\": \"c1778087464306\", \"title\": \"Superhero kid\", \"body\": \"A kid when he's just born, his parents are told by the doctors that he doesn't have much long to live. The parents decide, instead of taking this news as a loss, they'll instead ch...\", \"projs\": [], \"created\": 1778087464306}, {\"id\": \"c1778087487526\", \"title\": \"Murder mystery - Subconscious independent of time\", \"body\": \"A man witnessed a traumatic event when he was 5.\\n\\n\\nHe doesn't remember much about the trauma now that he's an adult but still gets terrible night terrors that are now affecting his physical a...\", \"projs\": [], \"created\": 1778087487526}, {\"id\": \"c1778087511451\", \"title\": \"A boy-girl story (murder mystery)\", \"body\": \"A girl is murdered. There's a boy in her class who was in love with her but never spoke to her. He never had the courage. He's a bit of a loser and a loner.\\nShe was the only rea...\", \"projs\": [], \"created\": 1778087511451}, {\"id\": \"c1778087533801\", \"title\": \"Stray dog meets steins gate\", \"body\": \"A rookie policeman loses his gun on the first day of his duty. Turns out His gun killed someone in the past/future. Gun traveled through time.\", \"projs\": [], \"created\": 1778087533801}, {\"id\": \"c1778087550333\", \"title\": \"Dream state genius - Dream i had\", \"body\": \"I enter a bar where i don't remember anything\\nAnd the bar is full of celebrities. Talented actors and musicians, etc\\nI am so drunk that i dont recognize any of them as celebr...\", \"projs\": [], \"created\": 1778087550333}, {\"id\": \"c1778087571430\", \"title\": \"Time-traveler who can swap himself from his past\", \"body\": \"A man can time-travel through his past and future life in his lifetime and can also swap\\n\\nSimilar to time travelers wife in which eric bana travels throughout his life - past, present and future...\", \"projs\": [], \"created\": 1778087571430}, {\"id\": \"c1778087603633\", \"title\": \"Hibernation man\", \"body\": \"There's a man who is made to hibernate (50 years) every 25 years of his life.\\nThis is the story of his life's journey.\", \"projs\": [], \"created\": 1778087603633}, {\"id\": \"c1778087637478\", \"title\": \"Story about innocent Kids\", \"body\": \"Innocent and dumb Kids caught in a raid by the NCB/authority/police\\n\\n\\nVery difficulty in getting out but are innocent and then they are let go stating that they are dumb i...\", \"projs\": [], \"created\": 1778087637478}, {\"id\": \"c1778087661937\", \"title\": \"Cadillac man (movie) meets restaurant waiter\", \"body\": \"Ek waiter joh ki poora restaurant hostage le leta hai because usko woh hi gaana baar baar sun sun kar tang aa jaata hai\\nToh he has a nervous breakdown and takes the restaurant h...\", \"projs\": [], \"created\": 1778087661937}, {\"id\": \"c1778087708543\", \"title\": \"Behavior concept\", \"body\": \"What is that one thing that you don't know that you do and others find it irritating but they don't tell you.\\nAnd once you get to know what it is..\\nIt suddenly occurs to you...\", \"projs\": [], \"created\": 1778087708543}, {\"id\": \"c1778087734551\", \"title\": \"Science Experiment in a theme Park (dream i had)\", \"body\": \"There is a science experiment happening in an abandoned theme park. This park has not been in operation since the 80's. The park is situated in a small town in India. Not an import...\", \"projs\": [], \"created\": 1778087734551}, {\"id\": \"c1778087751562\", \"title\": \"Invasion of the body snatchers +South park ep. concept\", \"body\": \"Invasion of the body snatchers.\\nBut hindu - Muslim\\n\\nThey're snatching bodies and turning everyone into weird aliens\\nAll religions must band together to stop this evil\", \"projs\": [], \"created\": 1778087751562}, {\"id\": \"c1778087771915\", \"title\": \"Sherlock Holmes meets Chef's Table meets Mr. Pickwick\", \"body\": \"Inspired from Charles Dickens' first novel - The Pickwick Papers.\\nOur protagonist is similar to Mr. Pickwick\\n\\nHe is fat, innocent looking, gullible, loyal and protective t...\", \"projs\": [], \"created\": 1778087771915}, {\"id\": \"c1778087796155\", \"title\": \"Restaurant (comedy)\", \"body\": \"In a restaurant, Buy a dish but from a different table already eating that dish and offer them a jaaydaad for the dish\", \"projs\": [], \"created\": 1778087796155}, {\"id\": \"c1778087921486\", \"title\": \"Old suspense Audio Dramas to adapt into films\", \"body\": \"- Sorry, wrong number\\n- Pigeon in a cage\\n- Occurrence at owl creek bridge\\n- The thing in the window\\n- Man in the house\\n- My dear niece\\n- Dead Ernest\\n- I won't go back\", \"projs\": [], \"created\": 1778087921486}, {\"id\": \"c1778087958498\", \"title\": \"PSA (short film idea) Public safety\", \"body\": \"PSA about car related death\\nThe guy gets killed in an accident.\\nJust after the impact\\nHe opens his eyes, he is driving the car again. Through the same route then again the...\", \"projs\": [], \"created\": 1778087958498}, {\"id\": \"c1778087977396\", \"title\": \"Son father\", \"body\": \"The son who lives exactly his father's life. Replicating everything that happened to the dad when dad was growing up.\\nSab kuch same hone lagta hai son ke saath joh bhi papa ke saath hua tha.\", \"projs\": [], \"created\": 1778087977396}, {\"id\": \"c1778087995293\", \"title\": \"Lady Macbeth (lookalike) meets Kagemusha\", \"body\": \"Taken from 'The 48 laws of Power by Robert Greene' \\nRead from 3 hours 48 minutes 30 seconds. \\n\\n\\n\\nStory of someone like lady macbeth and how she manipulates both kings...\", \"projs\": [], \"created\": 1778087995293}, {\"id\": \"c1778088045974\", \"title\": \"My old story inspired by Reservoir Dogs' daylight LA type of setting\", \"body\": \"After getting ditched by his mates post a dangerous heist, a robber drinks poison, records & sends his full confession to the police to avoid getting caught & tortured by th...\", \"projs\": [], \"created\": 1778088045974}, {\"id\": \"c1778088075965\", \"title\": \"Theme park ride that takes you to WW2 for 1 min\", \"body\": \"There's a ride which takes you into war directly for a whole minute. If you die when you're in the middle of that minute, then you die in real life. This is real war\\n\\nPeople...\", \"projs\": [], \"created\": 1778088075965}, {\"id\": \"c1778088105952\", \"title\": \"Even lone wolves have Guardian Angels\", \"body\": \"A detective who in the day time solves murder legally but in the night he masks himself and solves murder illegally. Murdering people etc like a masked avenger\\n\\nSome people k...\", \"projs\": [], \"created\": 1778088105952}, {\"id\": \"c1778088135601\", \"title\": \"Open-minded Grandparents\", \"body\": \"Grandparents who are closed off for the society but actually are extremely open minded swinging, smoking up, alchohol, sex\", \"projs\": [], \"created\": 1778088135601}, {\"id\": \"c1778088154372\", \"title\": \"Rick and morty S3 ep 2 inspired concept\", \"body\": \"Based on a moment in this episode. A concept.\\nThere's a moment when the strong hand on Morty who has taken revenge on everyone finally kills the last enemy and then goes away. T...\", \"projs\": [], \"created\": 1778088154372}, {\"id\": \"c1778088184013\", \"title\": \"Phone sex helpline turns into therapy\", \"body\": \"Ek phone sex girl sex call kar rahi hoti hai.\\nAur saamne se ek bande ka waapis reply aata hai. I just hugged my dad \\nFor the first time in my life. \\nAur fir woh sex talk turns into therapy...\", \"projs\": [], \"created\": 1778088184013}, {\"id\": \"c1778088203407\", \"title\": \"Doc on DTC Bus Drivers\", \"body\": \"Documentary on dtc bus drivers. Their lives and their routines. The dangers they go through while on road. How the buses are afraid of other drivers. How easy it is for them to go...\", \"projs\": [], \"created\": 1778088203407}, {\"id\": \"c1778088235275\", \"title\": \"Waiter and Gobar\", \"body\": \"1. A waiter interrupting a couple's private talk\\n\\nGobar le aao. Plate mein gobar daal kar\\n\\nWaiter gets upset and attempts suicide so the couple go and stop him.\", \"projs\": [], \"created\": 1778088235275}, {\"id\": \"c1778088250642\", \"title\": \"War movie concept (june 2022)\", \"body\": \"A war movie where you see from the POV of the soldiers or the innocent victims of war and they're all running away from the death and destruction of war but each of the POV's die...\", \"projs\": [], \"created\": 1778088250642}, {\"id\": \"c1778088268150\", \"title\": \"Mother and her children (June 2022) - MIRROR\", \"body\": \"We see in color a mother in a house who's doing all the household chores like making her childrens beds, cooking food for them and also talking to them but we never see the children...\", \"projs\": [], \"created\": 1778088268150}, {\"id\": \"c1778088300584\", \"title\": \"Ghar banana hai\", \"body\": \"Ek banda jiski poori life ka ek hi sapna hai ki ek ghar banana hai. Poori life sirf ghar hi banane koshish. Till the end of his life\", \"projs\": [], \"created\": 1778088300584}, {\"id\": \"c1778088323062\", \"title\": \"PSA - Public safety\", \"body\": \"Ek baar aur soch lo\\n\\nWe see a man extremely high. Wind through his hair, extremely happy, joyous.\\nWe zoom out to show that he's driving\\nWind running through his hair...\", \"projs\": [], \"created\": 1778088323062}, {\"id\": \"c1778088342950\", \"title\": \"Singer in the mountains\", \"body\": \"A girl who wants to be singer but whenever she sings in front of people, she sucks.\\nBut when she's alone and in the mountains when no one can see her, she sings and she is actually amazing.\", \"projs\": [], \"created\": 1778088342950}, {\"id\": \"c1778088361891\", \"title\": \"Montage of an auto driver\", \"body\": \"Music - Chennai Anthem by Dolkar Gurung\\n\\nWe see a snorry POV in the day in the life of an autorickshaw driver.\\nHow many people he takes in a day.\\nWhat kind of experiences...\", \"projs\": [], \"created\": 1778088361891}, {\"id\": \"c1778088386911\", \"title\": \"Theme for a movie\", \"body\": \"Saying yes to the bigger picture without looking at how dangerous the finer details can be...\", \"projs\": [], \"created\": 1778088386911}, {\"id\": \"c1778088402499\", \"title\": \"50 people go to event - 49 go missing\", \"body\": \"There's a gathering or an event where atleast 50 people show up.\\nIt's an event advertised as a magic show. The greatest trick you've never seen. Kind of a show.\\n\\nInside th...\", \"projs\": [], \"created\": 1778088402499}, {\"id\": \"c1778088416582\", \"title\": \"Construction noises from above\", \"body\": \"A character who constantly hears construction noises coming from above him.\\nWherever he goes, he's burdened with these noises of hammering, drilling, cutting tiles, moving really...\", \"projs\": [], \"created\": 1778088416582}, {\"id\": \"c1778088434168\", \"title\": \"Chess player who can read thoughts\", \"body\": \"A man who can understand or listen to thoughts of people. He can read what's on your mind or what you're about to say.\\n\\nMind reader.\\n\\nHe's so famous that he's accepted...\", \"projs\": [], \"created\": 1778088434168}, {\"id\": \"c1778088501427\", \"title\": \"young friends get high and vanish an entire tribe\", \"body\": \"4 bakchod dost ek trip par jaate hain pahadon par. High hote hote, bakchodi karte karte woh kaafi upar high in the mountains pahonch jaate hain. Wahan sab sunsaaniyat\\nThen a man...\", \"projs\": [], \"created\": 1778088501427}, {\"id\": \"c1778088524568\", \"title\": \"Mirror theme\", \"body\": \"The mother knows that there's something weird with her child. And at times, she hates her child, but she doesn't want to admit it because conventionally this is not the right thing...\", \"projs\": [], \"created\": 1778088524568}, {\"id\": \"c1778088542709\", \"title\": \"Revival after death\", \"body\": \"What if after you died, years later, humans discover the reanimation process and they could being you back to life. They can bring anyone back now.\\nBut when you're revived, you'...\", \"projs\": [], \"created\": 1778088542709}, {\"id\": \"c1778088559373\", \"title\": \"Sugar bottle kept open at night\", \"body\": \"A jar of open sugar bottle is kept on the dinning table or at the centre table of the drawing room at night. Always. It is said that the ghosts that roam around the house at night...\", \"projs\": [], \"created\": 1778088559373}, {\"id\": \"c1778088575655\", \"title\": \"Gris - game (concept based on the game)\", \"body\": \"A mama bird has a child. She is a beautiful baby bird. Mama bird loves her baby with all her heart and soul. But there is something off with the baby. She is not a normal bird. She...\", \"projs\": [], \"created\": 1778088575655}, {\"id\": \"c1778088600993\", \"title\": \"Plucking Flowers at night\", \"body\": \"A friend once pluck the flowers out of his plants in his garden at night. And he said since they're sleeping, I want to apologize to the plants and then pluck the flowers out. This...\", \"projs\": [], \"created\": 1778088600993}, {\"id\": \"c1778088659116\", \"title\": \"portal travel from MV to Madurai\", \"body\": \"Ek sapna jisme protagonist finds himself in Madurai. He's figuring out how he got there. He was just in Mayur Vihar. Wahan nobody speaking hindi. Wahan pata chalta hai a case is wa...\", \"projs\": [], \"created\": 1778088659116}, {\"id\": \"c1778088676304\", \"title\": \"Future me mail story of 2 friends\", \"body\": \"Future me mail story of 2 friends\\n\\n2 best friends send each other future mails.\\nAnd when one receives it, it is decided and understood by blood pact that no matter where we are...\", \"projs\": [], \"created\": 1778088676304}, {\"id\": \"c1778088703894\", \"title\": \"Movie making couple fight\", \"body\": \"A filmmaker and his wife go out to make a film on flute and the world of flutes and flautists.\\nWhile the husband make the film. The wife makes the making of the film.\\nAnd both...\", \"projs\": [], \"created\": 1778088703894}, {\"id\": \"c1778088730742\", \"title\": \"Hands in love (abstract concept)\", \"body\": \"Underground. Beneath the earth.\\nThe sand moves like a pulsating rhythm. \\nTwo hands. Two different hands. Of 2 very different people. Desperately in love. They are the opposites...\", \"projs\": [], \"created\": 1778088730742}, {\"id\": \"c1778088751665\", \"title\": \"people can travel to their past lives\", \"body\": \"People can now travel to their past life just like using a phone nowadays. It's that easy.\\nSo now people don't do anything else but go see their best part of their lives.\\nSo...\", \"projs\": [], \"created\": 1778088751665}, {\"id\": \"c1778088777032\", \"title\": \"2 cars on a highway going extremely slow one after the other\", \"body\": \"Two cars are moving on a highway.\\nThey are moving way slower than usual in the highway, everybody has go around these 2 cars cursing them, giving them looks.\\nEk ke peeche ek...\", \"projs\": [], \"created\": 1778088777032}, {\"id\": \"c1778088794048\", \"title\": \"Concept dream i had\", \"body\": \"There's a hall of mirrors where if you look through one of the mirrors, you see 40 years into the future.\\n\\nThere was a try to build an army of manual scavengers, experimenting...\", \"projs\": [], \"created\": 1778088794048}, {\"id\": \"c1778088814142\", \"title\": \"Mrs Chatterjee vs norway but better\", \"body\": \"Mrs. Chatterjee vs Norway film banayi aur, the real person jispar movie banayi hai usme rani Mukherjee promised the real woman to take care of the children's education. But when th...\", \"projs\": [], \"created\": 1778088814142}, {\"id\": \"c1778088836127\", \"title\": \"Parasite jaisi short film\", \"body\": \"Siddhant and i (are poor) invade a gk rich home, we order food, fool the servants there. We promise each other that we'll clean everything up and keep it in ship shape before we le...\", \"projs\": [], \"created\": 1778088836127}, {\"id\": \"c1778088853552\", \"title\": \"Nai nai nai nai nai nai nai nai nai\", \"body\": \"Nai nai nai nai nai nai nai nai nai\\n\\nSiddhant tries to show off new skill balancing only his ankles with our balcony ledge.\\nHe wants to show me how he can do the skill off...\", \"projs\": [], \"created\": 1778088853552}, {\"id\": \"c1778088875160\", \"title\": \"Jack black in real life\", \"body\": \"Jack black is actually a very serious, cunning asshole of a person who treats his employees like shit. His employees who work hard to make sure he's seen as a comedic family dude\", \"projs\": [], \"created\": 1778088875160}, {\"id\": \"c1778088896346\", \"title\": \"thought kiss\", \"body\": \"High hokar amazing thought aaya aur kiss karke chala gaya (the thought kissed me). Then a lot of other thoughts came who highjacked my vision. Toh i could see the thought i really...\", \"projs\": [], \"created\": 1778088896346}, {\"id\": \"c1778088913662\", \"title\": \"earthquake man\", \"body\": \"Ek bande ko bhukamp aata hai. He always feels ki earthquake aa raha hai\\n\\nAsli mein he actually feels the earth moving. Joh earth ki rotation hai, woh usko feel hoti hai. Normally...\", \"projs\": [], \"created\": 1778088913662}, {\"id\": \"c1778088935232\", \"title\": \"journalism course\", \"body\": \"How to get celebrities riled up journalism and it's a course\", \"projs\": [], \"created\": 1778088935232}, {\"id\": \"c1778088952871\", \"title\": \"Soldiers without limbs travelling through space\", \"body\": \"Soldiers now travel through space for different wars across different galaxies and the spaceship needs a lot of soldiers to travel through different galaxies for war because of reasons...\", \"projs\": [], \"created\": 1778088952871}, {\"id\": \"c1778088984904\", \"title\": \"Immortal people\", \"body\": \"A group of people who have been here for generations.\\nThey have lives that last 10,000 years.\\nSome of them have seen more than just human civilization.\\nThey have different perspectives...\", \"projs\": [], \"created\": 1778088984904}, {\"id\": \"c1778089012471\", \"title\": \"weird idea\", \"body\": \"You decode a possibility. Reverse the tracks and go through all the possibilities. To ensure a certain possibility happens.\", \"projs\": [], \"created\": 1778089012471}, {\"id\": \"c1778089025442\", \"title\": \"Vampire Hunter D : Bloodlust\", \"body\": \"Vampire Hunter D : Bloodlust\\n\\nA Clint Eastwood +Toshiro Mifune character who is a Ronin Vampire Hunter in a post apocalyptic western.\\nShort action scenes separated by expanse...\", \"projs\": [], \"created\": 1778089025442}, {\"id\": \"c1778089045123\", \"title\": \"Arcane se inspired concepts\", \"body\": \"Arcane S2E5\\n17 min\\n\\nA man turned into a beast.\\nThe beast is now savage and turned loose on the crowd.\\nIt can turn anything or anyone into mush.\\nBut he can see the...\", \"projs\": [], \"created\": 1778089045123}, {\"id\": \"c1778089071912\", \"title\": \"Listen to audio\", \"body\": \"Ananth ke papa koi Jaadugar insan hain joh ki\\n\\n\\nI went to a friend's house where they sat me on a bed and then took me on an elevator ride.\\n\\n\\nListen to audio\", \"projs\": [], \"created\": 1778089071912}, {\"id\": \"c1778089087302\", \"title\": \"Babyshuda\", \"body\": \"Babyshuda\\n\\nZomato guy makes you realize that everything in your life has been a literal lie.\\n\\nA guy is walking alone at night. He is upper middle class.\\nThere's a small...\", \"projs\": [], \"created\": 1778089087302}, {\"id\": \"c1778089105519\", \"title\": \"Potential billion dollar idea\", \"body\": \"Jungle Mein pokemon type creatures rehte hain jinko apne pet banane ka challenge lete Hain.\\nLike I mastered a leopard recently\\nAnd i mastered a crocodile\\n\\nPokemon but for real...\", \"projs\": [], \"created\": 1778089105519}, {\"id\": \"c1778089145461\", \"title\": \"Nuances from Ancestors\", \"body\": \"How weird nuances and addictions and habits that we have in ourselves, we unwantingly transfer to any of the future generations. It's not necessary that the hajmola type addiction...\", \"projs\": [], \"created\": 1778089145461}, {\"id\": \"c1778089165898\", \"title\": \"Hash and Consciousness\", \"body\": \"Rubbing hash a certain way in your hand is a technique and that technique is actually not learnt. It is passed on by the hash itself. The plant's consciousness\", \"projs\": [], \"created\": 1778089165898}, {\"id\": \"c1778089225878\", \"title\": \"Core harnessing\", \"body\": \"What if we start accessing the earth's core for energy consumption?\\nPeople start mining the core and industries are formed that are all about mining and deep mining companies...\", \"projs\": [], \"created\": 1778089225878}, {\"id\": \"c1778089255687\", \"title\": \"Dead body revival\", \"body\": \"A group or a company who revives people from the dead if the dead body hasn't had a significant degradation or is intact, the dead body has to have died recently...\", \"projs\": [], \"created\": 1778089255687}, {\"id\": \"c1778089297902\", \"title\": \"Mind civilization\", \"body\": \"Idea is an electrical current so large that it can power the mind for a generation but our mind has minions that want to extract every bit of juice we get from the idea electric e...\", \"projs\": [], \"created\": 1778089297902}, {\"id\": \"c1778089313443\", \"title\": \"Ai as a life recorder\", \"body\": \"What if we start recording our thoughts and uploading them unto AI cloud, and write life like a diary and then when we are old and are going to die, we can have AI replay all of th...\", \"projs\": [], \"created\": 1778089313443}, {\"id\": \"c1778089345616\", \"title\": \"Family-House as spaceship\", \"body\": \"When we put dustbin out of our house/apartment, it becomes a spaceship and flies away into the universe.\\nAnd then\\nThe adventures of spaceship family.\\nIt goes throughout th...\", \"projs\": [], \"created\": 1778089345616}, {\"id\": \"c1778089361597\", \"title\": \"AI as a parasite\", \"body\": \"When people die, they leave behind so many notes and thoughts that no person might ever read. So the internet AI reads them and collects them, gestates on them, builds philosophy o...\", \"projs\": [], \"created\": 1778089361597}, {\"id\": \"c1778089385343\", \"title\": \"Food vlogger\", \"body\": \"While making food videos, a food vlogger starts ranting on how he's so shitty and such a loser and he goes viral. Then his scene on the social media becomes while making food, this...\", \"projs\": [], \"created\": 1778089385343}, {\"id\": \"c1778089415027\", \"title\": \"mind control\", \"body\": \"What if I'm high and i think of a concept which no one has ever thought of like a celebrity controlling the whole of Hollywood secretly or a company who operates some secret dhandha...\", \"projs\": [], \"created\": 1778089415027}, {\"id\": \"c1778089435346\", \"title\": \"First Lucid Dream - Dream within Dream\", \"body\": \"I had the most weirdest dream.\\nSiddhant and I are in a society like IFS but it seems like a mixture of other societies like Supreme, Mavilla, Manu type society where the building...\", \"projs\": [], \"created\": 1778089435346}, {\"id\": \"c1778089454416\", \"title\": \"Sonam Sherpa\", \"body\": \"Sonam sherpa is named in the new movie about Indian rock music and there are people who want to include one more name and the director of the movie doesn't want to. Now the mafia i...\", \"projs\": [], \"created\": 1778089454416}, {\"id\": \"c1778089486504\", \"title\": \"Hollywood pyrotechnicians\", \"body\": \"Hollywood has pyro technicians who set fire to things and the fire has to look cinematic. That requires really good quality wood, quite a different type of fire whose properties...\", \"projs\": [], \"created\": 1778089486504}, {\"id\": \"c1778089502999\", \"title\": \"Guards\", \"body\": \"2 guards of cwg ki story. They are the main gate.\\nMain unke saamne se nikalta hun. In recorder. I recorded 2 concepts\", \"projs\": [], \"created\": 1778089502999}, {\"id\": \"c1778089519874\", \"title\": \"Life recorder\", \"body\": \"I want to talk about recording my life. And not just visually recording life. It's not a camera. I want to create something that gives you access to your memory as you're experiencing...\", \"projs\": [], \"created\": 1778089519874}, {\"id\": \"c1778089544070\", \"title\": \"Had a nightmare that ended up in night terror\", \"body\": \"I had a dream where I'm living with my wife for sometime and she slowly reveals that she has a child of her own and a husband (the real husband). This is the real reason why she's...\", \"projs\": [], \"created\": 1778089544070}, {\"id\": \"c1778089575649\", \"title\": \"killer and old men of society\", \"body\": \"Ek killer apni family ko maarkar bhaagne ki taiyaari kar raha hota hai, toh uske society waale buddhe uncle uss murder ko witness kar lete hain. Initially it looks like they'll all...\", \"projs\": [], \"created\": 1778089575649}, {\"id\": \"c1778089592469\", \"title\": \"Reels type story telling in a different way\", \"body\": \"A movie in the format of 4 reels where swiping up or down will show you a different movie/story.\\n4 different stories go/move like a dream.\\nWe can create this format within in...\", \"projs\": [], \"created\": 1778089592469}, {\"id\": \"c1778089615396\", \"title\": \"Transformers live show in Goa dream\", \"body\": \"I had a dream where huge mechatronic transformer characters were fighting in the Goa sea. This was a show. And it was amazing. Huge 30+ feet transformers fighting live in front of...\", \"projs\": [], \"created\": 1778089615396}, {\"id\": \"c1778089638523\", \"title\": \"Morcha\", \"body\": \"Ek morcha type nikalta hai from an ethnicity and uss ethnicity ke jitne bhi log aas paas hote hain; people who are working in shops, walking on the street, etc etc woh sab zombie...\", \"projs\": [], \"created\": 1778089638523}]";
+      try{concepts=JSON.parse(seed);await saveAll();console.log('Concepts seeded:',concepts.length);}catch(e){console.log('Seed error:',e);}
+    }
     if(localStorage.getItem('ptt_theme')==='light')document.body.classList.add('lm');
     const saved=localStorage.getItem('ptt_key');
     if(saved&&saved.startsWith('sk-ant-')){
@@ -1010,7 +1015,9 @@ function openProject(id){
   buildCSW();renderWlist();renderVaultList();renderCP();
   document.getElementById('app-proj-lbl').textContent=curProj.name;
   mode='group';activeW=null;goTo('app');clearChat();
-  addAIMsg('w1','The Architect',`The room is ready, Pratik. Project: "${curProj.name}". I've read your profile. Bring me anything — a premise, a structure problem, a scene, a plot hole. We start now.`);
+  const welcomeMsg=`The room is ready, Pratik. Project: "${curProj.name}". I've read your profile. Bring me anything — a premise, a structure problem, a scene, a plot hole. We start now.`;
+  if(!gHist[id].length){gHist[id].push({role:'assistant',content:'The Architect:\n'+welcomeMsg});}
+  addAIMsg('w1','The Architect',welcomeMsg);
 }
 
 // ONBOARDING
@@ -1193,21 +1200,79 @@ function pullConcept(id){
 
 // VIEW TOGGLE
 function setView(v){
+  if(v===curView)return;
   curView=v;
   document.getElementById('vt-stack').classList.toggle('active',v==='stacked');
   document.getElementById('vt-side').classList.toggle('active',v==='sbs');
-  if(v==='sbs'){buildSBS();}else{tearSBS();}
+  if(v==='sbs'){buildSBS();}else{tearSBS();replayStackedHistory();}
 }
 function buildSBS(){
+  const n=writers.length;
+  if(n>=7){
+    const msgs=document.getElementById('chat-msgs');
+    msgs.classList.remove('sbs');msgs.innerHTML='';
+    const d=document.createElement('div');
+    d.style.cssText='padding:2rem;text-align:center;color:var(--t3);font-size:11px;letter-spacing:0.06em;line-height:1.8;';
+    d.textContent='Side by side view is not available with 7 or more writers. Use stacked view instead.';
+    msgs.appendChild(d);
+    curView='stacked';
+    document.getElementById('vt-stack').classList.add('active');
+    document.getElementById('vt-side').classList.remove('active');
+    return;
+  }
   const msgs=document.getElementById('chat-msgs');
   msgs.classList.add('sbs');msgs.innerHTML='';
-  writers.forEach(w=>{
-    const col=document.createElement('div');col.className='sbs-col';col.id='sbsc-'+w.id;
-    col.innerHTML=`<div class="sbs-hdr"><div class="sbs-dot" style="background:${w.color.fg}"></div><div class="sbs-name" style="color:${w.color.fg}">${w.name}</div></div><div class="sbs-msgs" id="sbsm-${w.id}"></div>`;
-    msgs.appendChild(col);
+  // Layout: 1-3 = single row, 4 = 2x2, 5 = 2+3, 6 = 2x3, 7+ disabled above
+  if(n===4||n===5||n===6){
+    msgs.style.flexWrap='wrap';
+    writers.forEach(w=>{
+      const col=document.createElement('div');
+      col.className='sbs-col';col.id='sbsc-'+w.id;
+      col.style.cssText=`flex:1 1 ${n===4?'48%':n===5?'30%':'30%'};min-width:220px;min-height:300px;`;
+      col.innerHTML=`<div class="sbs-hdr"><div class="sbs-dot" style="background:${w.color.fg}"></div><div class="sbs-name" style="color:${w.color.fg}">${w.name}</div></div><div class="sbs-msgs" id="sbsm-${w.id}"></div>`;
+      msgs.appendChild(col);
+    });
+  } else {
+    msgs.style.flexWrap='';
+    writers.forEach(w=>{
+      const col=document.createElement('div');col.className='sbs-col';col.id='sbsc-'+w.id;
+      col.innerHTML=`<div class="sbs-hdr"><div class="sbs-dot" style="background:${w.color.fg}"></div><div class="sbs-name" style="color:${w.color.fg}">${w.name}</div></div><div class="sbs-msgs" id="sbsm-${w.id}"></div>`;
+      msgs.appendChild(col);
+    });
+  }
+  // Replay existing history into SBS columns
+  const pid=curProj?curProj.id:'d';
+  const hist=mode==='private'&&activeW?(pvHist[activeW.id]&&pvHist[activeW.id][pid]||[]):(gHist[pid]||[]);
+  hist.forEach(m=>{
+    if(m.role==='user'){
+      addSBSUser(m.content);
+    } else {
+      if(mode==='private'&&activeW){
+        addSBSAI(activeW.id,m.content);
+      } else {
+        m.content.split('\n\n---\n\n').forEach(p=>{
+          const mx=p.match(/^(.+?):\s*([\s\S]+)$/);
+          if(mx){const w=writers.find(x=>x.name===mx[1].trim());if(w)addSBSAI(w.id,mx[2].trim());}
+        });
+      }
+    }
   });
 }
-function tearSBS(){const msgs=document.getElementById('chat-msgs');msgs.classList.remove('sbs');msgs.innerHTML='';}
+function replayStackedHistory(){
+  const pid=curProj?curProj.id:'d';
+  const hist=mode==='private'&&activeW?(pvHist[activeW.id]&&pvHist[activeW.id][pid]||[]):(gHist[pid]||[]);
+  hist.forEach(m=>{
+    if(m.role==='user'){addUserMsg(m.content,false);}
+    else{
+      if(mode==='private'&&activeW){addAIMsg(activeW.id,activeW.name,m.content,false);}
+      else{m.content.split('\n\n---\n\n').forEach(p=>{
+        const mx=p.match(/^(.+?):\s*([\s\S]+)$/);
+        if(mx){const w=writers.find(x=>x.name===mx[1].trim());if(w)addAIMsg(w.id,w.name,mx[2].trim(),false);}
+      });}
+    }
+  });
+}
+function tearSBS(){const msgs=document.getElementById('chat-msgs');msgs.classList.remove('sbs');msgs.style.flexWrap='';msgs.innerHTML='';}
 function addSBSUser(text){
   if(curView!=='sbs')return;
   writers.forEach(w=>{const col=document.getElementById('sbsm-'+w.id);if(!col)return;const d=document.createElement('div');d.className='sbs-user';d.textContent=text;col.appendChild(d);col.scrollTop=col.scrollHeight;});
@@ -1411,7 +1476,7 @@ async function callOpenAI(sys,msgs){
 async function callGemini(sys,msgs){
   try{
     const combined=sys+'\n\n'+msgs.map(m=>(m.role==='user'?'Pratik: ':'Writer: ')+m.content).join('\n');
-    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key='+geminiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{role:'user',parts:[{text:combined}]}],generationConfig:{maxOutputTokens:1500}})});
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+geminiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{role:'user',parts:[{text:combined}]}],generationConfig:{maxOutputTokens:1500}})});
     const d=await r.json();
     if(d.error)return'Gemini Error: '+d.error.message;
     return d.candidates&&d.candidates[0]&&d.candidates[0].content?d.candidates[0].content.parts[0].text:'No response from Gemini.';
@@ -1487,5 +1552,5 @@ function previewVaultImg(inp){const f=inp.files[0];if(!f)return;const r=new File
 function previewLibImg(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=function(e){const prev=document.getElementById('lib-img-preview');const img=document.getElementById('lib-img-thumb');if(prev&&img){img.src=e.target.result;prev.style.display='block';}};r.readAsDataURL(f);}
 function readImgB64(fileInput,callback){const f=fileInput.files[0];if(!f){callback(null,null);return;}const r=new FileReader();r.onload=function(e){const b64=e.target.result.split(',')[1];callback(b64,f.type);};r.readAsDataURL(f);}
 </script>
-</body>
-</html>
+
+</body></html>
