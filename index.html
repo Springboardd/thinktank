@@ -2019,18 +2019,20 @@ async function sendMsg(){
 
   const pid=curProj?curProj.id:'d';
   if(!gHist[pid])gHist[pid]=[];
-  gHist[pid].push({role:'user',content:text});
+  // Only write to gHist if no active thread
+  if(!curThread)gHist[pid].push({role:'user',content:text});
   saveMessageToThread('user',text);
   const responses=[];
   const threadCtx=getThreadContext();
+  // Use curThread messages for API history if thread active, else gHist
+  const getHist=()=>curThread?curThread.messages.map(m=>({role:m.role==='user'?'user':'assistant',content:m.content})):gHist[pid].map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
 
   if(respMode==='solo'){
     await Promise.all(writers.map(async(w,i)=>{
       addLoading(w.id,w.name);
       try{
         const role=getModeRole(i,[],respMode);
-        const hist=gHist[pid].map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
-        const reply=await callForWriter(w,buildSys(w,role)+threadCtx,hist);
+        const reply=await callForWriter(w,buildSys(w,role)+threadCtx,getHist());
         responses[i]=reply;removeLoading(w.id);addAIMsg(w.id,w.name,reply);
       }catch(e){removeLoading(w.id);addAIMsg(w.id,w.name,'Connection error — please try again.');responses[i]='';}
     }));
@@ -2039,8 +2041,7 @@ async function sendMsg(){
       const w=writers[i];addLoading(w.id,w.name);
       try{
         const role=getModeRole(i,responses,respMode);
-        const hist=gHist[pid].map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
-        const reply=await callForWriter(w,buildSys(w,role)+threadCtx,hist);
+        const reply=await callForWriter(w,buildSys(w,role)+threadCtx,getHist());
         responses[i]=reply;removeLoading(w.id);addAIMsg(w.id,w.name,reply);
       }catch(e){removeLoading(w.id);addAIMsg(w.id,w.name,'Connection error — please try again.');responses[i]='';}
     }
@@ -2048,7 +2049,7 @@ async function sendMsg(){
 
   if(responses.some(r=>r)){
     const aiContent=responses.map((r,i)=>writers[i]?`${writers[i].name}: ${r}`:r).join('\n\n---\n\n');
-    gHist[pid].push({role:'assistant',content:aiContent});
+    if(!curThread)gHist[pid].push({role:'assistant',content:aiContent});
     saveMessageToThread('assistant',aiContent);
     saveAll();
   }
