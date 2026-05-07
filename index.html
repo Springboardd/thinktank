@@ -85,7 +85,8 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 .wm-ddesc{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--t2);line-height:1.8;font-style:italic;}
 .wm-dtag{display:inline-block;margin-top:1.2rem;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:4px 12px;border:1px solid var(--gold-border);color:var(--gold-dim);font-family:'DM Mono',monospace;}
 /* DUMP */
-#dump{background:var(--d1);}
+#dump{background:var(--d1);height:100vh;overflow:hidden;}
+#dialoguedump{background:var(--d1);height:100vh;overflow:hidden;}
 .dump-toolbar{padding:0.75rem 1.8rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:0.6rem;background:var(--d2);}
 .sort-btn{background:none;border:1px solid var(--b1);color:var(--t3);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.13em;text-transform:uppercase;padding:5px 12px;cursor:pointer;transition:all 0.2s;}
 .sort-btn:hover,.sort-btn.act{border-color:var(--gold-border);color:var(--gold-dim);}
@@ -485,7 +486,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <div class="dark-title">Dialogue Dump</div>
     <button class="abtn" onclick="openNDModal()">+ New Dialogue</button>
     <button class="theme-btn" onclick="toggleTheme()">&#9788; Theme</button>
-    <button class="hbtn" onclick="goTo(&#39;rawmaterials&#39;)">&#8592; Back</button>
+    <button class="hbtn" id="dd-back-btn" onclick="goTo('rawmaterials')">&#8592; Back</button>
   </div>
   <div class="dump-toolbar">
     <button class="sort-btn act" id="dd-sort-manual-btn" onclick="toggleDDSort()">Manual Order</button>
@@ -869,7 +870,14 @@ function goTo(id){
   setTimeout(()=>el.classList.remove('fi'),500);
   if(id==='projects')renderProjects();
   if(id==='dump')renderDump();
-  if(id==='dialoguedump'){renderDDGenreFilters();renderDialogueDump();}
+  if(id==='dialoguedump'){
+    const backBtn=document.getElementById('dd-back-btn');
+    if(backBtn){
+      if(curProj){backBtn.textContent='← '+curProj.name;backBtn.onclick=()=>goTo('app');}
+      else{backBtn.textContent='← Back';backBtn.onclick=()=>goTo('rawmaterials');}
+    }
+    renderDDGenreFilters();renderDialogueDump();
+  }
   try{const loc={page:id};if(id==='app'&&curProj)loc.proj=curProj.id;localStorage.setItem('ptt_loc',JSON.stringify(loc));}catch(e){}
 }
 function openModal(id){document.getElementById(id).classList.add('on');}
@@ -1038,6 +1046,7 @@ function toggleDumpChat(){
   dumpChatOpen=!dumpChatOpen;
   document.getElementById('dump-chat-panel').classList.toggle('open',dumpChatOpen);
   if(dumpChatOpen&&!document.getElementById('dump-chat-msgs').children.length){
+    addDumpChatMsg('notice','This conversation is temporary and will not be saved. Copy anything useful manually.');
     addDumpChatMsg('sys','Ask me anything about your concepts. Which is strongest? Which should you develop first?');
   }
 }
@@ -1045,6 +1054,7 @@ function addDumpChatMsg(role,text){
   const el=document.getElementById('dump-chat-msgs');
   const d=document.createElement('div');
   if(role==='user')d.style.cssText='font-size:11px;color:var(--t2);padding:0.4rem 0.6rem;background:var(--b3);border:1px solid var(--b1);text-align:right;line-height:1.6;';
+  else if(role==='notice')d.style.cssText='font-family:\'DM Mono\',monospace;font-size:9px;color:var(--t3);padding:0.5rem 0.8rem;border:1px solid var(--b1);letter-spacing:0.04em;line-height:1.6;text-align:center;';
   else if(role==='sys')d.style.cssText='font-size:10px;color:var(--t3);padding:0.4rem 0;border-bottom:1px solid var(--b1);letter-spacing:0.03em;';
   else d.style.cssText='font-size:11px;color:var(--t1);padding:0.6rem 0.8rem;background:var(--d3);border-left:2px solid var(--gold-border);line-height:1.8;';
   d.textContent=text;el.appendChild(d);el.scrollTop=el.scrollHeight;
@@ -1206,6 +1216,7 @@ function toggleDDChat(){
   ddChatOpen=!ddChatOpen;
   document.getElementById('dd-chat-panel').classList.toggle('open',ddChatOpen);
   if(ddChatOpen&&!document.getElementById('dd-chat-msgs').children.length){
+    addDDChatMsg('notice','This conversation is temporary and will not be saved. Copy anything useful manually.');
     addDDChatMsg('sys','Ask me anything about your dialogue. Which line is most alive? What does it reveal?');
   }
 }
@@ -1213,6 +1224,7 @@ function addDDChatMsg(role,text){
   const el=document.getElementById('dd-chat-msgs');
   const d=document.createElement('div');
   if(role==='user')d.style.cssText='font-size:11px;color:var(--t2);padding:0.4rem 0.6rem;background:var(--b3);border:1px solid var(--b1);text-align:right;line-height:1.6;';
+  else if(role==='notice')d.style.cssText='font-family:\'DM Mono\',monospace;font-size:9px;color:var(--t3);padding:0.5rem 0.8rem;border:1px solid var(--b1);letter-spacing:0.04em;line-height:1.6;text-align:center;';
   else if(role==='sys')d.style.cssText='font-size:10px;color:var(--t3);padding:0.4rem 0;border-bottom:1px solid var(--b1);letter-spacing:0.03em;';
   else d.style.cssText='font-family:\'Cormorant Garamond\',serif;font-size:1rem;color:var(--t1);padding:0.8rem 1rem;background:var(--d3);border-left:2px solid var(--gold-border);line-height:1.9;';
   d.textContent=text;el.appendChild(d);el.scrollTop=el.scrollHeight;
