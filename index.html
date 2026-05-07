@@ -365,6 +365,40 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 .tl-card:hover{border-left-color:var(--gold-dim);background:var(--d3);}
 .tl-card-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--t1);margin-bottom:0.35rem;}
 .tl-card-meta{font-size:8px;color:var(--t3);letter-spacing:0.08em;font-family:'DM Mono',monospace;}
+/* DISCUSSION PAGE */
+#discusspage{background:var(--d0);height:100vh;overflow:hidden;}
+.disc-head{height:52px;border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 1.8rem;gap:0.8rem;flex-shrink:0;background:var(--d2);}
+.disc-ctx{border-bottom:1px solid var(--b1);padding:1.2rem 2rem;background:var(--d3);flex-shrink:0;}
+.disc-ctx-label{font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:0.5rem;font-family:'DM Mono',monospace;}
+.disc-ctx-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--t1);margin-bottom:0.4rem;line-height:1.35;}
+.disc-ctx-body{font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--t2);line-height:1.8;font-style:italic;max-height:80px;overflow:hidden;position:relative;}
+.disc-ctx-body.expanded{max-height:none;}
+.disc-ctx-toggle{font-size:9px;color:var(--gold-dim);cursor:pointer;letter-spacing:0.08em;font-family:'DM Mono',monospace;margin-top:0.4rem;background:none;border:none;padding:0;text-transform:uppercase;}
+.disc-msgs{flex:1;overflow-y:auto;padding:2rem 2.2rem;display:flex;flex-direction:column;gap:1.8rem;min-height:0;}
+.disc-msgs::-webkit-scrollbar{width:2px;}
+.disc-msgs::-webkit-scrollbar-thumb{background:var(--b2);}
+.disc-msg-user{align-self:flex-end;max-width:75%;}
+.disc-msg-ai{align-self:flex-start;max-width:82%;}
+.disc-msg-who{font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--t3);margin-bottom:0.4rem;font-family:'DM Mono',monospace;}
+.disc-msg-bub{padding:1.2rem 1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.05rem;line-height:2;letter-spacing:0.01em;}
+.disc-msg-user .disc-msg-bub{background:var(--b3);border:1px solid var(--b2);color:var(--t1);font-family:'DM Mono',monospace;font-size:0.85rem;line-height:1.75;}
+.disc-msg-ai .disc-msg-bub{border-left:2px solid var(--gold-border);color:var(--t1);background:var(--d2);}
+.disc-input{border-top:1px solid var(--b1);padding:1.2rem 1.8rem;background:var(--d2);flex-shrink:0;display:flex;gap:0.7rem;align-items:flex-end;}
+.disc-ta{flex:1;background:var(--b3);border:1px solid var(--b2);color:var(--t1);padding:0.85rem 1.1rem;font-family:'Cormorant Garamond',serif;font-size:1rem;resize:none;outline:none;min-height:48px;max-height:140px;line-height:1.7;transition:border-color 0.2s;}
+.disc-ta:focus{border-color:var(--gold-border);}
+.disc-ta::placeholder{color:var(--t3);font-style:italic;}
+.disc-send{background:var(--gold2);border:none;color:var(--paper);padding:0.85rem 1.3rem;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;cursor:pointer;height:48px;transition:background 0.2s;}
+.disc-send:hover{background:var(--gold);}
+.disc-send:disabled{opacity:0.3;cursor:not-allowed;}
+/* DISCUSSIONS LIST PAGE */
+#discussionslist{background:var(--d1);}
+.dlist-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;}
+.dlist-in{width:100%;max-width:560px;}
+.dlist-empty{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--t3);font-style:italic;text-align:center;padding:3rem 0;}
+.dlist-card{padding:1.2rem 1.4rem;background:var(--d2);border:1px solid var(--b1);border-left:2px solid var(--b2);margin-bottom:0.7rem;cursor:pointer;transition:all 0.25px;}
+.dlist-card:hover{border-left-color:var(--gold-dim);background:var(--d3);}
+.dlist-card-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--t1);margin-bottom:0.3rem;}
+.dlist-card-meta{font-size:8px;color:var(--t3);letter-spacing:0.08em;font-family:'DM Mono',monospace;}
 @media(max-width:640px){.lpanel{display:none;}.doors{grid-template-columns:1fr;}.wm-opts{grid-template-columns:1fr;}.chat-msgs.sbs{flex-direction:column;}}
 </style>
 </head>
@@ -464,19 +498,10 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
   <div class="dump-toolbar">
     <button class="sort-btn" id="sort-manual-btn" onclick="toggleSort()">Manual Order</button>
     <button class="sort-btn act" id="sort-date-btn" onclick="toggleSort()" style="display:none">Newest First</button>
-    <button class="dump-ai-btn" onclick="toggleDumpChat()">✍ Discuss with Writers</button>
+    <button class="dump-ai-btn" onclick="openDiscussionsList('concept')">✍ Discussions</button>
   </div>
   <div class="dump-grid" id="dump-grid">
     <div class="dump-empty" id="dump-empty">No concepts yet. Click + New Concept to add your first idea.</div>
-  </div>
-  <div class="dump-chat-panel" id="dump-chat-panel">
-    <div class="dump-chat-msgs" id="dump-chat-msgs"></div>
-    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);padding:0.4rem 1.5rem;border-top:1px solid var(--b1);letter-spacing:0.04em;">Temporary — will not be saved. Copy anything useful manually.</div>
-    <div class="dump-chat-in">
-      <textarea class="dump-chat-ta" id="dump-chat-ta" placeholder="Which concept is strongest? Which is most commercial? What should I develop first?" rows="2" onkeydown="handleDumpKey(event)"></textarea>
-      <button class="dump-send" onclick="sendDumpMsg()">Send</button>
-      <button onclick="toggleDumpChat()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;line-height:1;padding:0 8px;font-family:inherit;">&#10005;</button>
-    </div>
   </div>
   <div class="overlay" id="nc-modal">
     <div class="modal">
@@ -497,6 +522,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
       <div class="mbts">
         <button class="btn-g" onclick="closeModal(&#39;cv-modal&#39;)">Close</button>
         <button class="btn-g" id="cv-edit-btn" onclick="toggleConceptEdit()">Edit</button>
+        <button class="btn-g" onclick="openDiscussion('concept',cvId)">Discuss with Writer</button>
         <button class="btn-p" id="cv-save-btn" onclick="saveConceptEdit()" style="display:none">Save</button>
       </div>
     </div>
@@ -522,19 +548,10 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <button class="sort-btn act" id="dd-sort-manual-btn" onclick="toggleDDSort()">Manual Order</button>
     <button class="sort-btn" id="dd-sort-date-btn" onclick="toggleDDSort()" style="display:none">Newest First</button>
     <div id="dd-genre-filters" style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-left:0.6rem;"></div>
-    <button class="dump-ai-btn" onclick="toggleDDChat()">&#9997; Discuss with Writers</button>
+    <button class="dump-ai-btn" onclick="openDiscussionsList('dialogue')">&#9997; Discussions</button>
   </div>
   <div class="dump-grid" id="dd-grid">
     <div class="dump-empty" id="dd-empty">No dialogue yet. Click + New Dialogue to capture your first line.</div>
-  </div>
-  <div class="dump-chat-panel" id="dd-chat-panel">
-    <div class="dump-chat-msgs" id="dd-chat-msgs"></div>
-    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);padding:0.4rem 1.5rem;border-top:1px solid var(--b1);letter-spacing:0.04em;">Temporary — will not be saved. Copy anything useful manually.</div>
-    <div class="dump-chat-in">
-      <textarea class="dump-chat-ta" id="dd-chat-ta" placeholder="Which line is strongest? What's missing? What does this dialogue reveal about character?" rows="2" onkeydown="handleDDKey(event)"></textarea>
-      <button class="dump-send" onclick="sendDDMsg()">Send</button>
-      <button onclick="toggleDDChat()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;line-height:1;padding:0 8px;font-family:inherit;">&#10005;</button>
-    </div>
   </div>
   <div class="overlay" id="nd-modal">
     <div class="modal">
@@ -557,6 +574,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
       <div class="mbts">
         <button class="btn-g" onclick="closeModal(&#39;dv-modal&#39;)">Close</button>
         <button class="btn-g" id="dv-edit-btn" onclick="toggleDialogueEdit()">Edit</button>
+        <button class="btn-g" onclick="openDiscussion('dialogue',dvId)">Discuss with Writer</button>
         <button class="btn-p" id="dv-save-btn" onclick="saveDialogueEdit()" style="display:none">Save</button>
       </div>
     </div>
@@ -564,6 +582,42 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
   <div id="dd-ctx-menu" class="ctx-menu" style="display:none;">
     <div class="ctx-item" onclick="ddCtxOpen()">Open / Read</div>
     <div class="ctx-item ctx-del" onclick="ddCtxDel()">Delete</div>
+  </div>
+</div>
+
+<!-- DISCUSSION PAGE -->
+<div id="discusspage" class="pg dark-pg fi">
+  <div class="disc-head">
+    <div class="dark-title" id="disc-title">Discussion</div>
+    <button class="theme-btn" onclick="toggleTheme()">☼ Theme</button>
+    <button class="hbtn" id="disc-back-btn" onclick="goTo('dump')">← Back</button>
+  </div>
+  <div class="disc-ctx" id="disc-ctx">
+    <div class="disc-ctx-label" id="disc-ctx-label">Concept</div>
+    <div class="disc-ctx-title" id="disc-ctx-title"></div>
+    <div class="disc-ctx-body" id="disc-ctx-body"></div>
+    <button class="disc-ctx-toggle" id="disc-ctx-toggle" onclick="toggleDiscCtx()">Show more</button>
+  </div>
+  <div class="disc-msgs" id="disc-msgs"></div>
+  <div class="disc-input">
+    <textarea class="disc-ta" id="disc-ta" placeholder="Ask anything about this idea..." rows="2" onkeydown="handleDiscKey(event)"></textarea>
+    <button class="disc-send" id="disc-send-btn" onclick="sendDiscMsg()">Send</button>
+  </div>
+</div>
+
+<!-- DISCUSSIONS LIST PAGE -->
+<div id="discussionslist" class="pg dark-pg fi">
+  <div class="dark-head">
+    <div class="dark-title">Discussions</div>
+    <button class="theme-btn" onclick="toggleTheme()">☼ Theme</button>
+    <button class="hbtn" id="dlist-back-btn" onclick="goTo('dump')">← Back</button>
+  </div>
+  <div class="dlist-body">
+    <div class="dlist-in">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--t1);letter-spacing:0.06em;margin-bottom:0.3rem;" id="dlist-title">Discussions</div>
+      <div style="font-size:9px;letter-spacing:0.2em;color:var(--t3);text-transform:uppercase;margin-bottom:2rem;font-family:'DM Mono',monospace;" id="dlist-sub">All card discussions</div>
+      <div id="dlist-cards"></div>
+    </div>
   </div>
 </div>
 
@@ -888,12 +942,18 @@ document.addEventListener('DOMContentLoaded',async function(){
       try{
         const locRaw=localStorage.getItem('ptt_loc');
         const loc=locRaw?JSON.parse(locRaw):{};
-        const safe=['lobby','wmhub','dump','projects','app','ob','profed','threadlist','rawmaterials','dialoguedump'];
+        const safe=['lobby','wmhub','dump','projects','app','ob','profed','threadlist','rawmaterials','dialoguedump','discusspage','discussionslist'];
         if(loc.page&&safe.includes(loc.page)){
           if(loc.page==='app'&&loc.proj){
             const p=projects.find(x=>x.id===loc.proj);
             if(p){try{openProject(p.id);restored=true;}catch(e2){goTo('lobby');restored=true;}}
-          }else{goTo(loc.page);restored=true;}
+          } else if(loc.page==='threadlist'&&loc.proj){
+            const p=projects.find(x=>x.id===loc.proj);
+            if(p){showThreadList(p.id);restored=true;}
+            else{goTo('projects');restored=true;}
+          } else {
+            goTo(loc.page);restored=true;
+          }
         }
       }catch(e){}
       if(!restored)goTo('lobby');
@@ -936,7 +996,7 @@ function goTo(id){
     }
     renderDDGenreFilters();renderDialogueDump();
   }
-  try{const loc={page:id};if(id==='app'&&curProj)loc.proj=curProj.id;localStorage.setItem('ptt_loc',JSON.stringify(loc));}catch(e){}
+  try{const loc={page:id};if(id==='app'&&curProj)loc.proj=curProj.id;if(id==='threadlist'&&curProj)loc.proj=curProj.id;localStorage.setItem('ptt_loc',JSON.stringify(loc));}catch(e){}
 }
 function openModal(id){document.getElementById(id).classList.add('on');}
 function closeModal(id){document.getElementById(id).classList.remove('on');}
@@ -1129,6 +1189,186 @@ async function sendDumpMsg(){
   try{const r=await callAPI(sys,[{role:'user',content:text}],null);loadEl.remove();addDumpChatMsg('ai',r);}
   catch(e){loadEl.remove();addDumpChatMsg('ai','Connection error. Please try again.');}
 }
+
+// DISCUSSION SYSTEM
+let discType=null; // 'concept' or 'dialogue'
+let discCardId=null;
+let discCtxExpanded=false;
+
+function getDiscCard(){
+  if(discType==='concept')return concepts.find(x=>x.id===discCardId);
+  if(discType==='dialogue')return dialogues.find(x=>x.id===discCardId);
+  return null;
+}
+
+function openDiscussion(type,cardId){
+  // Close any open modals
+  closeModal('cv-modal');
+  closeModal('dv-modal');
+  discType=type;
+  discCardId=cardId;
+  discCtxExpanded=false;
+  const card=getDiscCard();if(!card)return;
+  // Set back button destination
+  const backBtn=document.getElementById('disc-back-btn');
+  if(backBtn){
+    backBtn.textContent=type==='concept'?'← Concepts':'← Dialogue';
+    backBtn.onclick=()=>goTo(type==='concept'?'dump':'dialoguedump');
+  }
+  // Set context label
+  document.getElementById('disc-ctx-label').textContent=type==='concept'?'Concept':'Dialogue';
+  // Set title and body
+  document.getElementById('disc-ctx-title').style.display='';
+  if(type==='concept'){
+    document.getElementById('disc-ctx-title').textContent=card.title||'Untitled';
+    document.getElementById('disc-ctx-body').textContent=card.body||'';
+    document.getElementById('disc-title').textContent=card.title||'Discussion';
+  } else {
+    document.getElementById('disc-ctx-title').style.display='none';
+    document.getElementById('disc-ctx-body').textContent=card.body||'';
+    document.getElementById('disc-title').textContent='Discussion';
+  }
+  // Reset context expand
+  document.getElementById('disc-ctx-body').classList.remove('expanded');
+  document.getElementById('disc-ctx-toggle').textContent='Show more';
+  // Clear messages before rendering
+  document.getElementById('disc-msgs').innerHTML='';
+  // Render existing messages
+  renderDiscMsgs();
+  // Go to page
+  goTo('discusspage');
+  // If no discussion yet, get opening question from Writer
+  if(!card.discussion||!card.discussion.length){
+    getDiscOpener(card,type);
+  }
+}
+
+function toggleDiscCtx(){
+  discCtxExpanded=!discCtxExpanded;
+  document.getElementById('disc-ctx-body').classList.toggle('expanded',discCtxExpanded);
+  document.getElementById('disc-ctx-toggle').textContent=discCtxExpanded?'Show less':'Show more';
+}
+
+function renderDiscMsgs(){
+  const card=getDiscCard();
+  const el=document.getElementById('disc-msgs');
+  el.innerHTML='';
+  if(!card||!card.discussion||!card.discussion.length)return;
+  card.discussion.forEach(m=>addDiscMsgToDOM(m.role,m.content,false));
+  el.scrollTop=el.scrollHeight;
+}
+
+function addDiscMsgToDOM(role,text,scroll=true){
+  const el=document.getElementById('disc-msgs');
+  const wrap=document.createElement('div');
+  wrap.className=role==='user'?'disc-msg-user':'disc-msg-ai';
+  const who=document.createElement('div');
+  who.className='disc-msg-who';
+  who.textContent=role==='user'?'Pratik':'Writer';
+  const bub=document.createElement('div');
+  bub.className='disc-msg-bub';
+  bub.textContent=text;
+  wrap.appendChild(who);wrap.appendChild(bub);
+  el.appendChild(wrap);
+  if(scroll)el.scrollTop=el.scrollHeight;
+}
+
+function addDiscLoading(){
+  const el=document.getElementById('disc-msgs');
+  const wrap=document.createElement('div');
+  wrap.className='disc-msg-ai';wrap.id='disc-loading';
+  const who=document.createElement('div');who.className='disc-msg-who';who.textContent='Writer';
+  const bub=document.createElement('div');bub.className='disc-msg-bub dots';
+  bub.innerHTML='<span>·</span><span>·</span><span>·</span>';
+  wrap.appendChild(who);wrap.appendChild(bub);
+  el.appendChild(wrap);el.scrollTop=el.scrollHeight;
+}
+
+function removeDiscLoading(){
+  const el=document.getElementById('disc-loading');if(el)el.remove();
+}
+
+async function getDiscOpener(card,type){
+  addDiscLoading();
+  const cardText=type==='concept'?`Title: ${card.title||'Untitled'}\n\n${card.body||''}`:(card.body||'');
+  const sys=`You are a sharp, insightful creative collaborator helping filmmaker Pratik develop his work. He has shared a ${type==='concept'?'concept':'piece of dialogue'} with you. Read it carefully and ask ONE genuinely useful opening question that will help him think deeper about it. Be specific to what he's written. Don't be generic. Don't praise. Just ask the question.\n\nHis profile:\n- Films: ${profile.films||'not answered'}\n- Obsessions: ${profile.obsessions||'not answered'}\n- Instincts: ${profile.instincts||'not answered'}`;
+  try{
+    const reply=await callAPI(sys,[{role:'user',content:cardText}],null);
+    removeDiscLoading();
+    if(!card.discussion)card.discussion=[];
+    card.discussion.push({role:'assistant',content:reply});
+    saveAll();
+    addDiscMsgToDOM('assistant',reply);
+  }catch(e){removeDiscLoading();addDiscMsgToDOM('assistant','Connection error. Please try again.');}
+}
+
+function handleDiscKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendDiscMsg();}}
+
+async function sendDiscMsg(){
+  const ta=document.getElementById('disc-ta');
+  const text=(ta.value||'').trim();if(!text)return;
+  const card=getDiscCard();if(!card)return;
+  ta.value='';
+  if(!card.discussion)card.discussion=[];
+  addDiscMsgToDOM('user',text);
+  addDiscLoading();
+  document.getElementById('disc-send-btn').disabled=true;
+  const cardText=discType==='concept'?`Title: ${card.title||'Untitled'}\n\n${card.body||''}`:(card.body||'');
+  const sys=`You are a sharp, insightful creative collaborator helping filmmaker Pratik develop his work. The ${discType==='concept'?'concept':'dialogue'} being discussed:\n\n${cardText}\n\nHis profile:\n- Films: ${profile.films||'not answered'}\n- Obsessions: ${profile.obsessions||'not answered'}\n- Instincts: ${profile.instincts||'not answered'}\n\nContinue the conversation naturally. Be direct, specific, and genuinely useful.`;
+  // Build history from existing discussion, then add new user message at end
+  const hist=[...card.discussion.map(m=>({role:m.role==='user'?'user':'assistant',content:m.content})),{role:'user',content:text}];
+  try{
+    const reply=await callAPI(sys,hist,null);
+    removeDiscLoading();
+    card.discussion.push({role:'user',content:text});
+    card.discussion.push({role:'assistant',content:reply});
+    saveAll();
+    addDiscMsgToDOM('assistant',reply);
+  }catch(e){
+    removeDiscLoading();
+    addDiscMsgToDOM('assistant','Connection error. Please try again.');
+  }
+  document.getElementById('disc-send-btn').disabled=false;
+}
+
+function openDiscussionsList(type){
+  const backBtn=document.getElementById('dlist-back-btn');
+  if(backBtn){
+    backBtn.textContent=type==='concept'?'← Concepts':'← Dialogue';
+    backBtn.onclick=()=>goTo(type==='concept'?'dump':'dialoguedump');
+  }
+  document.getElementById('dlist-title').textContent=type==='concept'?'Concept Discussions':'Dialogue Discussions';
+  document.getElementById('dlist-sub').textContent=type==='concept'?'All concept discussions':'All dialogue discussions';
+  const cards=type==='concept'?concepts:dialogues;
+  const withDisc=cards.filter(c=>c.discussion&&c.discussion.length>0);
+  const list=document.getElementById('dlist-cards');
+  list.innerHTML='';
+  if(!withDisc.length){
+    list.innerHTML='<div class="dlist-empty">No discussions yet. Open any card and click Discuss with Writer to start.</div>';
+  } else {
+    withDisc.forEach(c=>{
+      const d=document.createElement('div');
+      d.className='dlist-card';
+      const title=type==='concept'?(c.title||'Untitled'):c.body.substring(0,60)+'...';
+      const msgCount=Math.floor(c.discussion.length/2);
+      const date=c.created?new Date(c.created).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
+      d.innerHTML=`<div class="dlist-card-title">${esc(title)}</div><div class="dlist-card-meta">${date} &nbsp;·&nbsp; ${msgCount} exchange${msgCount===1?'':'s'}</div>`;
+      d.onclick=()=>openDiscussion(type,c.id);
+      list.appendChild(d);
+    });
+  }
+  goTo('discussionslist');
+}
+
+// ESC KEY for modals
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if(document.getElementById('cv-modal').classList.contains('on'))closeModal('cv-modal');
+    else if(document.getElementById('dv-modal').classList.contains('on'))closeModal('dv-modal');
+    else if(document.getElementById('nd-modal').classList.contains('on'))closeModal('nd-modal');
+    else if(document.getElementById('nc-modal').classList.contains('on'))closeModal('nc-modal');
+  }
+});
 
 // DIALOGUE DUMP
 const DD_GENRES=['Thriller','Horror','Drama','Comedy','Romance','Action','Sci-Fi','Mystery','Fantasy','Abstract'];
