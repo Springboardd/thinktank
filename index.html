@@ -835,6 +835,22 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
       2. Create Worker → paste the worker script (ask Claude for it)<br>
       3. Deploy → copy the URL → paste above
     </div>
+    <div class="sm-dv"></div>
+    <div class="sm-sb">API Billing Pages</div>
+    <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.5rem;">
+      <a href="https://console.anthropic.com/settings/billing" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0.9rem;background:var(--b3);border:1px solid var(--b1);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--gold-border)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:#7ab89a;letter-spacing:0.1em;">Claude — Anthropic Console</span>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);">↗</span>
+      </a>
+      <a href="https://platform.openai.com/account/billing" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0.9rem;background:var(--b3);border:1px solid var(--b1);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--gold-border)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:#9a7ab8;letter-spacing:0.1em;">GPT-4o — OpenAI Platform</span>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);">↗</span>
+      </a>
+      <a href="https://aistudio.google.com/billing" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0.9rem;background:var(--b3);border:1px solid var(--b1);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--gold-border)'" onmouseout="this.style.borderColor='var(--b1)'">
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:#b87a7a;letter-spacing:0.1em;">Gemini — Google AI Studio</span>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);">↗</span>
+      </a>
+    </div>
     <button class="sm-sv" onclick="saveSettingsModal()">Save Settings</button>
     <div class="sm-mg" id="sm-msg"></div>
     <button class="sm-cl" onclick="closeSettingsModal()">Close</button>
