@@ -334,6 +334,37 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 .sm-mg{font-family:'Cormorant Garamond',serif;font-size:1rem;color:#7ab89a;text-align:center;min-height:1.2em;margin-bottom:0.7rem;}
 .sm-cl{width:100%;background:transparent;border:1px solid var(--b2);color:var(--t3);padding:0.7rem;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
 .sm-cl:hover{border-color:var(--t2);color:var(--t1);}
+/* THREADS PANEL */
+.threads-panel{position:fixed;right:0;top:52px;width:300px;height:calc(100vh - 52px);background:var(--d2);border-left:1px solid var(--b1);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.3s ease;}
+.threads-panel.open{transform:translateX(0);}
+.tp-head{padding:0.9rem 1.2rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.tp-title{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--t3);font-family:'DM Mono',monospace;}
+.tp-close{background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;font-family:inherit;line-height:1;}
+.tp-close:hover{color:var(--t1);}
+.tp-new{width:calc(100% - 2.4rem);margin:0.8rem 1.2rem;background:var(--gold2);border:none;color:var(--paper);padding:0.6rem 1rem;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:background 0.2s;text-align:center;}
+.tp-new:hover{background:var(--gold);}
+.tp-list{flex:1;overflow-y:auto;padding:0.5rem 1.2rem 1rem;}
+.tp-list::-webkit-scrollbar{width:2px;}
+.tp-list::-webkit-scrollbar-thumb{background:var(--b2);}
+.tcard{padding:0.9rem 1rem;background:var(--d3);border:1px solid var(--b1);border-left:2px solid var(--b2);margin-bottom:0.6rem;cursor:pointer;transition:all 0.2s;}
+.tcard:hover{border-left-color:var(--gold-dim);background:var(--d4);}
+.tcard.active{border-left-color:var(--gold-dim);background:var(--d4);}
+.tc-title{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--t1);margin-bottom:0.3rem;line-height:1.3;}
+.tc-date{font-size:8px;color:var(--t3);letter-spacing:0.08em;font-family:'DM Mono',monospace;}
+.tc-msgs{font-size:8px;color:var(--t3);letter-spacing:0.06em;font-family:'DM Mono',monospace;margin-top:0.2rem;}
+/* THREAD LIST PAGE */
+#threadlist{background:var(--d1);}
+.tl-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;}
+.tl-in{width:100%;max-width:560px;}
+.tl-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--t1);margin-bottom:0.3rem;}
+.tl-sub{font-size:9px;letter-spacing:0.2em;color:var(--t3);text-transform:uppercase;margin-bottom:2.5rem;font-family:'DM Mono',monospace;}
+.tl-new{width:100%;background:var(--gold2);border:none;color:var(--paper);padding:0.9rem;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:background 0.2s;margin-bottom:2rem;text-align:center;}
+.tl-new:hover{background:var(--gold);}
+.tl-list{display:flex;flex-direction:column;gap:0.7rem;}
+.tl-card{padding:1.2rem 1.4rem;background:var(--d2);border:1px solid var(--b1);border-left:2px solid var(--b2);cursor:pointer;transition:all 0.25s;}
+.tl-card:hover{border-left-color:var(--gold-dim);background:var(--d3);}
+.tl-card-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--t1);margin-bottom:0.35rem;}
+.tl-card-meta{font-size:8px;color:var(--t3);letter-spacing:0.08em;font-family:'DM Mono',monospace;}
 @media(max-width:640px){.lpanel{display:none;}.doors{grid-template-columns:1fr;}.wm-opts{grid-template-columns:1fr;}.chat-msgs.sbs{flex-direction:column;}}
 </style>
 </head>
@@ -536,6 +567,23 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
   </div>
 </div>
 
+<!-- THREAD LIST -->
+<div id="threadlist" class="pg dark-pg fi">
+  <div class="dark-head">
+    <div class="dark-title" id="tl-proj-name">Project</div>
+    <button class="theme-btn" onclick="toggleTheme()">☼ Theme</button>
+    <button class="hbtn" onclick="goTo('projects')">← Projects</button>
+  </div>
+  <div class="tl-body">
+    <div class="tl-in">
+      <div class="tl-title" id="tl-heading">Threads</div>
+      <div class="tl-sub" id="tl-sub">Pick a conversation to continue, or start a new one</div>
+      <button class="tl-new" onclick="startNewThread()">+ New Thread</button>
+      <div class="tl-list" id="tl-list"></div>
+    </div>
+  </div>
+</div>
+
 <!-- PROJECTS -->
 <div id="projects" class="pg dark-pg fi">
   <div class="dark-head">
@@ -585,6 +633,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <button class="hbtn" onclick="goTo(&#39;projects&#39;)">← Projects</button>
     <button class="hbtn" onclick="goTo('dump')">Concepts</button>
     <button class="hbtn" onclick="goTo('dialoguedump')">Dialogue</button>
+    <button class="hbtn" onclick="toggleThreadsPanel()">Threads</button>
     <button class="theme-btn" onclick="toggleTheme()">☼</button>
   </div>
   <div class="app-body">
@@ -641,6 +690,12 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
   <div class="concepts-panel" id="concepts-panel">
     <div class="cp-head"><div class="cp-title">Your Concepts</div><button class="cp-close" onclick="toggleConceptsPanel()">✕</button></div>
     <div class="cp-list" id="cp-list"></div>
+  </div>
+  <!-- THREADS PANEL -->
+  <div class="threads-panel" id="threads-panel">
+    <div class="tp-head"><div class="tp-title">Threads</div><button class="tp-close" onclick="toggleThreadsPanel()">✕</button></div>
+    <button class="tp-new" onclick="startNewThread()">+ New Thread</button>
+    <div class="tp-list" id="tp-list"></div>
   </div>
   <!-- ADD WRITER -->
   <div class="overlay" id="aw-modal">
@@ -781,7 +836,7 @@ async function saveAll(){
     localStorage.setItem('ptt_ghist',JSON.stringify(gHist));
     localStorage.setItem('ptt_pvhist',JSON.stringify(pvHist));
   }catch(e){}
-  if(sb){try{const {error}=await sb.from('ptt_data').upsert({id:'main',profile,wat_entries:watEntries,concepts,projects,group_hist:gHist,pv_hist:pvHist,updated_at:new Date().toISOString()});if(error)console.log('Supabase save error:',error);}catch(e){console.log('Supabase save exception:',e);}}
+  if(sb){try{const {error}=await sb.from('ptt_data').upsert({id:'main',profile,wat_entries:watEntries,concepts,projects,dialogues,group_hist:gHist,pv_hist:pvHist,updated_at:new Date().toISOString()});if(error)console.log('Supabase save error:',error);}catch(e){console.log('Supabase save exception:',e);}}
 }
 
 async function loadAll(){
@@ -833,7 +888,7 @@ document.addEventListener('DOMContentLoaded',async function(){
       try{
         const locRaw=localStorage.getItem('ptt_loc');
         const loc=locRaw?JSON.parse(locRaw):{};
-        const safe=['lobby','wmhub','dump','projects','app','ob','profed'];
+        const safe=['lobby','wmhub','dump','projects','app','ob','profed','threadlist','rawmaterials','dialoguedump'];
         if(loc.page&&safe.includes(loc.page)){
           if(loc.page==='app'&&loc.proj){
             const p=projects.find(x=>x.id===loc.proj);
@@ -1243,6 +1298,207 @@ async function sendDDMsg(){
   catch(e){loadEl.remove();addDDChatMsg('ai','Connection error. Please try again.');}
 }
 
+// THREAD SYSTEM
+let curThread=null;
+let tpOpen=false;
+
+function getThreads(projId){
+  const p=projects.find(x=>x.id===projId);
+  if(!p)return[];
+  if(!p.threads)p.threads=[];
+  return p.threads;
+}
+
+function migrateGHistToThread(projId){
+  // If project has gHist but no threads, migrate to Thread 1
+  const hist=gHist[projId];
+  if(!hist||!hist.length)return;
+  const p=projects.find(x=>x.id===projId);
+  if(!p)return;
+  if(!p.threads)p.threads=[];
+  if(p.threads.length===0){
+    const t={id:'t'+Date.now(),title:'Thread 1',created:Date.now(),summary:'',messages:[...hist]};
+    p.threads.push(t);
+    gHist[projId]=[];
+    saveAll();
+  }
+}
+
+function openProject(id){
+  curProj=projects.find(p=>p.id===id);if(!curProj)return;
+  writers=JSON.parse(JSON.stringify(curProj.writers&&curProj.writers.length?curProj.writers:DEF_WRITERS));
+  writers.forEach(w=>{if(!pvHist[w.id])pvHist[w.id]={};});
+  if(!gHist[id])gHist[id]=[];
+  vault=curProj.vault||[];
+  if(!curProj.threads)curProj.threads=[];
+  buildCSW();renderWlist();renderVaultList();renderCP();
+  document.getElementById('app-proj-lbl').textContent=curProj.name;
+  // Migrate old gHist to threads if needed
+  migrateGHistToThread(id);
+  if(curProj.threads.length>0){
+    // Has threads — show thread list
+    showThreadList(id);
+  } else {
+    // Brand new project — go straight to chat
+    mode='group';activeW=null;goTo('app');clearChat();curThread=null;
+    const welcomeMsg='The room is ready. Bring anything.';
+    addAIMsg('w1','The Architect',welcomeMsg);
+  }
+}
+
+function showThreadList(projId){
+  const p=projects.find(x=>x.id===projId);if(!p)return;
+  document.getElementById('tl-proj-name').textContent=p.name;
+  document.getElementById('tl-heading').textContent=p.name;
+  renderThreadList(projId);
+  goTo('threadlist');
+}
+
+function renderThreadList(projId){
+  const threads=getThreads(projId);
+  const list=document.getElementById('tl-list');
+  list.innerHTML='';
+  [...threads].reverse().forEach(t=>{
+    const d=document.createElement('div');
+    d.className='tl-card';
+    const date=new Date(t.created).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    const msgCount=t.messages?t.messages.length:0;
+    d.innerHTML=`<div class="tl-card-title">${esc(t.title||'Untitled Thread')}</div><div class="tl-card-meta">${date} &nbsp;·&nbsp; ${Math.floor(msgCount/2)} exchange${Math.floor(msgCount/2)===1?'':'s'}</div>`;
+    d.onclick=()=>openThread(projId,t.id);
+    list.appendChild(d);
+  });
+}
+
+function openThread(projId,threadId){
+  const p=projects.find(x=>x.id===projId);if(!p)return;
+  curProj=p;
+  const t=p.threads.find(x=>x.id===threadId);if(!t)return;
+  curThread=t;
+  writers=JSON.parse(JSON.stringify(p.writers&&p.writers.length?p.writers:DEF_WRITERS));
+  writers.forEach(w=>{if(!pvHist[w.id])pvHist[w.id]={};});
+  vault=p.vault||[];
+  buildCSW();renderWlist();renderVaultList();renderCP();
+  document.getElementById('app-proj-lbl').textContent=p.name;
+  mode='group';activeW=null;goTo('app');clearChat();
+  // Replay thread messages
+  (t.messages||[]).forEach(m=>{
+    if(m.role==='user'){addUserMsg(m.content,false);}
+    else{
+      m.content.split('\n\n---\n\n').forEach(part=>{
+        const mx=part.match(/^(.+?):\s*([\s\S]+)$/);
+        if(mx){const w=writers.find(x=>x.name===mx[1].trim());if(w)addAIMsg(w.id,w.name,mx[2].trim(),false);}
+        else if(part.trim()){addAIMsg('w1','The Architect',part.trim(),false);}
+      });
+    }
+  });
+  renderThreadsPanel();
+}
+
+function startNewThread(){
+  if(!curProj)return;
+  // Summarise current thread before leaving
+  if(curThread&&curThread.messages&&curThread.messages.length>2){
+    autoSummariseThread(curThread);
+  }
+  curThread=null;
+  mode='group';activeW=null;
+  if(document.getElementById('app').classList.contains('on')){
+    clearChat();
+  } else {
+    goTo('app');clearChat();
+    buildCSW();renderWlist();renderVaultList();renderCP();
+    document.getElementById('app-proj-lbl').textContent=curProj.name;
+  }
+  const welcomeMsg='The room is ready. Bring anything.';
+  addAIMsg('w1','The Architect',welcomeMsg);
+  // Close threads panel if open
+  if(tpOpen)toggleThreadsPanel();
+}
+
+function saveMessageToThread(role,content){
+  if(!curProj)return;
+  // Create new thread on first user message if none exists
+  if(!curThread){
+    const t={id:'t'+Date.now(),title:'',created:Date.now(),summary:'',messages:[]};
+    if(!curProj.threads)curProj.threads=[];
+    curProj.threads.push(t);
+    curThread=t;
+  }
+  curThread.messages.push({role,content});
+  // Auto-title after first user message
+  if(role==='user'&&!curThread.title){
+    autoTitleThread(curThread,content);
+  }
+  saveAll();
+  renderThreadsPanel();
+}
+
+async function autoTitleThread(thread,firstMsg){
+  try{
+    const sys='Generate a short title (4-6 words) for a creative writing conversation that starts with this message. Return ONLY the title, nothing else, no quotes, no punctuation at the end.';
+    const title=await callAPI(sys,[{role:'user',content:firstMsg}],null);
+    thread.title=title.trim().substring(0,60);
+    saveAll();
+    renderThreadsPanel();
+    // Also update thread list if visible
+    if(curProj)renderThreadList(curProj.id);
+  }catch(e){thread.title=firstMsg.substring(0,40)+'...';saveAll();}
+}
+
+async function autoSummariseThread(thread){
+  if(!thread||!thread.messages||thread.messages.length<2)return;
+  try{
+    const hist=thread.messages.map(m=>`${m.role==='user'?'Pratik':''}: ${m.content.substring(0,300)}`).join('\n');
+    const sys='Summarise this creative writing conversation in 2-3 sentences. Focus on what was discussed, any decisions made, and key ideas explored. Be specific and useful for future context.';
+    const summary=await callAPI(sys,[{role:'user',content:hist}],null);
+    thread.summary=summary.trim();
+    saveAll();
+  }catch(e){}
+}
+
+function getThreadContext(){
+  // Get last 2-3 thread summaries for cross-thread context
+  if(!curProj||!curProj.threads)return'';
+  const threads=curProj.threads.filter(t=>t.id!==(curThread&&curThread.id)&&t.summary);
+  if(!threads.length)return'';
+  const recent=threads.slice(-3);
+  return'\n\nPrevious conversation context:\n'+recent.map((t,i)=>`Thread "${t.title||'Untitled'}" (${new Date(t.created).toLocaleDateString()}): ${t.summary}`).join('\n');
+}
+
+function toggleThreadsPanel(){
+  tpOpen=!tpOpen;
+  document.getElementById('threads-panel').classList.toggle('open',tpOpen);
+  if(tpOpen){
+    renderThreadsPanel();
+    // Close concepts panel if open
+    if(cpOpen){cpOpen=false;document.getElementById('concepts-panel').classList.remove('open');}
+  }
+}
+
+function renderThreadsPanel(){
+  if(!curProj)return;
+  const list=document.getElementById('tp-list');
+  if(!list)return;
+  list.innerHTML='';
+  const threads=[...(curProj.threads||[])].reverse();
+  if(!threads.length){
+    const d=document.createElement('div');
+    d.style.cssText='font-size:10px;color:var(--t3);padding:1rem 0;text-align:center;font-family:\'DM Mono\',monospace;letter-spacing:0.05em;';
+    d.textContent='No saved threads yet.';
+    list.appendChild(d);
+    return;
+  }
+  threads.forEach(t=>{
+    const d=document.createElement('div');
+    d.className='tcard'+(curThread&&t.id===curThread.id?' active':'');
+    const date=new Date(t.created).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    const msgCount=Math.floor((t.messages||[]).length/2);
+    d.innerHTML=`<div class="tc-title">${esc(t.title||'Untitled Thread')}</div><div class="tc-date">${date}</div><div class="tc-msgs">${msgCount} exchange${msgCount===1?'':'s'}</div>`;
+    d.onclick=()=>{openThread(curProj.id,t.id);if(tpOpen)toggleThreadsPanel();};
+    list.appendChild(d);
+  });
+}
+
 // PROJECTS
 function renderProjects(){
   const g=document.getElementById('proj-grid');g.innerHTML='';
@@ -1267,23 +1523,6 @@ function createProject(){
   projects.push({id,name:nm,desc:ds,vault:[],libs:{}});
   closeModal('np-modal');document.getElementById('np-name').value='';document.getElementById('np-desc').value='';
   saveAll();openProject(id);
-}
-function openProject(id){
-  curProj=projects.find(p=>p.id===id);if(!curProj)return;
-  writers=JSON.parse(JSON.stringify(curProj.writers&&curProj.writers.length?curProj.writers:DEF_WRITERS));
-  writers.forEach(w=>{if(!pvHist[w.id])pvHist[w.id]={};});
-  if(!gHist[id])gHist[id]=[];
-  vault=curProj.vault||[];
-  buildCSW();renderWlist();renderVaultList();renderCP();
-  document.getElementById('app-proj-lbl').textContent=curProj.name;
-  mode='group';activeW=null;goTo('app');clearChat();
-  if(gHist[id].length){
-    replayStackedHistory();
-  } else {
-    const welcomeMsg=`The room is ready. Bring anything.`;
-    gHist[id].push({role:'assistant',content:'system:\n'+welcomeMsg});
-    addAIMsg('w1','The Architect',welcomeMsg);
-  }
 }
 
 // ONBOARDING
@@ -1782,7 +2021,9 @@ async function sendMsg(){
   const pid=curProj?curProj.id:'d';
   if(!gHist[pid])gHist[pid]=[];
   gHist[pid].push({role:'user',content:text});
+  saveMessageToThread('user',text);
   const responses=[];
+  const threadCtx=getThreadContext();
 
   if(respMode==='solo'){
     await Promise.all(writers.map(async(w,i)=>{
@@ -1790,7 +2031,7 @@ async function sendMsg(){
       try{
         const role=getModeRole(i,[],respMode);
         const hist=gHist[pid].map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
-        const reply=await callForWriter(w,buildSys(w,role),hist);
+        const reply=await callForWriter(w,buildSys(w,role)+threadCtx,hist);
         responses[i]=reply;removeLoading(w.id);addAIMsg(w.id,w.name,reply);
       }catch(e){removeLoading(w.id);addAIMsg(w.id,w.name,'Connection error — please try again.');responses[i]='';}
     }));
@@ -1800,13 +2041,18 @@ async function sendMsg(){
       try{
         const role=getModeRole(i,responses,respMode);
         const hist=gHist[pid].map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
-        const reply=await callForWriter(w,buildSys(w,role),hist);
+        const reply=await callForWriter(w,buildSys(w,role)+threadCtx,hist);
         responses[i]=reply;removeLoading(w.id);addAIMsg(w.id,w.name,reply);
       }catch(e){removeLoading(w.id);addAIMsg(w.id,w.name,'Connection error — please try again.');responses[i]='';}
     }
   }
 
-  if(responses.some(r=>r)){gHist[pid].push({role:'assistant',content:responses.map((r,i)=>writers[i]?`${writers[i].name}: ${r}`:r).join('\n\n---\n\n')});saveAll();}
+  if(responses.some(r=>r)){
+    const aiContent=responses.map((r,i)=>writers[i]?`${writers[i].name}: ${r}`:r).join('\n\n---\n\n');
+    gHist[pid].push({role:'assistant',content:aiContent});
+    saveMessageToThread('assistant',aiContent);
+    saveAll();
+  }
   btn.disabled=false;
   document.getElementById('chat-ta').focus();
 }
