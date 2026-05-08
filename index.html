@@ -1033,6 +1033,7 @@ function loadKeys(){
     const gk=localStorage.getItem('ptt_gkey');if(gk)geminiKey=gk;
     const ea=localStorage.getItem('ptt_engines');if(ea)engineAssign=JSON.parse(ea);
     const px=localStorage.getItem('ptt_proxy');if(px)proxyUrl=px;
+    const rm=localStorage.getItem('ptt_respmode');if(rm)respMode=rm;
   }catch(e){}
 }
 function openSettingsModal(){
@@ -1691,9 +1692,9 @@ function saveMessageToThread(role,content){
     curThread=t;
   }
   curThread.messages.push({role,content});
-  // Auto-title after first user message
+  // Auto-title after first user message — delayed to avoid race with writer API calls
   if(role==='user'&&!curThread.title){
-    autoTitleThread(curThread,content);
+    setTimeout(()=>autoTitleThread(curThread,content),2000);
   }
   saveAll();
   renderThreadsPanel();
@@ -2070,6 +2071,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.mode-picker
 const modeLabels={debate:'Debate',solo:'Solo',devils:"Devil's Adv",build:'Build',pitch:'Pitch'};
 function setMode(m){
   respMode=m;
+  try{localStorage.setItem('ptt_respmode',m);}catch(e){}
   document.getElementById('mode-pill-lbl').textContent=modeLabels[m];
   document.querySelectorAll('.mode-opt').forEach(el=>el.classList.remove('sel'));
   const opt=document.getElementById('mopt-'+m);if(opt)opt.classList.add('sel');
