@@ -493,11 +493,13 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <div class="dark-title">Concepts Dump</div>
     <button class="abtn" onclick="openModal(&#39;nc-modal&#39;)">+ New Concept</button>
     <button class="theme-btn" onclick="toggleTheme()">☼ Theme</button>
-    <button class="hbtn" id="dump-back-btn" onclick="goTo('rawmaterials')">← Back</button>
+    <button class="hbtn" id="dump-back-btn" onclick="goTo('projects')">← Projects</button>
+    <button class="hbtn" onclick="goTo('rawmaterials')">← Raw Materials</button>
   </div>
   <div class="dump-toolbar">
     <button class="sort-btn" id="sort-manual-btn" onclick="toggleSort()" style="display:none">Manual Order</button>
     <button class="sort-btn act" id="sort-date-btn" onclick="toggleSort()">Newest First</button>
+    <input class="dump-search" id="dump-search" placeholder="Search concepts..." oninput="renderDump()" style="background:var(--b3);border:1px solid var(--b1);color:var(--t1);padding:5px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.05em;outline:none;margin-left:0.6rem;min-width:220px;">
     <button class="dump-ai-btn" onclick="openDiscussionsList('concept')">✍ Discussions</button>
   </div>
   <div class="dump-grid" id="dump-grid">
@@ -547,6 +549,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
   <div class="dump-toolbar">
     <button class="sort-btn" id="dd-sort-manual-btn" onclick="toggleDDSort()" style="display:none">Manual Order</button>
     <button class="sort-btn act" id="dd-sort-date-btn" onclick="toggleDDSort()">Newest First</button>
+    <input class="dump-search" id="dd-search" placeholder="Search dialogues..." oninput="renderDialogueDump()" style="background:var(--b3);border:1px solid var(--b1);color:var(--t1);padding:5px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.05em;outline:none;margin-left:0.6rem;min-width:200px;">
     <div id="dd-genre-filters" style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-left:0.6rem;"></div>
     <button class="dump-ai-btn" onclick="openDiscussionsList('dialogue')">&#9997; Discussions</button>
   </div>
@@ -712,6 +715,8 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
         <div class="cmode gmode" id="mode-lbl">Group Room</div>
         <div style="font-size:9px;color:var(--t3);letter-spacing:0.06em;" id="mode-sub"></div>
         <div class="chat-hdr-right">
+          <input class="thread-search-inp" id="thread-search-inp" placeholder="Search this thread..." oninput="filterThreadMessages()" style="display:none;background:var(--b3);border:1px solid var(--b1);color:var(--t1);padding:5px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.05em;outline:none;min-width:200px;margin-right:0.5rem;">
+          <button class="hbtn" id="thread-search-btn" onclick="toggleThreadSearch()" title="Search in this thread" style="margin-right:0.4rem;">⌕</button>
           <div class="mode-picker-wrap">
             <button class="mode-pill" onclick="toggleModeDD()" id="mode-pill-btn">
               <span class="mode-dot"></span><span id="mode-pill-lbl">Debate</span> ▾
@@ -749,6 +754,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
   <div class="threads-panel" id="threads-panel">
     <div class="tp-head"><div class="tp-title">Threads</div><button class="tp-close" onclick="toggleThreadsPanel()">✕</button></div>
     <button class="tp-new" onclick="startNewThread()">+ New Thread</button>
+    <input id="tp-search" oninput="renderThreadsPanel()" placeholder="Search across threads..." style="margin:0 1rem 0.6rem 1rem;background:var(--b3);border:1px solid var(--b1);color:var(--t1);padding:6px 10px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.04em;outline:none;">
     <div class="tp-list" id="tp-list"></div>
   </div>
   <!-- ADD WRITER -->
@@ -1017,7 +1023,7 @@ function goTo(id){
     const backBtn=document.getElementById('dump-back-btn');
     if(backBtn){
       if(curProj){backBtn.textContent='← '+curProj.name;backBtn.onclick=()=>goTo('app');}
-      else{backBtn.textContent='← Back';backBtn.onclick=()=>goTo('rawmaterials');}
+      else{backBtn.textContent='← Projects';backBtn.onclick=()=>goTo('projects');}
     }
     renderDump();
   }
@@ -1105,8 +1111,12 @@ function renderDump(){
   const em=document.getElementById('dump-empty');
   g.querySelectorAll('.ccard').forEach(e=>e.remove());
   if(!concepts.length){if(em)em.style.display='block';return;}
+  const searchEl=document.getElementById('dump-search');
+  const q=searchEl?searchEl.value.trim().toLowerCase():'';
+  let list=sortByDate?[...concepts].sort((a,b)=>(b.created||0)-(a.created||0)):[...concepts];
+  if(q){list=list.filter(c=>(c.title||'').toLowerCase().includes(q)||(c.body||'').toLowerCase().includes(q)||(c.projs||[]).some(pn=>(pn||'').toLowerCase().includes(q)));}
+  if(!list.length){if(em){em.style.display='block';em.textContent=q?'No concepts match your search.':'No concepts yet. Click + New Concept to add your first idea.';}return;}
   if(em)em.style.display='none';
-  const list=sortByDate?[...concepts].sort((a,b)=>(b.created||0)-(a.created||0)):[...concepts];
   list.forEach(c=>{
     const d=document.createElement('div');
     d.className='ccard';d.draggable=!sortByDate;d.dataset.id=c.id;
@@ -1457,7 +1467,10 @@ function renderDialogueDump(){
   g.querySelectorAll('.ccard').forEach(e=>e.remove());
   let list=ddSortByDate?[...dialogues].sort((a,b)=>(b.created||0)-(a.created||0)):[...dialogues];
   if(ddActiveGenres.length)list=list.filter(d=>d.tags&&d.tags.some(t=>ddActiveGenres.includes(t)));
-  if(!list.length){if(em)em.style.display='block';return;}
+  const ddSearchEl=document.getElementById('dd-search');
+  const ddQ=ddSearchEl?ddSearchEl.value.trim().toLowerCase():'';
+  if(ddQ){list=list.filter(dl=>(dl.body||'').toLowerCase().includes(ddQ)||(dl.tags||[]).some(t=>(t||'').toLowerCase().includes(ddQ)));}
+  if(!list.length){if(em){em.style.display='block';em.textContent=ddQ?'No dialogues match your search.':(ddActiveGenres.length?'No dialogues match these filters.':'No dialogue yet. Click + New Dialogue to capture your first line.');}return;}
   if(em)em.style.display='none';
   list.forEach(dl=>{
     const d=document.createElement('div');
@@ -1755,6 +1768,9 @@ function toggleThreadsPanel(){
     renderThreadsPanel();
     // Close concepts panel if open
     if(cpOpen){cpOpen=false;document.getElementById('concepts-panel').classList.remove('open');}
+  } else {
+    // Clear search when panel closes
+    const s=document.getElementById('tp-search');if(s)s.value='';
   }
 }
 
@@ -1764,6 +1780,34 @@ function renderThreadsPanel(){
   if(!list)return;
   list.innerHTML='';
   const threads=[...(curProj.threads||[])].reverse();
+  const searchInp=document.getElementById('tp-search');
+  const q=searchInp?searchInp.value.trim().toLowerCase():'';
+  // Search mode: show matching messages from all threads
+  if(q){
+    const results=[];
+    threads.forEach(t=>{
+      (t.messages||[]).forEach(m=>{
+        const txt=(m.content||'').toLowerCase();
+        if(txt.includes(q))results.push({thread:t,msg:m});
+      });
+    });
+    if(!results.length){
+      const d=document.createElement('div');
+      d.style.cssText='font-size:10px;color:var(--t3);padding:1rem;text-align:center;font-family:\'DM Mono\',monospace;letter-spacing:0.05em;';
+      d.textContent='No matches.';list.appendChild(d);return;
+    }
+    results.forEach(r=>{
+      const d=document.createElement('div');
+      d.className='tcard';
+      const snippet=(r.msg.content||'').substring(0,120)+(r.msg.content.length>120?'...':'');
+      const who=r.msg.role==='user'?'Pratik':'Writers';
+      d.innerHTML=`<div class="tc-title" style="font-size:10px;color:var(--gold-dim);">${esc(r.thread.title||'Untitled Thread')}</div><div class="tc-date" style="margin-top:0.3rem;font-style:italic;color:var(--t2);font-size:11px;line-height:1.5;">${esc(snippet)}</div><div class="tc-msgs">${who}</div>`;
+      d.onclick=()=>{openThread(curProj.id,r.thread.id);if(tpOpen)toggleThreadsPanel();};
+      list.appendChild(d);
+    });
+    return;
+  }
+  // Normal thread list
   if(!threads.length){
     const d=document.createElement('div');
     d.style.cssText='font-size:10px;color:var(--t3);padding:1rem 0;text-align:center;font-family:\'DM Mono\',monospace;letter-spacing:0.05em;';
@@ -2169,6 +2213,25 @@ function openPrivate(wid){
   if(!hist.length)addAIMsg(w.id,w.name,'This is our private channel, Pratik. What you tell me here stays between us \u2014 I\'ll carry it into the group room without the others knowing. What do you want me to hold onto?');
 }
 function clearChat(){document.getElementById('chat-msgs').innerHTML='';}
+function toggleThreadSearch(){
+  const inp=document.getElementById('thread-search-inp');
+  if(inp.style.display==='none'){
+    inp.style.display='inline-block';inp.value='';inp.focus();
+  } else {
+    inp.style.display='none';inp.value='';filterThreadMessages();
+  }
+}
+function filterThreadMessages(){
+  const inp=document.getElementById('thread-search-inp');
+  const q=(inp&&inp.value||'').trim().toLowerCase();
+  const msgs=document.querySelectorAll('#chat-msgs .msg');
+  msgs.forEach(m=>{
+    if(!q){m.style.opacity='';m.style.outline='';return;}
+    const txt=(m.textContent||'').toLowerCase();
+    if(txt.includes(q)){m.style.opacity='1';m.style.outline='1px solid var(--gold-border)';}
+    else{m.style.opacity='0.25';m.style.outline='';}
+  });
+}
 function addUserMsg(t,sc=true){
   if(curView==='sbs'){addSBSUser(t);return;}
   const el=document.getElementById('chat-msgs');
