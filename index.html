@@ -993,7 +993,7 @@ let mode='group',activeW=null;
 let ctxId=null,libWriter=null;
 let curQ=0;
 
-function toggleTheme(){document.body.classList.toggle('lm');localStorage.setItem('ptt_theme',document.body.classList.contains('lm')?'light':'dark');}
+function toggleTheme(){const s=document.createElement('style');s.id='no-trans';s.textContent='*{transition:none!important;}';document.head.appendChild(s);document.body.classList.toggle('lm');localStorage.setItem('ptt_theme',document.body.classList.contains('lm')?'light':'dark');requestAnimationFrame(()=>requestAnimationFrame(()=>{const el=document.getElementById('no-trans');if(el)el.remove();}));}
 function clearKey(){try{localStorage.removeItem('ptt_key');localStorage.removeItem('ptt_loc');}catch(e){}apiKey='';document.getElementById('api-inp').value='';goTo('gate');}
 function enterGate(){
   const k=(document.getElementById('api-inp').value||'').trim();
@@ -2085,14 +2085,14 @@ function getModeRole(i,prevResps,m){
     case 'solo':return'Answer from your specific craft lens only. Do NOT reference or acknowledge any other writer. Give your own completely independent response.';
     case 'debate':
       if(i===0)return'First response. Set the tone from your craft lens. Be direct and specific.';
-      return`You have seen:\n${others}\n\nGive YOUR response. Engage with what was said — agree, disagree, build from your lens.`;
+      return`The other writers have responded as follows — read them, then write ONLY your own response. Do NOT reproduce or repeat their responses. Do NOT start with any writer name. Write only your own paragraph(s).\n\n${others}\n\nNow give YOUR response only. Engage with what was said — agree, disagree, build from your lens.`;
     case 'devils':
-      if(i===writers.length-1&&i>0)return`You are the Devil's Advocate. You have seen:\n${others}\n\nArgue the OPPOSITE. Find every weakness. Be provocative but intelligent — find the genuine counter-argument.`;
+      if(i===writers.length-1&&i>0)return`You are the Devil's Advocate. Read what others said, then write ONLY your own counter-argument. Do NOT reproduce or repeat their responses. Do NOT start with any writer name.\n\n${others}\n\nNow argue the OPPOSITE. Find every weakness. Be provocative but intelligent — find the genuine counter-argument.`;
       if(i===0)return'First response. Make your strongest case from your craft lens.';
       return`Build on what came before:\n${others}`;
     case 'build':
       if(i===0)return'First response. Lay the foundation from your craft lens. Be specific and constructive.';
-      return`You have seen:\n${others}\n\nBUILD ONLY. Add what is missing. Extend what was said. Do NOT contradict or challenge. Only add new value.`;
+      return`Read what others said, then write ONLY your own addition. Do NOT reproduce or repeat their responses. Do NOT start with any writer name.\n\n${others}\n\nBUILD ONLY. Add what is missing. Extend what was said. Do NOT contradict or challenge. Only add new value.`;
     case 'pitch':
       const pp=i>0&&prevResps.length?`\n\nYour colleagues pitched:\n${others}\n\nAdd your angle — don't repeat theirs.`:'';
       return`You are pitching to a room of OTT producers and executives. Champion this idea with conviction, commercial awareness, and creative passion. Make them want to greenlight it. Speak as ${writers[i]?writers[i].name:'you'} — your craft lens shapes how you pitch.${pp}`;
@@ -2253,9 +2253,19 @@ async function callOpenAI(sys,msgs){
     return d.choices&&d.choices[0]?d.choices[0].message.content:'No response from GPT.';
   }catch(e){return'GPT connection error. If this keeps happening, add a Cloudflare Worker URL in Settings to fix CORS.';}
 }
-async function callGemini(sys,msgs){
+async function callGemini(sys,msgs,writerName){
   try{
-    const combined=sys+'\n\n'+msgs.map(m=>(m.role==='user'?'Pratik: ':'Writer: ')+m.content).join('\n');
+    const filteredMsgs=msgs.map(m=>{
+      if(m.role!=='assistant')return m;
+      const parts=m.content.split('\n\n---\n\n');
+      if(parts.length>1){
+        const mine=parts.find(p=>writerName&&p.trim().startsWith(writerName+':'));
+        if(mine)return{role:'assistant',content:mine.replace(/^[^:]+:\s*/,'').trim()};
+        return{role:'assistant',content:parts[parts.length-1].replace(/^[^:]+:\s*/,'').trim()};
+      }
+      return m;
+    });
+    const combined=sys+'\n\n'+filteredMsgs.map(m=>(m.role==='user'?'Pratik: ':'You previously said: ')+m.content).join('\n');
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+geminiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{role:'user',parts:[{text:combined}]}],generationConfig:{maxOutputTokens:1500}})});
     const d=await r.json();
     if(d.error)return'Gemini Error: '+d.error.message;
@@ -2265,7 +2275,7 @@ async function callGemini(sys,msgs){
 async function callForWriter(w,sys,msgs){
   const engine=w.engine||'claude';
   if(engine==='openai'&&openaiKey)return await callOpenAI(sys,msgs);
-  if(engine==='gemini'&&geminiKey)return await callGemini(sys,msgs);
+  if(engine==='gemini'&&geminiKey)return await callGemini(sys,msgs,w.name);
   return await callAPI(sys,msgs,w.id);
 }
 
