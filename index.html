@@ -2308,15 +2308,15 @@ async function sendMsg(){
 
   const pid=curProj?curProj.id:'d';
   if(!gHist[pid])gHist[pid]=[];
-  // Only write to gHist if no active thread
+  // Snapshot history BEFORE saving the new message — clean context for all writers
+  const histSnapshot=(curThread?curThread.messages:(gHist[pid]||[])).map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
+  histSnapshot.push({role:'user',content:text});
+  const getHist=()=>histSnapshot;
+  // Now save to thread/gHist
   if(!curThread)gHist[pid].push({role:'user',content:text});
   saveMessageToThread('user',text);
   const responses=[];
   const threadCtx=getThreadContext();
-  // Snapshot history ONCE before writers start responding — prevents each writer
-  // from seeing previous writers' responses in the history mid-turn
-  const histSnapshot=(curThread?curThread.messages:(gHist[pid]||[])).map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
-  const getHist=()=>histSnapshot;
 
   if(respMode==='solo'){
     await Promise.all(writers.map(async(w,i)=>{
