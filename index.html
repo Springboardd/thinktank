@@ -2024,7 +2024,8 @@ function buildSBS(){
       } else {
         m.content.split('\n\n---\n\n').forEach(p=>{
           const mx=p.match(/^(.+?):\s*([\s\S]+)$/);
-          if(mx){const w=writers.find(x=>x.name===mx[1].trim());if(w)addSBSAI(w.id,mx[2].trim());}
+          if(mx){const w=writers.find(x=>x.name===mx[1].trim());if(w){addSBSAI(w.id,mx[2].trim());}else{const fb=writers[0];if(fb)addSBSAI(fb.id,p.trim());}}
+          else if(p.trim()){const fb=writers[0];if(fb)addSBSAI(fb.id,p.trim());}
         });
       }
     }
@@ -2039,7 +2040,8 @@ function replayStackedHistory(){
       if(mode==='private'&&activeW){addAIMsg(activeW.id,activeW.name,m.content,false);}
       else{m.content.split('\n\n---\n\n').forEach(p=>{
         const mx=p.match(/^(.+?):\s*([\s\S]+)$/);
-        if(mx){const w=writers.find(x=>x.name===mx[1].trim());if(w)addAIMsg(w.id,w.name,mx[2].trim(),false);}
+        if(mx){const w=writers.find(x=>x.name===mx[1].trim());if(w){addAIMsg(w.id,w.name,mx[2].trim(),false);}else{const fb=writers[0];if(fb)addAIMsg(fb.id,fb.name,p.trim(),false);}}
+        else if(p.trim()){const fb=writers[0];if(fb)addAIMsg(fb.id,fb.name,p.trim(),false);}
       });}
     }
   });
@@ -2124,7 +2126,8 @@ function switchGroup(){
       if(m.role==='user'){addUserMsg(m.content,false);}
       else{m.content.split('\n\n---\n\n').forEach(p=>{
         const mx=p.match(/^(.+?):\s*([\s\S]+)$/);
-        if(mx){const w=writers.find(x=>x.name===mx[1].trim());if(w)addAIMsg(w.id,w.name,mx[2].trim(),false);}
+        if(mx){const w=writers.find(x=>x.name===mx[1].trim());if(w){addAIMsg(w.id,w.name,mx[2].trim(),false);}else{const fb=writers[0];if(fb)addAIMsg(fb.id,fb.name,p.trim(),false);}}
+        else if(p.trim()){const fb=writers[0];if(fb)addAIMsg(fb.id,fb.name,p.trim(),false);}
       });}
     });
   }
@@ -2310,8 +2313,10 @@ async function sendMsg(){
   saveMessageToThread('user',text);
   const responses=[];
   const threadCtx=getThreadContext();
-  // Use curThread messages for API history if thread active, else gHist
-  const getHist=()=>curThread?curThread.messages.map(m=>({role:m.role==='user'?'user':'assistant',content:m.content})):gHist[pid].map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
+  // Snapshot history ONCE before writers start responding — prevents each writer
+  // from seeing previous writers' responses in the history mid-turn
+  const histSnapshot=(curThread?curThread.messages:(gHist[pid]||[])).map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
+  const getHist=()=>histSnapshot;
 
   if(respMode==='solo'){
     await Promise.all(writers.map(async(w,i)=>{
