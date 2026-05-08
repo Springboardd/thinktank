@@ -971,6 +971,8 @@ document.addEventListener('DOMContentLoaded',async function(){
                 } else {
                   openProject(p.id);restored=true;
                 }
+                // Restore SBS view if it was active before refresh
+                if(restored&&loc.view==='sbs'){setTimeout(()=>{try{setView('sbs');}catch(e){}},100);}
               }catch(e2){goTo('lobby');restored=true;}
             } else {goTo('projects');restored=true;}
           } else if(loc.page==='threadlist'&&loc.proj){
@@ -1022,7 +1024,7 @@ function goTo(id){
     }
     renderDDGenreFilters();renderDialogueDump();
   }
-  if(id==='app')syncModeUI();try{const loc={page:id};if(id==='app'&&curProj){loc.proj=curProj.id;if(curThread)loc.thread=curThread.id;}if(id==='threadlist'&&curProj)loc.proj=curProj.id;localStorage.setItem('ptt_loc',JSON.stringify(loc));}catch(e){}
+  if(id==='app')syncModeUI();try{const loc={page:id};if(id==='app'&&curProj){loc.proj=curProj.id;if(curThread)loc.thread=curThread.id;loc.view=curView;}if(id==='threadlist'&&curProj)loc.proj=curProj.id;localStorage.setItem('ptt_loc',JSON.stringify(loc));}catch(e){}
 }
 function openModal(id){document.getElementById(id).classList.add('on');}
 function closeModal(id){document.getElementById(id).classList.remove('on');}
@@ -1977,6 +1979,8 @@ function setView(v){
   document.getElementById('vt-stack').classList.toggle('active',v==='stacked');
   document.getElementById('vt-side').classList.toggle('active',v==='sbs');
   if(v==='sbs'){buildSBS();}else{tearSBS();clearChat();replayStackedHistory();}
+  // Persist current view so refresh restores correctly
+  try{const locRaw=localStorage.getItem('ptt_loc');const loc=locRaw?JSON.parse(locRaw):{};loc.view=v;localStorage.setItem('ptt_loc',JSON.stringify(loc));}catch(e){}
 }
 function buildSBS(){
   const n=writers.length;
@@ -2206,7 +2210,7 @@ YOUR ROLE: ${role}
 
 ABSOLUTE RULES:
 1. Stay in character. Respond only from your specific craft lens.
-2. Default length is 3 to 5 paragraphs — but if Pratik gives a clear length instruction in his message (e.g. "1 line only", "one paragraph", "in a sentence", "detailed essay"), honour it exactly. His instruction always wins over the default.
+2. Be sharp — 3 to 5 paragraphs. Precise, not exhaustive.
 3. NOT a yes-man. Challenge weak ideas directly but respectfully.
 4. Make it personal — use his profile, blind spots, obsessions. Generic feedback is failure.
 5. Deep knowledge of Hollywood AND Bollywood. Non-linear structure, perspective shifts, Psycho mid-film death, Vantage Point POV — all legitimate tools you understand and respect.
@@ -2277,14 +2281,8 @@ async function callGemini(sys,msgs,writerName){
 }
 async function callForWriter(w,sys,msgs){
   const engine=w.engine||'claude';
-  if(engine==='openai'){
-    if(!openaiKey)return'['+w.name+' cannot respond — OpenAI key is missing. Please add it in Settings.]';
-    return await callOpenAI(sys,msgs);
-  }
-  if(engine==='gemini'){
-    if(!geminiKey)return'['+w.name+' cannot respond — Gemini key is missing. Please add it in Settings.]';
-    return await callGemini(sys,msgs,w.name);
-  }
+  if(engine==='openai'&&openaiKey)return await callOpenAI(sys,msgs);
+  if(engine==='gemini'&&geminiKey)return await callGemini(sys,msgs,w.name);
   return await callAPI(sys,msgs,w.id);
 }
 
