@@ -499,7 +499,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
   <div class="dump-toolbar">
     <button class="sort-btn" id="sort-manual-btn" onclick="toggleSort()" style="display:none">Manual Order</button>
     <button class="sort-btn act" id="sort-date-btn" onclick="toggleSort()">Newest First</button>
-    <input class="dump-search" id="dump-search" placeholder="Search concepts..." oninput="renderDump()" style="background:var(--b3);border:1px solid var(--b1);color:var(--t1);padding:5px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.05em;outline:none;margin-left:0.6rem;min-width:220px;">
+    <input class="dump-search" id="dump-search" placeholder="Search concepts..." oninput="renderDump()" style="background:var(--b3);border:1px solid var(--b2);color:var(--t1);padding:8px 14px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.05em;outline:none;margin-left:1rem;min-width:300px;flex:1;max-width:420px;">
     <button class="dump-ai-btn" onclick="openDiscussionsList('concept')">✍ Discussions</button>
   </div>
   <div class="dump-grid" id="dump-grid">
@@ -524,6 +524,8 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
       <div class="mbts">
         <button class="btn-g" onclick="closeModal(&#39;cv-modal&#39;)">Close</button>
         <button class="btn-g" id="cv-edit-btn" onclick="toggleConceptEdit()">Edit</button>
+        <button class="btn-g" onclick="cvNewProj()">+ New Project</button>
+        <button class="btn-g" onclick="cvAddToProj()">+ Add to Project</button>
         <button class="btn-g" onclick="openDiscussion('concept',cvId)">Discuss with Writer</button>
         <button class="btn-p" id="cv-save-btn" onclick="saveConceptEdit()" style="display:none">Save</button>
       </div>
@@ -534,6 +536,14 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <div class="ctx-item" onclick="ctxNewProj()">Send to new project</div>
     <div class="ctx-item" onclick="ctxExistProj()">Add to existing project</div>
     <div class="ctx-item ctx-del" onclick="ctxDel()">Delete concept</div>
+  </div>
+  <div class="overlay" id="proj-picker-modal">
+    <div class="modal" style="max-width:460px;">
+      <div class="modal-title" id="pp-title">Add to Project</div>
+      <div style="font-size:11px;color:var(--t3);margin-bottom:1rem;letter-spacing:0.04em;font-style:italic;">Pick which project to add this concept to:</div>
+      <div id="pp-list" style="max-height:50vh;overflow-y:auto;display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem;"></div>
+      <div class="mbts"><button class="btn-g" onclick="closeModal('proj-picker-modal')">Cancel</button></div>
+    </div>
   </div>
 </div>
 
@@ -549,7 +559,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
   <div class="dump-toolbar">
     <button class="sort-btn" id="dd-sort-manual-btn" onclick="toggleDDSort()" style="display:none">Manual Order</button>
     <button class="sort-btn act" id="dd-sort-date-btn" onclick="toggleDDSort()">Newest First</button>
-    <input class="dump-search" id="dd-search" placeholder="Search dialogues..." oninput="renderDialogueDump()" style="background:var(--b3);border:1px solid var(--b1);color:var(--t1);padding:5px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.05em;outline:none;margin-left:0.6rem;min-width:200px;">
+    <input class="dump-search" id="dd-search" placeholder="Search dialogues..." oninput="renderDialogueDump()" style="background:var(--b3);border:1px solid var(--b2);color:var(--t1);padding:8px 14px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.05em;outline:none;margin-left:1rem;min-width:280px;flex:1;max-width:380px;">
     <div id="dd-genre-filters" style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-left:0.6rem;"></div>
     <button class="dump-ai-btn" onclick="openDiscussionsList('dialogue')">&#9997; Discussions</button>
   </div>
@@ -636,6 +646,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
       <div class="tl-title" id="tl-heading">Threads</div>
       <div class="tl-sub" id="tl-sub">Pick a conversation to continue, or start a new one</div>
       <button class="tl-new" onclick="startNewThread()">+ New Thread</button>
+      <input id="tl-search" oninput="renderThreadList(curProj?curProj.id:null)" placeholder="Search threads and messages..." style="width:100%;margin-bottom:1rem;background:var(--b3);border:1px solid var(--b2);color:var(--t1);padding:10px 14px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.05em;outline:none;">
       <div class="tl-list" id="tl-list"></div>
     </div>
   </div>
@@ -1201,15 +1212,60 @@ function ctxNewProj(){
 function ctxExistProj(){
   const c=concepts.find(x=>x.id===ctxId);if(!c)return;
   if(!projects.length){alert('No projects yet. Create one first.');return;}
-  const ls=projects.map((p,i)=>`${i+1}. ${p.name}`).join('\n');
-  const ch=prompt('Which project?\n'+ls);
-  const idx=parseInt(ch)-1;
-  if(isNaN(idx)||idx<0||idx>=projects.length)return;
-  const p=projects[idx];
-  if(!c.projs.includes(p.name)){c.projs.push(p.name);saveAll();}
-  renderDump();alert('Added to "'+p.name+'".');
+  openProjectPicker(c.id);
 }
 function ctxDel(){concepts=concepts.filter(x=>x.id!==ctxId);saveAll();renderDump();}
+
+// Concept-view-modal versions of the same actions (work from cvId, the open concept)
+function cvNewProj(){
+  const c=concepts.find(x=>x.id===cvId);if(!c)return;
+  const nm=prompt('New project name?');if(!nm)return;
+  const id='p'+Date.now();
+  projects.push({id,name:nm,desc:c.title||c.body.substring(0,60),vault:[],libs:{}});
+  if(!c.projs.includes(nm))c.projs.push(nm);
+  saveAll();
+  closeModal('cv-modal');
+  alert('Project "'+nm+'" created with this concept attached.');
+  renderDump();
+}
+function cvAddToProj(){
+  const c=concepts.find(x=>x.id===cvId);if(!c)return;
+  if(!projects.length){alert('No projects yet. Create one first.');return;}
+  openProjectPicker(c.id);
+}
+
+// Shared project picker — opens a modal with a clean list of projects to pick from
+let pickerConceptId=null;
+function openProjectPicker(conceptId){
+  pickerConceptId=conceptId;
+  const c=concepts.find(x=>x.id===conceptId);
+  const list=document.getElementById('pp-list');
+  list.innerHTML='';
+  projects.forEach(p=>{
+    const already=c&&c.projs&&c.projs.includes(p.name);
+    const d=document.createElement('div');
+    d.style.cssText='padding:0.9rem 1rem;border:1px solid var(--b2);background:var(--b3);cursor:'+(already?'default':'pointer')+';display:flex;justify-content:space-between;align-items:center;transition:background 0.2s;'+(already?'opacity:0.5;':'');
+    d.innerHTML=`<div><div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--t1);">${esc(p.name)}</div><div style="font-size:9px;color:var(--t3);letter-spacing:0.05em;font-family:'DM Mono',monospace;margin-top:0.2rem;">${esc(p.desc||'')}</div></div>${already?'<div style="font-size:9px;color:var(--gold-dim);letter-spacing:0.1em;font-family:\'DM Mono\',monospace;">ALREADY ADDED</div>':''}`;
+    if(!already){
+      d.onmouseover=()=>{d.style.background='var(--b2)';};
+      d.onmouseout=()=>{d.style.background='var(--b3)';};
+      d.onclick=()=>pickProjectForConcept(p.id);
+    }
+    list.appendChild(d);
+  });
+  openModal('proj-picker-modal');
+}
+function pickProjectForConcept(projId){
+  const c=concepts.find(x=>x.id===pickerConceptId);
+  const p=projects.find(x=>x.id===projId);
+  if(!c||!p){closeModal('proj-picker-modal');return;}
+  if(!c.projs)c.projs=[];
+  if(!c.projs.includes(p.name)){c.projs.push(p.name);saveAll();}
+  closeModal('proj-picker-modal');
+  closeModal('cv-modal');
+  renderDump();
+  alert('Added to "'+p.name+'".');
+}
 
 // DUMP CHAT
 let dumpChatOpen=false;
@@ -1646,21 +1702,39 @@ function showThreadList(projId){
   const p=projects.find(x=>x.id===projId);if(!p)return;
   document.getElementById('tl-proj-name').textContent=p.name;
   document.getElementById('tl-heading').textContent=p.name;
+  const sInp=document.getElementById('tl-search');if(sInp)sInp.value='';
   renderThreadList(projId);
   goTo('threadlist');
 }
 
 function renderThreadList(projId){
+  if(!projId)return;
   const threads=getThreads(projId);
   const list=document.getElementById('tl-list');
   list.innerHTML='';
-  [...threads].reverse().forEach(t=>{
+  const sInp=document.getElementById('tl-search');
+  const q=sInp?sInp.value.trim().toLowerCase():'';
+  let arr=[...threads].reverse();
+  if(q){
+    arr=arr.filter(t=>{
+      if((t.title||'').toLowerCase().includes(q))return true;
+      return (t.messages||[]).some(m=>(m.content||'').toLowerCase().includes(q));
+    });
+  }
+  if(!arr.length){
+    const d=document.createElement('div');
+    d.style.cssText='font-size:11px;color:var(--t3);padding:2rem 0;text-align:center;font-family:\'DM Mono\',monospace;letter-spacing:0.05em;font-style:italic;';
+    d.textContent=q?'No threads match your search.':'No threads yet. Start a new one.';
+    list.appendChild(d);return;
+  }
+  arr.forEach(t=>{
     const d=document.createElement('div');
     d.className='tl-card';
+    d.style.position='relative';
     const date=new Date(t.created).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
     const msgCount=t.messages?t.messages.length:0;
-    d.innerHTML=`<div class="tl-card-title">${esc(t.title||'Untitled Thread')}</div><div class="tl-card-meta">${date} &nbsp;·&nbsp; ${Math.floor(msgCount/2)} exchange${Math.floor(msgCount/2)===1?'':'s'}</div>`;
-    d.onclick=()=>openThread(projId,t.id);
+    d.innerHTML=`<button class="tl-card-del" onclick="deleteThread(event,'${projId}','${t.id}')" title="Delete thread" style="position:absolute;top:0.7rem;right:0.7rem;background:none;border:none;color:var(--t3);font-family:'DM Mono',monospace;font-size:14px;cursor:pointer;padding:4px 8px;opacity:0.5;transition:opacity 0.2s,color 0.2s;">×</button><div class="tl-card-title">${esc(t.title||'Untitled Thread')}</div><div class="tl-card-meta">${date} &nbsp;·&nbsp; ${Math.floor(msgCount/2)} exchange${Math.floor(msgCount/2)===1?'':'s'}</div>`;
+    d.onclick=(ev)=>{if(ev.target.classList.contains('tl-card-del'))return;openThread(projId,t.id);};
     list.appendChild(d);
   });
 }
@@ -1709,6 +1783,22 @@ function startNewThread(){
   addAIMsg('w1','The Architect',welcomeMsg);
   // Close threads panel if open
   if(tpOpen)toggleThreadsPanel();
+}
+
+function deleteThread(ev,projId,threadId){
+  if(ev){ev.stopPropagation();ev.preventDefault();}
+  const p=projects.find(x=>x.id===projId);if(!p||!p.threads)return;
+  const t=p.threads.find(x=>x.id===threadId);if(!t)return;
+  if(!confirm('Delete thread "'+(t.title||'Untitled Thread')+'"? This cannot be undone.'))return;
+  p.threads=p.threads.filter(x=>x.id!==threadId);
+  // If we deleted the currently open thread, leave it
+  if(curThread&&curThread.id===threadId){curThread=null;}
+  saveAll();
+  // Refresh whichever view is showing
+  if(document.getElementById('threadlist').classList.contains('on')){renderThreadList(projId);}
+  if(tpOpen)renderThreadsPanel();
+  // If we just deleted the currently open thread while inside it, send user back to thread list
+  if(document.getElementById('app').classList.contains('on')&&!curThread){showThreadList(projId);}
 }
 
 function saveMessageToThread(role,content){
@@ -1818,10 +1908,11 @@ function renderThreadsPanel(){
   threads.forEach(t=>{
     const d=document.createElement('div');
     d.className='tcard'+(curThread&&t.id===curThread.id?' active':'');
+    d.style.position='relative';
     const date=new Date(t.created).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
     const msgCount=Math.floor((t.messages||[]).length/2);
-    d.innerHTML=`<div class="tc-title">${esc(t.title||'Untitled Thread')}</div><div class="tc-date">${date}</div><div class="tc-msgs">${msgCount} exchange${msgCount===1?'':'s'}</div>`;
-    d.onclick=()=>{openThread(curProj.id,t.id);if(tpOpen)toggleThreadsPanel();};
+    d.innerHTML=`<button onclick="deleteThread(event,'${curProj.id}','${t.id}')" title="Delete thread" style="position:absolute;top:0.5rem;right:0.5rem;background:none;border:none;color:var(--t3);font-family:'DM Mono',monospace;font-size:14px;cursor:pointer;padding:2px 6px;opacity:0.5;">×</button><div class="tc-title">${esc(t.title||'Untitled Thread')}</div><div class="tc-date">${date}</div><div class="tc-msgs">${msgCount} exchange${msgCount===1?'':'s'}</div>`;
+    d.onclick=(ev)=>{if(ev.target.tagName==='BUTTON')return;openThread(curProj.id,t.id);if(tpOpen)toggleThreadsPanel();};
     list.appendChild(d);
   });
 }
