@@ -251,7 +251,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 .dots span:nth-child(3){animation-delay:0.4s;}
 @keyframes blink{0%,80%,100%{opacity:0.1}40%{opacity:1}}
 /* SBS */
-.sbs-col{flex:1;border-right:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.sbs-col{flex:1;border-right:2px solid var(--b2);display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .sbs-col:last-child{border-right:none;}
 .sbs-hdr{padding:0.75rem 1.2rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:0.5rem;background:var(--d2);flex-shrink:0;}
 .sbs-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
@@ -496,8 +496,8 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <button class="hbtn" id="dump-back-btn" onclick="goTo('rawmaterials')">← Back</button>
   </div>
   <div class="dump-toolbar">
-    <button class="sort-btn" id="sort-manual-btn" onclick="toggleSort()">Manual Order</button>
-    <button class="sort-btn act" id="sort-date-btn" onclick="toggleSort()" style="display:none">Newest First</button>
+    <button class="sort-btn" id="sort-manual-btn" onclick="toggleSort()" style="display:none">Manual Order</button>
+    <button class="sort-btn act" id="sort-date-btn" onclick="toggleSort()">Newest First</button>
     <button class="dump-ai-btn" onclick="openDiscussionsList('concept')">✍ Discussions</button>
   </div>
   <div class="dump-grid" id="dump-grid">
@@ -545,8 +545,8 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <button class="hbtn" onclick="goTo('rawmaterials')">&#8592; Raw Materials</button>
   </div>
   <div class="dump-toolbar">
-    <button class="sort-btn act" id="dd-sort-manual-btn" onclick="toggleDDSort()">Manual Order</button>
-    <button class="sort-btn" id="dd-sort-date-btn" onclick="toggleDDSort()" style="display:none">Newest First</button>
+    <button class="sort-btn" id="dd-sort-manual-btn" onclick="toggleDDSort()" style="display:none">Manual Order</button>
+    <button class="sort-btn act" id="dd-sort-date-btn" onclick="toggleDDSort()">Newest First</button>
     <div id="dd-genre-filters" style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-left:0.6rem;"></div>
     <button class="dump-ai-btn" onclick="openDiscussionsList('dialogue')">&#9997; Discussions</button>
   </div>
@@ -885,7 +885,7 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 let sb=null;
 let respMode='debate';
 let curView='stacked';
-let sortByDate=false;
+let sortByDate=true;
 let dragSrcId=null;
 let cpOpen=false;
 let concepts=[],projects=[],dialogues=[],gHist={},pvHist={};
@@ -958,6 +958,11 @@ document.addEventListener('DOMContentLoaded',async function(){
       try{
         const locRaw=localStorage.getItem('ptt_loc');
         const loc=locRaw?JSON.parse(locRaw):{};
+        // Restore curProj context if saved — keeps the back button correct on refresh
+        if(loc.proj){
+          const pSaved=projects.find(x=>x.id===loc.proj);
+          if(pSaved)curProj=pSaved;
+        }
         const safe=['lobby','wmhub','dump','projects','app','ob','profed','threadlist','rawmaterials','dialoguedump','discusspage','discussionslist'];
         if(loc.page&&safe.includes(loc.page)){
           if(loc.page==='app'&&loc.proj){
@@ -1024,7 +1029,16 @@ function goTo(id){
     }
     renderDDGenreFilters();renderDialogueDump();
   }
-  if(id==='app')syncModeUI();try{const loc={page:id};if(id==='app'&&curProj){loc.proj=curProj.id;if(curThread)loc.thread=curThread.id;loc.view=curView;}if(id==='threadlist'&&curProj)loc.proj=curProj.id;localStorage.setItem('ptt_loc',JSON.stringify(loc));}catch(e){}
+  if(id==='app')syncModeUI();
+  // When navigating to Lobby, clear current project context — Lobby is top-level
+  if(id==='lobby'){curProj=null;curThread=null;}
+  try{
+    const loc={page:id};
+    if(id==='app'&&curProj){loc.proj=curProj.id;if(curThread)loc.thread=curThread.id;loc.view=curView;}
+    else if(id==='threadlist'&&curProj){loc.proj=curProj.id;}
+    else if(curProj&&id!=='lobby'&&id!=='gate'){loc.proj=curProj.id;}
+    localStorage.setItem('ptt_loc',JSON.stringify(loc));
+  }catch(e){}
 }
 function openModal(id){document.getElementById(id).classList.add('on');}
 function closeModal(id){document.getElementById(id).classList.remove('on');}
@@ -1400,8 +1414,8 @@ document.addEventListener('keydown',function(e){
 });
 
 // DIALOGUE DUMP
-const DD_GENRES=['Thriller','Horror','Drama','Comedy','Romance','Action','Sci-Fi','Mystery','Fantasy','Abstract'];
-let ddSortByDate=false,ddDragSrcId=null,ddCtxId=null,ddActiveGenres=[],ddChatOpen=false,dvId=null,dvEditing=false;
+const DD_GENRES=['Thriller','Horror','Drama','Comedy','Black Comedy','Crime','Romance','Action','Sci-Fi','Mystery','Fantasy','Abstract'];
+let ddSortByDate=true,ddDragSrcId=null,ddCtxId=null,ddActiveGenres=[],ddChatOpen=false,dvId=null,dvEditing=false;
 
 function initDDTagPicker(containerId,selectedArr){
   const c=document.getElementById(containerId);if(!c)return;
