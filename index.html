@@ -727,7 +727,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
         <div style="font-size:9px;color:var(--t3);letter-spacing:0.06em;" id="mode-sub"></div>
         <div class="chat-hdr-right">
           <input class="thread-search-inp" id="thread-search-inp" placeholder="Search this thread..." oninput="filterThreadMessages()" style="display:none;background:var(--b3);border:1px solid var(--b1);color:var(--t1);padding:5px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.05em;outline:none;min-width:200px;margin-right:0.5rem;">
-          <button class="hbtn" id="thread-search-btn" onclick="toggleThreadSearch()" title="Search in this thread" style="margin-right:0.4rem;">⌕</button>
+          <button class="hbtn" id="thread-search-btn" onclick="toggleThreadSearch()" title="Search in this thread" style="margin-right:0.5rem;padding:6px 14px;font-size:11px;letter-spacing:0.1em;">⌕ Search</button>
           <div class="mode-picker-wrap">
             <button class="mode-pill" onclick="toggleModeDD()" id="mode-pill-btn">
               <span class="mode-dot"></span><span id="mode-pill-lbl">Debate</span> ▾
@@ -803,6 +803,20 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
         <div style="margin-top:0.6rem"><div class="ml">Caption</div><textarea class="mta" id="v-img-caption" placeholder="What is this image? What does it capture?" rows="3"></textarea></div>
       </div>
       <div class="mbts"><button class="btn-g" onclick="closeModal(&#39;vault-modal&#39;)">Cancel</button><button class="btn-p" onclick="addVault()">Add to Vault</button></div>
+    </div>
+  </div>
+  <!-- VAULT ENTRY EDIT -->
+  <div class="overlay" id="ve-modal">
+    <div class="modal" style="max-width:540px;">
+      <div style="font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--t3);margin-bottom:0.6rem;" id="ve-type-label"></div>
+      <div class="mf"><div class="ml">Title</div><input class="mi" id="ve-title"></div>
+      <div id="ve-img-wrap" style="display:none;margin-bottom:1rem;"><img id="ve-img" style="max-width:100%;max-height:200px;border:1px solid var(--b2);"></div>
+      <div class="mf"><div class="ml">Content</div><textarea class="mta" id="ve-content" rows="8"></textarea></div>
+      <div class="mbts">
+        <button class="btn-g" onclick="closeModal(&#39;ve-modal&#39;)">Close</button>
+        <button class="btn-g" style="color:#c14444;border-color:#5a2828;" onclick="deleteVaultEntry()">Delete</button>
+        <button class="btn-p" onclick="saveVaultEntry()">Save</button>
+      </div>
     </div>
   </div>
   <!-- LIBRARY -->
@@ -1205,7 +1219,8 @@ function ctxNewProj(){
   const c=concepts.find(x=>x.id===ctxId);if(!c)return;
   const nm=prompt('New project name?');if(!nm)return;
   const id='p'+Date.now();
-  projects.push({id,name:nm,desc:c.title||c.body.substring(0,60),vault:[],libs:{}});
+  const newVault=[buildConceptVaultEntry(c)];
+  projects.push({id,name:nm,desc:c.title||c.body.substring(0,60),vault:newVault,libs:{}});
   if(!c.projs.includes(nm))c.projs.push(nm);
   saveAll();renderDump();alert('Project "'+nm+'" created.');
 }
@@ -1216,16 +1231,31 @@ function ctxExistProj(){
 }
 function ctxDel(){concepts=concepts.filter(x=>x.id!==ctxId);saveAll();renderDump();}
 
+// Build a vault entry from a concept — used by all "add concept to project" flows
+function buildConceptVaultEntry(c){
+  const title=c.title||(c.body||'').substring(0,60)||'Untitled Concept';
+  return{
+    id:'v'+Date.now()+Math.floor(Math.random()*1000),
+    title:title,
+    type:'concept',
+    scope:'all',
+    wid:null,
+    content:c.body||'',
+    fromConceptId:c.id
+  };
+}
+
 // Concept-view-modal versions of the same actions (work from cvId, the open concept)
 function cvNewProj(){
   const c=concepts.find(x=>x.id===cvId);if(!c)return;
   const nm=prompt('New project name?');if(!nm)return;
   const id='p'+Date.now();
-  projects.push({id,name:nm,desc:c.title||c.body.substring(0,60),vault:[],libs:{}});
+  const newVault=[buildConceptVaultEntry(c)];
+  projects.push({id,name:nm,desc:c.title||c.body.substring(0,60),vault:newVault,libs:{}});
   if(!c.projs.includes(nm))c.projs.push(nm);
   saveAll();
   closeModal('cv-modal');
-  alert('Project "'+nm+'" created with this concept attached.');
+  alert('Project "'+nm+'" created with this concept added to its Project Vault.');
   renderDump();
 }
 function cvAddToProj(){
@@ -1260,11 +1290,21 @@ function pickProjectForConcept(projId){
   const p=projects.find(x=>x.id===projId);
   if(!c||!p){closeModal('proj-picker-modal');return;}
   if(!c.projs)c.projs=[];
-  if(!c.projs.includes(p.name)){c.projs.push(p.name);saveAll();}
+  if(!c.projs.includes(p.name)){c.projs.push(p.name);}
+  // Also copy the concept into the project's vault as an editable entry
+  if(!p.vault)p.vault=[];
+  // Avoid duplicate vault entries from the same concept
+  const dupe=p.vault.find(v=>v.fromConceptId===c.id);
+  if(!dupe){
+    p.vault.push(buildConceptVaultEntry(c));
+    // If we're currently inside this project, update the live vault and re-render
+    if(curProj&&curProj.id===p.id){vault=p.vault;renderVaultList();}
+  }
+  saveAll();
   closeModal('proj-picker-modal');
   closeModal('cv-modal');
   renderDump();
-  alert('Added to "'+p.name+'".');
+  alert('Added "'+(c.title||'concept')+'" to "'+p.name+'" — find it in the Project Vault.');
 }
 
 // DUMP CHAT
@@ -2093,10 +2133,47 @@ function addVault(){
   document.getElementById('v-title').value='';document.getElementById('v-content').value='';
 }
 function renderVaultList(){
-  const icons={screenplay:'S',book:'B',note:'N',research:'R',link:'L',image:'I'};
+  const icons={screenplay:'S',book:'B',note:'N',research:'R',link:'L',image:'I',concept:'C'};
   const el=document.getElementById('vault-list');
   if(!vault.length){el.innerHTML='<div class="vitem" style="opacity:0.28;border-style:dashed;font-size:9px;justify-content:center">Empty vault</div>';return;}
-  el.innerHTML=vault.map(v=>`<div class="vitem"><span style="font-size:8px;opacity:0.4">[${icons[v.type]||'?'}]</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${v.title.substring(0,20)}</span><span style="font-size:8px;opacity:0.28">${v.scope==='all'?'All':'Prv'}</span></div>`).join('');
+  el.innerHTML=vault.map(v=>`<div class="vitem" style="cursor:pointer" onclick="openVaultEntry('${v.id}')"><span style="font-size:8px;opacity:0.4">[${icons[v.type]||'?'}]</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${esc(v.title.substring(0,20))}</span><span style="font-size:8px;opacity:0.28">${v.scope==='all'?'All':'Prv'}</span></div>`).join('');
+}
+
+// Open a vault entry for viewing/editing
+let editingVaultId=null;
+function openVaultEntry(vid){
+  const v=vault.find(x=>x.id===vid);if(!v)return;
+  editingVaultId=vid;
+  document.getElementById('ve-title').value=v.title||'';
+  document.getElementById('ve-content').value=v.content||'';
+  document.getElementById('ve-type-label').textContent=(v.type||'').toUpperCase();
+  // Image vault entries: show image, hide content textarea
+  const imgWrap=document.getElementById('ve-img-wrap');
+  if(v.type==='image'&&v.imgData){
+    imgWrap.style.display='block';
+    document.getElementById('ve-img').src='data:'+(v.imgType||'image/png')+';base64,'+v.imgData;
+  } else {
+    imgWrap.style.display='none';
+  }
+  openModal('ve-modal');
+}
+function saveVaultEntry(){
+  if(!editingVaultId)return;
+  const v=vault.find(x=>x.id===editingVaultId);if(!v)return;
+  v.title=(document.getElementById('ve-title').value||'').trim()||v.title;
+  v.content=(document.getElementById('ve-content').value||'').trim();
+  if(curProj)curProj.vault=vault;
+  saveAll();renderVaultList();
+  closeModal('ve-modal');
+}
+function deleteVaultEntry(){
+  if(!editingVaultId)return;
+  const v=vault.find(x=>x.id===editingVaultId);if(!v)return;
+  if(!confirm('Delete "'+v.title+'" from this project\'s vault? This will not affect the original concept in Concepts Dump.'))return;
+  vault=vault.filter(x=>x.id!==editingVaultId);
+  if(curProj)curProj.vault=vault;
+  saveAll();renderVaultList();
+  closeModal('ve-modal');
 }
 
 // CONCEPTS PANEL IN APP
