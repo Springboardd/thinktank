@@ -719,6 +719,7 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
     <button class="hbtn" onclick="goTo('dump')">Concepts</button>
     <button class="hbtn" onclick="goTo('dialoguedump')">Dialogue</button>
     <button class="hbtn" onclick="toggleThreadsPanel()">Threads</button>
+    <button class="hbtn" id="proj-sync-btn" onclick="syncNow('proj-sync-btn')" title="Save this work to the cloud now" style="border-color:var(--gold-border);color:var(--gold-dim);">↻ Sync</button>
     <button class="theme-btn" onclick="toggleTheme()">☼</button>
   </div>
   <div class="app-body">
@@ -899,6 +900,14 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
         <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);">↗</span>
       </a>
     </div>
+    <div class="sm-dv"></div>
+    <div class="sm-sb">Backup Your Work</div>
+    <div style="background:var(--b3);border:1px solid var(--b1);padding:1rem;margin-bottom:1rem;font-size:10px;color:var(--t3);line-height:1.7;letter-spacing:0.03em;">
+      Downloads two files: a <b style="color:var(--t2);">.json</b> restore file (to recover everything if needed) and a readable <b style="color:var(--t2);">.txt</b> file (to read or archive your work). Save them somewhere safe — your computer, Google Drive, email to yourself.
+    </div>
+    <button onclick="downloadBackup()" style="width:100%;background:var(--gold2);border:none;color:var(--paper);padding:0.85rem;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;margin-bottom:0.6rem;transition:background 0.2s;" onmouseover="this.style.background='var(--gold)'" onmouseout="this.style.background='var(--gold2)'">⬇ Download Backup</button>
+    <button onclick="syncNowSettings()" style="width:100%;background:none;border:1px solid var(--gold-border);color:var(--gold-dim);padding:0.7rem;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;margin-bottom:0.4rem;">↻ Sync to Cloud Now</button>
+    <div id="sm-sync-msg" style="font-family:'DM Mono',monospace;font-size:10px;text-align:center;margin-bottom:1.5rem;min-height:14px;letter-spacing:0.05em;"></div>
     <button class="sm-sv" onclick="saveSettingsModal()">Save Settings</button>
     <div class="sm-mg" id="sm-msg"></div>
     <button class="sm-cl" onclick="closeSettingsModal()">Close</button>
@@ -955,6 +964,146 @@ async function saveAll(){
     localStorage.setItem('ptt_pvhist',JSON.stringify(pvHist));
   }catch(e){}
   if(sb){try{const {error}=await sb.from('ptt_data').upsert({id:'main',profile,wat_entries:watEntries,concepts,projects,dialogues,group_hist:gHist,pv_hist:pvHist,updated_at:new Date().toISOString()});if(error)console.log('Supabase save error:',error);}catch(e){console.log('Supabase save exception:',e);}}
+}
+
+// ============ BACKUP & SYNC SYSTEM ============
+
+// Sync triggered from Settings modal — shows feedback in the settings message line
+async function syncNowSettings(){
+  const msg=document.getElementById('sm-sync-msg');
+  if(msg){msg.textContent='Syncing...';msg.style.color='var(--t3)';}
+  try{
+    localStorage.setItem('ptt_concepts',JSON.stringify(concepts));
+    localStorage.setItem('ptt_projects',JSON.stringify(projects));
+    localStorage.setItem('ptt_dialogues',JSON.stringify(dialogues));
+    localStorage.setItem('ptt_profile',JSON.stringify(profile));
+    localStorage.setItem('ptt_wat',JSON.stringify(watEntries));
+    localStorage.setItem('ptt_ghist',JSON.stringify(gHist));
+    localStorage.setItem('ptt_pvhist',JSON.stringify(pvHist));
+    localStorage.setItem('ptt_updated_at',new Date().toISOString());
+  }catch(e){}
+  if(!sb){
+    if(msg){msg.textContent='⚠ Cloud offline — downloading backup instead';msg.style.color='#c9a84c';}
+    downloadBackup();return;
+  }
+  try{
+    const {error}=await sb.from('ptt_data').upsert({id:'main',profile,wat_entries:watEntries,concepts,projects,dialogues,group_hist:gHist,pv_hist:pvHist,updated_at:new Date().toISOString()});
+    if(error){
+      if(msg){msg.textContent='⚠ Sync failed — backup downloaded to protect your work';msg.style.color='#c14444';}
+      downloadBackup();
+    } else {
+      if(msg){msg.textContent='✓ Synced to cloud successfully';msg.style.color='#6aa882';}
+    }
+  }catch(e){
+    if(msg){msg.textContent='⚠ Sync failed — backup downloaded to protect your work';msg.style.color='#c14444';}
+    downloadBackup();
+  }
+}
+
+// Helper: trigger a browser download of text content
+function triggerDownload(filename,text){
+  const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+// Build a date stamp like 2026-05-28
+function dateStamp(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+// Download a complete backup: one .json (for restore) + one readable .txt (for reading)
+function downloadBackup(){
+  // 1. The restore file — structured JSON of everything
+  const fullData={
+    exported:new Date().toISOString(),
+    profile:profile,
+    watEntries:watEntries,
+    concepts:concepts,
+    dialogues:dialogues,
+    projects:projects,
+    gHist:gHist,
+    pvHist:pvHist
+  };
+  triggerDownload('think-tank-backup-'+dateStamp()+'.json',JSON.stringify(fullData,null,2));
+
+  // 2. The readable file — human-friendly text of concepts, dialogues, projects
+  let txt='PRATIK\'S THINK-TANK — READABLE BACKUP\nExported: '+new Date().toLocaleString()+'\n';
+  txt+='\n========================================\nCONCEPTS ('+concepts.length+')\n========================================\n';
+  concepts.forEach((c,i)=>{
+    txt+='\n--- '+(i+1)+'. '+(c.title||'Untitled')+' ---\n'+(c.body||'')+'\n';
+    if(c.projs&&c.projs.length)txt+='[In projects: '+c.projs.join(', ')+']\n';
+  });
+  txt+='\n\n========================================\nDIALOGUES ('+dialogues.length+')\n========================================\n';
+  dialogues.forEach((d,i)=>{
+    txt+='\n--- '+(i+1)+'. ---\n'+(d.body||'')+'\n';
+    if(d.tags&&d.tags.length)txt+='[Tags: '+d.tags.join(', ')+']\n';
+  });
+  txt+='\n\n========================================\nPROJECTS ('+projects.length+')\n========================================\n';
+  projects.forEach((p,i)=>{
+    txt+='\n\n############ '+(i+1)+'. '+(p.name||'Untitled Project')+' ############\n';
+    if(p.desc)txt+='Description: '+p.desc+'\n';
+    if(p.vault&&p.vault.length){
+      txt+='\n-- Project Vault --\n';
+      p.vault.forEach(v=>{txt+='['+(v.type||'note').toUpperCase()+'] '+(v.title||'')+'\n'+(v.content||'')+'\n\n';});
+    }
+    if(p.threads&&p.threads.length){
+      p.threads.forEach(t=>{
+        txt+='\n--- Thread: '+(t.title||'Untitled Thread')+' ---\n';
+        (t.messages||[]).forEach(m=>{
+          txt+=(m.role==='user'?'PRATIK: ':'WRITERS: ')+(m.content||'')+'\n\n';
+        });
+      });
+    }
+  });
+  triggerDownload('think-tank-readable-'+dateStamp()+'.txt',txt);
+}
+
+// Sync Now: force a save to Supabase and report success/failure visually.
+// On failure, auto-download a backup so data is never at risk.
+async function syncNow(btnId){
+  const btn=btnId?document.getElementById(btnId):null;
+  const setLabel=(txt,color)=>{if(btn){btn.textContent=txt;if(color)btn.style.color=color;}};
+  setLabel('Syncing...','');
+  // Always save to localStorage first
+  try{
+    localStorage.setItem('ptt_profile',JSON.stringify(profile));
+    localStorage.setItem('ptt_wat',JSON.stringify(watEntries));
+    localStorage.setItem('ptt_concepts',JSON.stringify(concepts));
+    localStorage.setItem('ptt_projects',JSON.stringify(projects));
+    localStorage.setItem('ptt_dialogues',JSON.stringify(dialogues));
+    localStorage.setItem('ptt_ghist',JSON.stringify(gHist));
+    localStorage.setItem('ptt_pvhist',JSON.stringify(pvHist));
+    localStorage.setItem('ptt_updated_at',new Date().toISOString());
+  }catch(e){}
+  // Now try Supabase
+  if(!sb){
+    setLabel('⚠ Offline — backup saved','#c9a84c');
+    downloadBackup();
+    setTimeout(()=>{if(btn){btn.textContent='↻ Sync';btn.style.color='var(--gold-dim)';}},4000);
+    return;
+  }
+  try{
+    const {error}=await sb.from('ptt_data').upsert({id:'main',profile,wat_entries:watEntries,concepts,projects,dialogues,group_hist:gHist,pv_hist:pvHist,updated_at:new Date().toISOString()});
+    if(error){
+      // Sync failed — make it loud and protect the data
+      setLabel('⚠ Sync failed — backup downloaded','#c14444');
+      downloadBackup();
+      console.log('Sync error:',error);
+    } else {
+      setLabel('✓ Synced','#6aa882');
+    }
+  }catch(e){
+    setLabel('⚠ Sync failed — backup downloaded','#c14444');
+    downloadBackup();
+    console.log('Sync exception:',e);
+  }
+  setTimeout(()=>{if(btn){btn.textContent='↻ Sync';btn.style.color='var(--gold-dim)';}},4000);
 }
 
 async function loadAll(){
