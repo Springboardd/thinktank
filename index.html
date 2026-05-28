@@ -402,6 +402,19 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 .dlist-card-meta{font-size:8px;color:var(--t3);letter-spacing:0.08em;font-family:'DM Mono',monospace;}
 @media(max-width:640px){.lpanel{display:none;}.doors{grid-template-columns:1fr;}.wm-opts{grid-template-columns:1fr;}.chat-msgs.sbs{flex-direction:column;}}
 </style>
+<script>
+// Anti-flash: set background immediately on load, before body paints, based on saved theme
+(function(){
+  try{
+    var t=localStorage.getItem('ptt_theme');
+    // Dark is default (--d0:#0e0b08); light mode uses #f4efe6
+    var bg=(t==='light')?'#f4efe6':'#0e0b08';
+    document.documentElement.style.background=bg;
+  }catch(e){
+    document.documentElement.style.background='#0e0b08';
+  }
+})();
+</script>
 </head>
 <body>
 
