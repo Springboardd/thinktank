@@ -403,16 +403,19 @@ body{font-family:'DM Mono',monospace;background:var(--d0);color:var(--t1);overfl
 @media(max-width:640px){.lpanel{display:none;}.doors{grid-template-columns:1fr;}.wm-opts{grid-template-columns:1fr;}.chat-msgs.sbs{flex-direction:column;}}
 </style>
 <script>
-// Anti-flash: set background immediately on load, before body paints, based on saved theme
+// Anti-flash: set background immediately and hide content until the correct page is shown
 (function(){
   try{
     var t=localStorage.getItem('ptt_theme');
-    // Dark is default (--d0:#0e0b08); light mode uses #f4efe6
     var bg=(t==='light')?'#f4efe6':'#0e0b08';
     document.documentElement.style.background=bg;
   }catch(e){
     document.documentElement.style.background='#0e0b08';
   }
+  // Hide page content until JS places us on the right page (prevents flash of all pages)
+  document.documentElement.style.visibility='hidden';
+  // Safety net: always reveal within 2s even if something goes wrong, so we never stay blank
+  setTimeout(function(){document.documentElement.style.visibility='';},2000);
 })();
 </script>
 </head>
@@ -1048,6 +1051,8 @@ document.addEventListener('DOMContentLoaded',async function(){
       if(!restored)goTo('lobby');
     }else{goTo('gate');}
   }catch(e){goTo('gate');}
+  // Reveal content now that the correct page is shown — ends the load flash
+  requestAnimationFrame(function(){document.documentElement.style.visibility='';});
 });
 
 let writers=[],vault=[],selColor=COLORS[0];
